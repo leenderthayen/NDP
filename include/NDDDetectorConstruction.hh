@@ -113,10 +113,6 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   G4LogicalVolume* logicalCarrier;
   G4VPhysicalVolume* physicalCarrier;
 
-  G4Polyhedron* solidPixel;
-  G4LogicalVolume* logicalPixel;
-  std::vector<G4VPhysicalVolume*> physicalPixels;
-
   G4UserLimits* stepLimitMyl;
   G4UserLimits* stepLimitDead;
   G4UserLimits* stepLimitCar;

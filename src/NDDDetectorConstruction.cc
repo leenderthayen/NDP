@@ -28,7 +28,7 @@ NDDDetectorConstruction::NDDDetectorConstruction()
       stepLimitDead(0),
       stepLimitCar(0) {
   detMess = new NDDDetectorMessenger(this);
-  detectorPosition = G4ThreeVector(0, 0, 1 * m);
+  detectorPosition = G4ThreeVector(0, 0, 10 * mm);
 }
 
 NDDDetectorConstruction::~NDDDetectorConstruction() {
