@@ -5,6 +5,7 @@
 #define NDDRunAction_h 1
 
 #include "G4UserRunAction.hh"
+#include "G4String.hh"
 
 class NDDRunMessenger;
 class G4Run;
@@ -23,9 +24,13 @@ class NDDRunAction : public G4UserRunAction {
   void SetRndmFreq(G4int val) { fSaveRndm = val; }
   G4int GetRndmFreq() const { return fSaveRndm; }
 
+  inline void SetFilename(const G4String& s) { filename = s;}
+  inline const G4String& GetFilename() const { return filename; }
+
  private:
   NDDRunMessenger* runMessenger;
   G4int fSaveRndm;
+  G4String filename;
 };
 
 #endif

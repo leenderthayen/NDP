@@ -13,7 +13,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 NDDSiPixelSD::NDDSiPixelSD(const G4String& name, const G4String& hitsCollectionName)
-    : G4VSensitiveDetector(name), fHitsCollection(NULL) {
+    : G4VSensitiveDetector(name), fHitsCollection(nullptr) {
   collectionName.insert(hitsCollectionName);
 }
 
@@ -65,18 +65,18 @@ G4bool NDDSiPixelSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   newHit->SetPixelNumber(theTouchable->GetVolume()->GetCopyNo());
   newHit->SetPixelName(theTouchable->GetVolume()->GetName());
 
-  G4double* field = new G4double[4];
-  const G4double point[4] = {pos.x() / mm, pos.y() / mm, pos.z() / mm, 0.};
-  const G4FieldManager* fman = pVol->GetLogicalVolume()->GetFieldManager();
+  // G4double* field = new G4double[4];
+  // const G4double point[4] = {pos.x() / mm, pos.y() / mm, pos.z() / mm, 0.};
+  // const G4FieldManager* fman = pVol->GetLogicalVolume()->GetFieldManager();
 
-  if (fman) {
-    fman->GetDetectorField()->GetFieldValue(point, field);
-  }
-  newHit->SetField(G4ThreeVector(field[0], field[1], field[2]));
+  // if (fman) {
+  //   fman->GetDetectorField()->GetFieldValue(point, field);
+  // }
+  // newHit->SetField(G4ThreeVector(field[0], field[1], field[2]));
 
   fHitsCollection->insert(newHit);
 
-  delete[] field;
+  //delete[] field;
 
   return true;
 }

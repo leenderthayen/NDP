@@ -1,6 +1,8 @@
 #include "NDDActionInitialization.hh"
 #include "NDDPrimaryGeneratorAction.hh"
 #include "NDDRunAction.hh"
+#include "NDDEventAction.hh"
+#include "NDDSteppingAction.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -22,4 +24,7 @@ void NDDActionInitialization::Build() const {
   SetUserAction(new NDDPrimaryGeneratorAction);
 
   SetUserAction(new NDDRunAction);
+  NDDEventAction* eventAction = new NDDEventAction;
+  SetUserAction(eventAction);
+  SetUserAction(new NDDSteppingAction(eventAction));
 }

@@ -102,9 +102,9 @@
 #/gps/source/clear
 #/gps/source/add 1.0
 /gps/particle e-
-/gps/energy 100 keV
-/gps/direction 0 0 1
-#/gps/ang/type iso
+/gps/energy 500 keV
+#/gps/direction 0 0 1
+/gps/ang/type iso
 /gps/position 0 0 0 mm
 
 # Delete unwanted sources
