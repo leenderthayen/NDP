@@ -55,7 +55,7 @@ G4bool NDDSiPixelSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
 
   newHit->SetTrackID(aStep->GetTrack()->GetTrackID());
   newHit->SetEnDep(enDep);
-  newHit->SetPos(pos - initPos);
+  newHit->SetPos(G4ThreeVector(pos.x(), pos.y(), pos.z() - initPos.z()));
   newHit->SetTime(aStep->GetPreStepPoint()->GetGlobalTime());
   newHit->SetMomentum(aStep->GetPreStepPoint()->GetMomentum());
   newHit->SetParticleCode(aStep->GetTrack()->GetDefinition()->GetPDGEncoding());

@@ -499,7 +499,9 @@ uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 
 [[RadiationDetectorSignals]]
 deps = ["ArraysOfArrays", "ElasticArrays", "EncodedArrays", "FillArrays", "IntervalSets", "RecipesBase", "StaticArrays", "StatsBase", "StructArrays", "Tables", "TypedTables", "Unitful", "UnsafeArrays"]
-git-tree-sha1 = "0d43ab63162c5358d7d7800ae745e42b934b4c21"
+git-tree-sha1 = "4402755948aef741b1426979a264a7ed63cbb56e"
+repo-rev = "master"
+repo-url = "https://github.com/JuliaPhysics/RadiationDetectorSignals.jl.git"
 uuid = "bf2c0563-65cf-5db2-a620-ceb7de82658c"
 version = "0.1.2"
 

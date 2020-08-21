@@ -7,8 +7,8 @@
 #                   VERBOSITY                      #
 ####################################################
 /control/verbose 2
-/tracking/verbose 0
-/event/verbose 0
+/tracking/verbose 2
+/event/verbose 2
 /run/verbose 2
 
 ####################################################
@@ -101,11 +101,11 @@
 
 #/gps/source/clear
 #/gps/source/add 1.0
-/gps/particle proton
-/gps/energy 30 keV
+/gps/particle e-
+/gps/energy 500 keV
 /gps/direction 0 0 1
 #/gps/ang/type iso
-/gps/position 0 0 0 cm
+/gps/position 2 0 0 cm
 
 # Delete unwanted sources
 #/gps/source/delete 0
@@ -120,4 +120,4 @@
 
 /run/printProgress 100
 
-/run/beamOn 1000
+/run/beamOn 1

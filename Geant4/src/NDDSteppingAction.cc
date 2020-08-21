@@ -30,35 +30,35 @@ void NDDSteppingAction::UserSteppingAction(const G4Step *aStep) {
                                   pVol->GetName());
   }
 
-  if (pVol->GetName() == "Dead") {
-    eventAction->AddDepositedEnDead(aStep->GetTotalEnergyDeposit());
-  } else if (pVol->GetName() == "EastFoil" || pVol->GetName() == "WestFoil") {
-    eventAction->AddDepositedEnFoil(aStep->GetTotalEnergyDeposit());
-    eventAction->SetFoilPoE(aStep->GetPreStepPoint()->GetPosition());
-  } else if (pVol->GetName() == "Carrier") {
-    eventAction->AddDepositedEnCarrier(aStep->GetTotalEnergyDeposit());
-  } else if (pVol->GetName() == "SourceHolder") {
-    eventAction->AddDepositedEnSourceHolder(aStep->GetTotalEnergyDeposit());
-  } else if (particleName == "gamma" &&
-             pVolPost->GetName() == "World") {
-    if (aStep->GetTrack()->GetCreatorProcess() &&
-        aStep->GetTrack()->GetCreatorProcess()->GetProcessName() == "eBrem") {
-        eventAction->AddBremsstrahlungLoss(aStep->GetPreStepPoint()->GetTotalEnergy());
-      aStep->GetTrack()->SetTrackStatus(fStopAndKill);
-    }
-  }
-
-  if (particleName == "e-") {
-    if (pVol->GetName() == "Dead" && pVolPost->GetName() == "World") {
-      eventAction->SetAngleOut(
-          aStep->GetPostStepPoint()->GetMomentum().theta());
-    } else if (pVol->GetName() == "Carrier" || pVol->GetName() == "EastFoil" ||
-               pVol->GetName() == "WestFoil") {
-      if (pVolPost->GetName() == "World" &&
-          aStep->IsFirstStepInVolume()) {
-        eventAction->SetAngleSourceOut(
-            aStep->GetPostStepPoint()->GetMomentum().theta());
-      }
-    }
-  }
+  // if (pVol->GetName() == "Dead") {
+  //   eventAction->AddDepositedEnDead(aStep->GetTotalEnergyDeposit());
+  // } else if (pVol->GetName() == "EastFoil" || pVol->GetName() == "WestFoil") {
+  //   eventAction->AddDepositedEnFoil(aStep->GetTotalEnergyDeposit());
+  //   eventAction->SetFoilPoE(aStep->GetPreStepPoint()->GetPosition());
+  // } else if (pVol->GetName() == "Carrier") {
+  //   eventAction->AddDepositedEnCarrier(aStep->GetTotalEnergyDeposit());
+  // } else if (pVol->GetName() == "SourceHolder") {
+  //   eventAction->AddDepositedEnSourceHolder(aStep->GetTotalEnergyDeposit());
+  // } else if (particleName == "gamma" &&
+  //            pVolPost->GetName() == "World") {
+  //   if (aStep->GetTrack()->GetCreatorProcess() &&
+  //       aStep->GetTrack()->GetCreatorProcess()->GetProcessName() == "eBrem") {
+  //       eventAction->AddBremsstrahlungLoss(aStep->GetPreStepPoint()->GetTotalEnergy());
+  //     aStep->GetTrack()->SetTrackStatus(fStopAndKill);
+  //   }
+  // }
+  //
+  // if (particleName == "e-") {
+  //   if (pVol->GetName() == "Dead" && pVolPost->GetName() == "World") {
+  //     eventAction->SetAngleOut(
+  //         aStep->GetPostStepPoint()->GetMomentum().theta());
+  //   } else if (pVol->GetName() == "Carrier" || pVol->GetName() == "EastFoil" ||
+  //              pVol->GetName() == "WestFoil") {
+  //     if (pVolPost->GetName() == "World" &&
+  //         aStep->IsFirstStepInVolume()) {
+  //       eventAction->SetAngleSourceOut(
+  //           aStep->GetPostStepPoint()->GetMomentum().theta());
+  //     }
+  //   }
+  // }
 }
