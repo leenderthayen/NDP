@@ -6,12 +6,13 @@ include("EventSimulation.jl")
 include("WaveformAnalysis.jl")
 
 println("Reading Geant4 Hits info from HDF5")
-geantFilename = "data/e_500keV_center.hdf5"
+geantFilename = "data/p_30keV.hdf5"
 gdf = GetHitInformation(geantFilename)
 
 println("Setting up simulation")
-ssdGeometryFile = "config_files/simple_si_pixel.json"
-sim = SetupSimulation(ssdGeometryFile)
+ssdGeometryFile = "config_files/planar_si.json"
+ssdChargeDriftConfigFile = "config_files/drift_velocity_config_linear_si.json"
+sim = SetupSimulation(ssdGeometryFile, ssdChargeDriftConfigFile)
 
 max_ref = 3
 

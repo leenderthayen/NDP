@@ -1,0 +1,99 @@
+{
+	"name":"Planar Silicon",
+	"units": {
+		"length": "mm",
+		"angle": "deg",
+		"potential": "V",
+		"temperature": "K"
+	},
+	"grid": {
+		"coordinates": "cartesian",
+		"axes": {
+            "x": {
+								"from": -1,
+                "to": 12.0,
+                "boundaries": {
+                    "left": "inf",
+                    "right": "inf"
+                }
+            },
+            "y": {
+                "from": -12,
+                "to": 12,
+								"boundaries": {
+                    "left": "inf",
+                    "right": "inf"
+                }
+            },
+            "z": {
+                "from": -5,
+                "to": 20.0,
+                "boundaries": {
+                    "left": "inf",
+                    "right": "inf"
+                }
+            }
+        }
+	},
+	"medium": "vacuum",
+	"objects": [
+		{
+			"type": "semiconductor",
+			"material": "Si",
+			"bulk_type": "n",
+			"temperature": 140,
+			"charge_density_model": {
+				"name": "linear",
+				"r": {
+					"init": 0.0,
+					"gradient": 0.0
+				},
+				"phi": {
+					"init": 0.0,
+					"gradient": 0.0
+				},
+				"z": {
+					"init": 1e-7,
+					"gradient": 0.0
+				}
+			},
+			"geometry": {
+				"type": "tube",
+				"r": {
+					"from": 0,
+					"to": 11.
+				},
+				"phi":{
+					"from": 0,
+					"to": 360.
+				},
+				"z": {
+					"from": 0,
+					"to": 2.0
+				}
+			}
+		},
+		{
+			"type": "contact",
+			"material": "Si",
+			"name": "n+ contact",
+			"potential": 0.0,
+			"channel": 1,
+			"geometry": {
+				"type": "tube",
+				"r": {
+					"from": 0,
+					"to": 11.0
+				},
+				"phi":{
+					"from": 0,
+					"to": 360.
+				},
+				"h": 1e-6,
+				"translate": {
+					"z": 2.0
+				}
+			}
+		}
+	]
+}
