@@ -1,3 +1,5 @@
+using HDF5
+using LegendHDF5IO: readdata, writedata
 using SolidStateDetectors
 using Unitful
 
@@ -7,13 +9,20 @@ pyplot(fmt = :png)
 T = Float32
 
 function SaveSimulation(filename::String, simulation::Simulation{T})::Nothing
-    if !ispath(dirname(filename)) mkpath(dirname(filename)) end
-    SolidStateDetectors.ssd_write(filename, simulation)
+    @info "Saving simulation"
+    if !isfile(filename) mkpath(dirname(filename)) end
+    HDF5.h5open(filename, "w") do h5f
+        writedata(h5f, "Simulation", NamedTuple(sim))
+    end
 end
 
 function ReadSimulation(filename)::Union{Nothing, Simulation{T}}
-    if ispath(dirname(filename))
-        simulation = SolidStateDetectors.ssd_read(filename, Simulation)
+    if isfile(filename)
+        @info "Reading simulation"
+        simulation = HDF5.h5open(filename, "r") do h5f
+            Simulation(readdata(h5f, "Simulation"))
+        end
+        set_charge_drift_model!(simulation, ADLChargeDriftModel())
         return simulation
     end
     return nothing
@@ -26,11 +35,11 @@ function CalculateDefaultDetectorFields!(sim::Simulation{T},
     CalculateElectricPotential!(sim, max_ref)
     CalculateElectricField!(sim)
     CalculateWeightingPotential!(sim, max_ref)
-    ApplyDriftModel!(sim, driftConfigFile)
+    SetChargeDriftModel!(sim, driftConfigFile)
 end
 
 function SetupSimulation(geomConfigFile::String)::Simulation{T}
-    simulation = Simulation{T}(configFile)
+    simulation = Simulation{T}(geomConfigFile)
     apply_initial_state!(simulation, ElectricPotential)
     for c in simulation.detector.contacts
         apply_initial_state!(simulation, WeightingPotential, c.id)
@@ -63,9 +72,9 @@ function CalculateElectricField!(simulation::Simulation{T}, points_in_φ = 72, v
     end
 end
 
-function ApplyDriftModel!(simulation::Simulation{T}, driftConfigFile::Union{Missing, String})
+function SetChargeDriftModel!(simulation::Simulation{T}, driftConfigFile::Union{Missing, String})
     charge_drift_model = ADLChargeDriftModel(driftConfigFile, T=T)
-    apply_charge_drift_model!(simulation, charge_drift_model)
+    set_charge_drift_model!(simulation, charge_drift_model)
     calculate_drift_fields!(simulation)
 end
 
