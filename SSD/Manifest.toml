@@ -6,6 +6,12 @@ git-tree-sha1 = "0fac443759fa829ed8066db6cf1077d888bb6573"
 uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
 version = "2.0.2"
 
+[[ArrayInterface]]
+deps = ["LinearAlgebra", "Requires", "SparseArrays"]
+git-tree-sha1 = "a2b4a1b7c725297565105f98dcee04e362d955d6"
+uuid = "4fba245c-0d91-5ea0-9b3e-6abc04ee57a9"
+version = "2.12.0"
+
 [[ArraysOfArrays]]
 deps = ["Requires", "Statistics", "UnsafeArrays"]
 git-tree-sha1 = "843bd29cd1b7ce4797dc4ffeba69f634e5c7b343"
@@ -44,6 +50,12 @@ git-tree-sha1 = "03a44490020826950c68005cafb336e5ba08b7e8"
 uuid = "6e34b625-4abd-537c-b88f-471c36dfa7a0"
 version = "1.0.6+4"
 
+[[Calculus]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "f641eb0a4f00c343bbc32346e1217b86f3ce9dad"
+uuid = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
+version = "0.5.1"
+
 [[CategoricalArrays]]
 deps = ["DataAPI", "Future", "JSON", "Missings", "Printf", "Statistics", "Unicode"]
 git-tree-sha1 = "a6c17353ee38ddab30e73dcfaa1107752de724ec"
@@ -73,6 +85,12 @@ deps = ["ColorTypes", "FixedPointNumbers", "InteractiveUtils", "Reexport"]
 git-tree-sha1 = "008d6bc68dea6beb6303fdc37188cb557391ebf2"
 uuid = "5ae59095-9a9b-59fe-a467-6f913c188581"
 version = "0.12.4"
+
+[[CommonSubexpressions]]
+deps = ["MacroTools", "Test"]
+git-tree-sha1 = "7b8a93dba8af7e3b42fecabf646260105ac373f7"
+uuid = "bbf7d656-a473-5ed7-a52c-81e309532950"
+version = "0.3.0"
 
 [[Compat]]
 deps = ["Base64", "Dates", "DelimitedFiles", "Distributed", "InteractiveUtils", "LibGit2", "Libdl", "LinearAlgebra", "Markdown", "Mmap", "Pkg", "Printf", "REPL", "Random", "SHA", "Serialization", "SharedArrays", "Sockets", "SparseArrays", "Statistics", "Test", "UUIDs", "Unicode"]
@@ -139,6 +157,24 @@ git-tree-sha1 = "0e3fd3b20e7ad88bf912cea6a2693bfc6253e221"
 uuid = "85a47980-9c8c-11e8-2b9f-f7ca1fa99fb4"
 version = "0.3.2"
 
+[[DiffEqDiffTools]]
+deps = ["LinearAlgebra", "SparseArrays", "StaticArrays"]
+git-tree-sha1 = "b992345a39b4d9681342ae795a8dacc100730182"
+uuid = "01453d9d-ee7c-5054-8395-0335cb756afa"
+version = "0.14.0"
+
+[[DiffResults]]
+deps = ["StaticArrays"]
+git-tree-sha1 = "da24935df8e0c6cf28de340b958f6aac88eaa0cc"
+uuid = "163ba53b-c6d8-5494-b064-1a9d43ac40c5"
+version = "1.0.2"
+
+[[DiffRules]]
+deps = ["NaNMath", "Random", "SpecialFunctions"]
+git-tree-sha1 = "eb0c34204c8410888844ada5359ac8b96292cfd1"
+uuid = "b552c78f-8df3-52c6-915a-8e097449b14b"
+version = "1.0.1"
+
 [[Distances]]
 deps = ["LinearAlgebra", "Statistics"]
 git-tree-sha1 = "bed62cc5afcff16de797a9f38fb358b74071f785"
@@ -193,6 +229,12 @@ git-tree-sha1 = "56dc5338eb79a05e5ea120f510ed77efe7e9784d"
 uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
 version = "0.9.5"
 
+[[FiniteDiff]]
+deps = ["ArrayInterface", "LinearAlgebra", "Requires", "SparseArrays", "StaticArrays"]
+git-tree-sha1 = "c98c1b5c2b5eeb6d867ec77b936132b8e7c978c0"
+uuid = "6a86dc24-6348-571c-b903-95158fe2bd41"
+version = "2.6.0"
+
 [[FixedPointNumbers]]
 deps = ["Statistics"]
 git-tree-sha1 = "335bfdceacc84c5cdf16aadc768aa5ddfc5383cc"
@@ -204,6 +246,12 @@ deps = ["Printf"]
 git-tree-sha1 = "a0c901c29c0e7c763342751c0a94211d56c0de5c"
 uuid = "59287772-0a20-5a39-b81b-1366585eb4c0"
 version = "0.4.1"
+
+[[ForwardDiff]]
+deps = ["CommonSubexpressions", "DiffResults", "DiffRules", "NaNMath", "Random", "SpecialFunctions", "StaticArrays"]
+git-tree-sha1 = "1d090099fb82223abc48f7ce176d3f7696ede36d"
+uuid = "f6369f11-7733-5829-9624-2563aa707210"
+version = "0.10.12"
 
 [[FreeType2_jll]]
 deps = ["Bzip2_jll", "Libdl", "Pkg", "Zlib_jll"]
@@ -324,6 +372,22 @@ git-tree-sha1 = "de44b395389b84fd681394d4e8d39ef14e3a2ea8"
 uuid = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 version = "1.1.0"
 
+[[LegendDataTypes]]
+deps = ["ArraysOfArrays", "Colors", "ElasticArrays", "EncodedArrays", "RadiationDetectorSignals", "RadiationSpectra", "RecipesBase", "StaticArrays", "StatsBase", "StructArrays", "Tables", "TypedTables", "Unitful", "UnsafeArrays"]
+git-tree-sha1 = "30abcb03455bf17edd3202ca66a2c6b29c5f95db"
+repo-rev = "master"
+repo-url = "https://github.com/legend-exp/LegendDataTypes.jl"
+uuid = "99e09c13-5545-5ee2-bfa2-77f358fb75d8"
+version = "0.0.0"
+
+[[LegendHDF5IO]]
+deps = ["ArraysOfArrays", "ElasticArrays", "EncodedArrays", "HDF5", "LegendDataTypes", "RadiationDetectorSignals", "StaticArrays", "StatsBase", "StructArrays", "Tables", "TypedTables", "Unitful"]
+git-tree-sha1 = "5ad097cfb81f8e8962a1ca8d4578a7f14198467c"
+repo-rev = "master"
+repo-url = "https://github.com/legend-exp/LegendHDF5IO.jl"
+uuid = "c9265ca6-b027-5446-b1a4-febfa8dd10b0"
+version = "0.0.0"
+
 [[LibGit2]]
 deps = ["Printf"]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
@@ -336,6 +400,12 @@ version = "1.9.0+0"
 
 [[Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+
+[[LineSearches]]
+deps = ["LinearAlgebra", "NLSolversBase", "NaNMath", "Parameters", "Printf"]
+git-tree-sha1 = "d6e6b2ed397a402a22e474a3f1859c8c1db82c8c"
+uuid = "d3d80556-e9d4-5f37-9878-2ab0fcc64255"
+version = "7.1.0"
 
 [[LinearAlgebra]]
 deps = ["Libdl"]
@@ -386,6 +456,12 @@ version = "0.4.4"
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
+[[NLSolversBase]]
+deps = ["DiffResults", "Distributed", "FiniteDiff", "ForwardDiff"]
+git-tree-sha1 = "db63edd0199a4813a1fa117e3c840a4528b59d72"
+uuid = "d41bc354-129a-5804-8e4c-c37616107c6c"
+version = "7.7.0"
+
 [[NaNMath]]
 git-tree-sha1 = "c84c576296d0e2fbb3fc134d3e09086b3ea617cd"
 uuid = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
@@ -398,9 +474,9 @@ uuid = "b8a86587-4115-5ab1-83bc-aa920d37bbce"
 version = "0.4.6"
 
 [[OffsetArrays]]
-git-tree-sha1 = "2066e16af994955287f2e03ba1d9e890eb43b0dd"
+git-tree-sha1 = "b8500f9d73999cfbab4add5136ec26894081581e"
 uuid = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
-version = "1.1.2"
+version = "1.1.3"
 
 [[Ogg_jll]]
 deps = ["Libdl", "Pkg"]
@@ -419,6 +495,12 @@ deps = ["CompilerSupportLibraries_jll", "Libdl", "Pkg"]
 git-tree-sha1 = "d51c416559217d974a1113522d5919235ae67a87"
 uuid = "efe28fd5-8261-553b-a9e1-b2916fc3738e"
 version = "0.5.3+3"
+
+[[Optim]]
+deps = ["Calculus", "DiffEqDiffTools", "ForwardDiff", "LineSearches", "LinearAlgebra", "NLSolversBase", "NaNMath", "Parameters", "PositiveFactorizations", "Printf", "Random", "SparseArrays", "StatsBase", "Test"]
+git-tree-sha1 = "a626e09c1f7f019b8f3a30a8172c7b82d2f4810b"
+uuid = "429524aa-4258-5aef-a3af-852621145aeb"
+version = "0.18.1"
 
 [[Opus_jll]]
 deps = ["Libdl", "Pkg"]
@@ -442,6 +524,12 @@ deps = ["Distributed"]
 git-tree-sha1 = "80c40053ed64fb240b8878a140459c4dc7f40fd7"
 uuid = "8e8a01fc-6193-5ca1-a2f1-20776dae4199"
 version = "0.4.1"
+
+[[Parameters]]
+deps = ["OrderedCollections", "UnPack"]
+git-tree-sha1 = "38b2e970043613c187bd56a995fe2e551821eb4a"
+uuid = "d96e819e-fc66-5662-9728-84c9c7592b0a"
+version = "0.12.1"
 
 [[Parsers]]
 deps = ["Dates", "Test"]
@@ -476,6 +564,12 @@ deps = ["DataAPI"]
 git-tree-sha1 = "b1333d4eced1826e15adbdf01a4ecaccca9d353c"
 uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
 version = "0.5.3"
+
+[[PositiveFactorizations]]
+deps = ["LinearAlgebra", "Test"]
+git-tree-sha1 = "127c47b91990c101ee3752291c4f45640eeb03d1"
+uuid = "85a6dd25-e78a-55b7-8502-1745935b8125"
+version = "0.2.3"
 
 [[Printf]]
 deps = ["Unicode"]
@@ -512,10 +606,14 @@ uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 [[RadiationDetectorSignals]]
 deps = ["ArraysOfArrays", "ElasticArrays", "EncodedArrays", "FillArrays", "IntervalSets", "RecipesBase", "StaticArrays", "StatsBase", "StructArrays", "Tables", "TypedTables", "Unitful", "UnsafeArrays"]
 git-tree-sha1 = "da9b60af36c1d1ae8b1c00e67936694943cec6ce"
-repo-rev = "master"
-repo-url = "https://github.com/JuliaPhysics/RadiationDetectorSignals.jl.git"
 uuid = "bf2c0563-65cf-5db2-a620-ceb7de82658c"
 version = "0.1.3"
+
+[[RadiationSpectra]]
+deps = ["DelimitedFiles", "Distributions", "Optim", "RecipesBase", "Statistics", "StatsBase"]
+git-tree-sha1 = "75e00a2162e70c65a8ed3687ecf3ede69a854c09"
+uuid = "4f207c7e-01da-51d7-a1a0-c8c06dd1d883"
+version = "0.2.0"
 
 [[Random]]
 deps = ["Serialization"]
@@ -595,8 +693,6 @@ version = "1.1.0"
 [[SolidStateDetectors]]
 deps = ["ArraysOfArrays", "Clustering", "Distributions", "FillArrays", "Formatting", "Interpolations", "IntervalSets", "JSON", "LaTeXStrings", "LinearAlgebra", "ParallelProcessingTools", "ProgressMeter", "RadiationDetectorSignals", "Random", "RecipesBase", "Requires", "Rotations", "StaticArrays", "Statistics", "StatsBase", "Tables", "TypedTables", "Unitful", "YAML"]
 git-tree-sha1 = "46725aefb9b69e3b3a3472135490c73f90d29638"
-repo-rev = "master"
-repo-url = "https://github.com/JuliaPhysics/SolidStateDetectors.jl"
 uuid = "71e43887-2bd9-5f77-aebd-47f656f0a3f0"
 version = "0.4.3"
 
@@ -679,6 +775,11 @@ version = "1.2.0"
 [[UUIDs]]
 deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
+
+[[UnPack]]
+git-tree-sha1 = "387c1f73762231e86e0c9c5443ce3b4a0a9a0c2b"
+uuid = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
+version = "1.0.2"
 
 [[Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"

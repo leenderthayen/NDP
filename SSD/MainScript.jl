@@ -5,18 +5,27 @@ include("SetupSSD.jl")
 include("EventSimulation.jl")
 include("WaveformAnalysis.jl")
 
+println("#######################")
+println("# Start")
+println("#######################")
+
+# Setup the simulation
+simFilename = "save/Planar_Si"
+geometryFile = "config_files/planar_si.json"
+chargeDriftConfigFile = "config_files/drift_velocity_config_linear_si.json"
+max_ref = 3
+
+# Get either a saved simulation or a new one
+sim = ReadSimulation(simFilename)
+if isnothing(sim)
+    sim = SetupSimulation(geometryFile)
+    CalculateDefaultDetectorFields!(sim, ssdChargeDriftConfigFile, max_ref)
+    SaveSimulation(simFilename, sim)
+end
+
 println("Reading Geant4 Hits info from HDF5")
 geantFilename = "data/p_30keV.hdf5"
 gdf = GetHitInformation(geantFilename)
-
-println("Setting up simulation")
-ssdGeometryFile = "config_files/planar_si.json"
-ssdChargeDriftConfigFile = "config_files/drift_velocity_config_linear_si.json"
-sim = SetupSimulation(ssdGeometryFile, ssdChargeDriftConfigFile)
-
-max_ref = 3
-
-CalculateDefaultDetectorFields(sim, max_ref)
 
 offset0 = CartesianPoint{T}(0, 0, 0)
 events0 = DriftGeant4Events(gdf, sim, offset0)
@@ -29,3 +38,7 @@ riseTimesEdge = CollectRiseTimes(eventsEdge)
 histogram(riseTimes0 / 1u"ns", bins = 50, alpha = 0.5, label="Center")
 histogram!(riseTimesEdge / 1u"ns", bins = 50, alpha= 0.5, label="Edge")
 xlabel!("Rise time [ns]")
+
+println("#######################")
+println("# Stop")
+println("#######################")

@@ -11,9 +11,12 @@ function SaveSimulation(filename::String, simulation::Simulation{T})::Nothing
     SolidStateDetectors.ssd_write(filename, simulation)
 end
 
-function ReadSimulation(filename)::Simulation{T}
-    simulation = SolidStateDetectors.ssd_read(filename, Simulation)
-    return simulation
+function ReadSimulation(filename)::Union{Nothing, Simulation{T}}
+    if ispath(dirname(filename))
+        simulation = SolidStateDetectors.ssd_read(filename, Simulation)
+        return simulation
+    end
+    return nothing
 end
 
 function CalculateDefaultDetectorFields!(sim::Simulation{T},
