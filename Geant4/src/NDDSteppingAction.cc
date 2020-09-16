@@ -39,14 +39,14 @@ void NDDSteppingAction::UserSteppingAction(const G4Step *aStep) {
   //   eventAction->AddDepositedEnCarrier(aStep->GetTotalEnergyDeposit());
   // } else if (pVol->GetName() == "SourceHolder") {
   //   eventAction->AddDepositedEnSourceHolder(aStep->GetTotalEnergyDeposit());
-  // } else if (particleName == "gamma" &&
-  //            pVolPost->GetName() == "World") {
-  //   if (aStep->GetTrack()->GetCreatorProcess() &&
-  //       aStep->GetTrack()->GetCreatorProcess()->GetProcessName() == "eBrem") {
-  //       eventAction->AddBremsstrahlungLoss(aStep->GetPreStepPoint()->GetTotalEnergy());
-  //     aStep->GetTrack()->SetTrackStatus(fStopAndKill);
-  //   }
-  // }
+  else if (particleName == "gamma" &&
+             pVolPost->GetName() == "World") {
+    if (aStep->GetTrack()->GetCreatorProcess() &&
+        aStep->GetTrack()->GetCreatorProcess()->GetProcessName() == "eBrem") {
+        eventAction->AddBremsstrahlungLoss(aStep->GetPreStepPoint()->GetTotalEnergy());
+      aStep->GetTrack()->SetTrackStatus(fStopAndKill);
+    }
+  }
   //
   // if (particleName == "e-") {
   //   if (pVol->GetName() == "Dead" && pVolPost->GetName() == "World") {
