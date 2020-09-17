@@ -1,16 +1,15 @@
-NDP -- Nab detector pipeline
-=============
+# NDP -- Nab detector pipeline
 
-Purpose
---------
+
+## Purpose
 
 Simulate Silicon detector response in a simplified version of the Nab detector geometry
 
-Installation
---------
+## Installation
 
-Geant4
-+++++++++
+
+### Geant4
+
 
 Compilation is performed using CMake. The CMake script forces an out of source build (i.e. make a separate build folder).
 
@@ -18,8 +17,7 @@ Note that right now the choice of output format (HDF5/ROOT) is determined at com
 
 In order to enable HDF5, your local Geant4 installation should have HDF5 enabled, which puts constraints on your local HDF5 installation. This is still flagged as experimental by the G4 documentation, and so depends on your own experience. If you run into trouble, switch to ROOT or get in touch.
 
-SSD
-++++++++
+### SSD
 
 Follow the general Julia procedure, i.e. use the Manifest.toml and Project.toml files.
 
