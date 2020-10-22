@@ -1,5 +1,5 @@
 {
-	"name":"Silicon pixel",
+	"name":"Simple Si Hexagon",
 	"units": {
 		"length": "mm",
 		"angle": "deg",
@@ -10,24 +10,24 @@
 		"coordinates": "cartesian",
 		"axes": {
             "x": {
-								"from": -1,
-                "to": 12.0,
+								"from": -2,
+                "to": 2,
                 "boundaries": {
                     "left": "inf",
                     "right": "inf"
                 }
             },
             "y": {
-                "from": -12,
-                "to": 12,
+                "from": -2,
+                "to": 2,
 								"boundaries": {
                     "left": "inf",
                     "right": "inf"
                 }
             },
             "z": {
-                "from": -5,
-                "to": 20.0,
+                "from": -1,
+                "to": 3,
                 "boundaries": {
                     "left": "inf",
                     "right": "inf"
@@ -46,30 +46,26 @@
 				"name": "linear",
 				"r": {
 					"init": 0.0,
-					"gradient": 1e-5
+					"gradient": 0.0
 				},
 				"phi": {
 					"init": 0.0,
 					"gradient": 0.0
 				},
 				"z": {
-					"init": 1e-7,
-					"gradient": 1e-5
+					"init": 1.9e8,
+					"gradient": 0.0
 				}
 			},
 			"geometry": {
-				"type": "tube",
+				"type": "HexagonalPrism",
 				"r": {
-					"from": 0,
-					"to": 11.
+					"from": 0.0,
+					"to": 1.0
 				},
-				"phi":{
-					"from": 0,
-					"to": 360.
-				},
-				"z": {
-					"from": 0,
-					"to": 2.0
+				"h": 2.0,
+				"translate": {
+					"z": 1.0
 				}
 			}
 		},
@@ -80,160 +76,14 @@
 			"potential": 0.0,
 			"channel": 1,
 			"geometry": {
-				"type": "tube",
+				"type": "HexagonalPrism",
 				"r": {
-					"from": 0,
-					"to": 3.0
+					"from": 0.,
+					"to": 1.0
 				},
-				"phi":{
-					"from": 0,
-					"to": 360.
-				},
-				"h": 1e-6,
+				"h": 1e-2,
 				"translate": {
-					"z": 2.0
-				}
-			}
-		},
-		{
-			"type": "contact",
-			"material": "Si",
-			"name": "n+ contact 2",
-			"potential": 0.0,
-			"channel": 3,
-			"geometry": {
-				"type": "tube",
-				"r": {
-					"from": 0,
-					"to": 3.0
-				},
-				"phi":{
-					"from": 0,
-					"to": 360.
-				},
-				"h": 1e-6,
-				"translate": {
-					"x": 7.0,
-					"z": 2.0
-				}
-			}
-		},
-		{
-			"type": "contact",
-			"material": "Si",
-			"name": "n+ contact 3",
-			"potential": 0.0,
-			"channel": 4,
-			"geometry": {
-				"type": "tube",
-				"r": {
-					"from": 0,
-					"to": 3.0
-				},
-				"phi":{
-					"from": 0,
-					"to": 360.
-				},
-				"h": 1e-6,
-				"translate": {
-					"x": 3.5,
-					"y": 6.062,
-					"z": 2.0
-				}
-			}
-		},
-		{
-			"type": "contact",
-			"material": "Si",
-			"name": "n+ contact 4",
-			"potential": 0.0,
-			"channel": 5,
-			"geometry": {
-				"type": "tube",
-				"r": {
-					"from": 0,
-					"to": 3.0
-				},
-				"phi":{
-					"from": 0,
-					"to": 360.
-				},
-				"h": 1e-6,
-				"translate": {
-					"x": -3.5,
-					"y": 6.062,
-					"z": 2.0
-				}
-			}
-		},
-		{
-			"type": "contact",
-			"material": "Si",
-			"name": "n+ contact 5",
-			"potential": 0.0,
-			"channel": 6,
-			"geometry": {
-				"type": "tube",
-				"r": {
-					"from": 0,
-					"to": 3.0
-				},
-				"phi":{
-					"from": 0,
-					"to": 360.
-				},
-				"h": 1e-6,
-				"translate": {
-					"x": -7.0,
-					"z": 2.0
-				}
-			}
-		},
-		{
-			"type": "contact",
-			"material": "Si",
-			"name": "n+ contact 6",
-			"potential": 0.0,
-			"channel": 7,
-			"geometry": {
-				"type": "tube",
-				"r": {
-					"from": 0,
-					"to": 3.0
-				},
-				"phi":{
-					"from": 0,
-					"to": 360.
-				},
-				"h": 1e-6,
-				"translate": {
-					"x": -3.5,
-					"y": -6.062,
-					"z": 2.0
-				}
-			}
-		},
-		{
-			"type": "contact",
-			"material": "Si",
-			"name": "n+ contact 7",
-			"potential": 0.0,
-			"channel": 8,
-			"geometry": {
-				"type": "tube",
-				"r": {
-					"from": 0,
-					"to": 3.0
-				},
-				"phi":{
-					"from": 0,
-					"to": 360.
-				},
-				"h": 1e-6,
-				"translate": {
-					"x": 3.5,
-					"y": -6.062,
-					"z": 2.0
+					"z": 2.005
 				}
 			}
 		},
@@ -244,16 +94,15 @@
 			"potential": -150.0,
 			"channel": 2,
 			"geometry": {
-				"type": "tube",
+				"type": "HexagonalPrism",
 				"r": {
-					"from": 0,
-					"to": 11.0
+					"from": 0.0,
+					"to": 1.0
 				},
-				"phi":{
-					"from": 0.,
-					"to": 360.
-				},
-				"h": 1e-4
+				"h": 0.01,
+				"translate": {
+					"z": -5e-3
+				}
 			}
 		}
 	]

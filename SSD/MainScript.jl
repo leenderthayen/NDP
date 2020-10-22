@@ -8,10 +8,10 @@ include("WaveformAnalysis.jl")
 @info "Start"
 
 # Setup the simulation
-simFilename = "save/planar_Si.h5"
-geometryFile = "config_files/planar_si.json"
+simFilename = "save/hex_pixel_Si.h5"
+geometryFile = "config_files/simple_si_pixel.json"
 chargeDriftConfigFile = "config_files/drift_velocity_config_linear_si.json"
-max_ref = 2
+max_ref = 4
 
 # Get either a saved simulation or a new one
 sim = ReadSimulation(simFilename)
@@ -23,7 +23,7 @@ end
 
 SetChargeDriftModel!(sim, chargeDriftConfigFile)
 
-geantFilename = "../data/p_30keV.hdf5"
+geantFilename = "../data/g_50keV.root"
 gdf = GetHitInformation(geantFilename)
 #
 offset0 = CartesianPoint{T}(0, 0, 0)

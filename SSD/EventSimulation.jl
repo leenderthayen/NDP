@@ -28,7 +28,7 @@ function GetClusteredGeant4Events(gdf::GroupedDataFrame{DataFrame}, offset::Cart
     return events_clustered
 end
 
-function DriftGeant4Events(gdf::GroupedDataFrame{DataFrame}, sim::Simulation, offset::CartesianPoint{T}, time_step = 1u"ns")
+function DriftGeant4Events(gdf::GroupedDataFrame{DataFrame}, sim::Simulation, offset::CartesianPoint{T}, time_step = 0.1u"ns")
     events = Vector{Event}()
     println("Simulating events")
     @showprogress for i in 1:length(gdf)
