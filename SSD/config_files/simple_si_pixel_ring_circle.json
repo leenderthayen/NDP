@@ -1,0 +1,227 @@
+{
+	"name":"Simple Si Hexagon",
+	"units": {
+		"length": "mm",
+		"angle": "deg",
+		"potential": "V",
+		"temperature": "K"
+	},
+	"grid": {
+		"coordinates": "cartesian",
+		"axes": {
+            "x": {
+								"from": -4,
+                "to": 4,
+                "boundaries": {
+                    "left": "inf",
+                    "right": "inf"
+                }
+            },
+            "y": {
+                "from": -4,
+                "to": 4,
+								"boundaries": {
+                    "left": "inf",
+                    "right": "inf"
+                }
+            },
+            "z": {
+                "from": -3,
+                "to": 3,
+                "boundaries": {
+                    "left": "inf",
+                    "right": "inf"
+                }
+            }
+        }
+	},
+	"medium": "vacuum",
+	"objects": [
+		{
+			"type": "semiconductor",
+			"material": "Si",
+			"bulk_type": "n",
+			"temperature": 140,
+			"charge_density_model": {
+				"name": "linear",
+				"r": {
+					"init": 0.0,
+					"gradient": 0.0
+				},
+				"phi": {
+					"init": 0.0,
+					"gradient": 0.0
+				},
+				"z": {
+					"init": 1.9e8,
+					"gradient": 0.0
+				}
+			},
+			"geometry": {
+				"type": "tube",
+				"r": {
+					"from": 0.0,
+					"to": 3.0
+				},
+				"h": 1.5,
+				"translate": {
+					"z": 0.75
+				}
+			}
+		},
+		{
+			"type": "contact",
+			"material": "Si",
+			"name": "n+ contact 0",
+			"potential": 0.0,
+			"channel": 1,
+			"geometry": {
+				"type": "tube",
+				"r": {
+					"from": 0.,
+					"to": 1.0
+				},
+				"h": 1e-2,
+				"translate": {
+					"z": 2.005
+				}
+			}
+		},
+		{
+			"type": "contact",
+			"material": "Si",
+			"name": "n+ contact 1",
+			"potential": 0.0,
+			"channel": 2,
+			"geometry": {
+				"type": "tube",
+				"r": {
+					"from": 0.,
+					"to": 1.0
+				},
+				"h": 1e-2,
+				"translate": {
+					"y": 1.733,
+					"z": 2.005
+				}
+			}
+		},
+		{
+			"type": "contact",
+			"material": "Si",
+			"name": "n+ contact 2",
+			"potential": 0.0,
+			"channel": 3,
+			"geometry": {
+				"type": "tube",
+				"r": {
+					"from": 0.,
+					"to": 1.0
+				},
+				"h": 1e-2,
+				"translate": {
+					"y": -1.733,
+					"z": 2.005
+				}
+			}
+		},
+		{
+			"type": "contact",
+			"material": "Si",
+			"name": "n+ contact 3",
+			"potential": 0.0,
+			"channel": 4,
+			"geometry": {
+				"type": "tube",
+				"r": {
+					"from": 0.,
+					"to": 1.0
+				},
+				"h": 1e-2,
+				"translate": {
+					"x": 1.5,
+					"y": 0.8661,
+					"z": 2.005
+				}
+			}
+		},
+		{
+			"type": "contact",
+			"material": "Si",
+			"name": "n+ contact 4",
+			"potential": 0.0,
+			"channel": 5,
+			"geometry": {
+				"type": "tube",
+				"r": {
+					"from": 0.,
+					"to": 1.0
+				},
+				"h": 1e-2,
+				"translate": {
+					"x": 1.5,
+					"y": -0.8661,
+					"z": 2.005
+				}
+			}
+		},
+		{
+			"type": "contact",
+			"material": "Si",
+			"name": "n+ contact 5",
+			"potential": 0.0,
+			"channel": 6,
+			"geometry": {
+				"type": "tube",
+				"r": {
+					"from": 0.,
+					"to": 1.0
+				},
+				"h": 1e-2,
+				"translate": {
+					"x": -1.5,
+					"y": 0.8661,
+					"z": 2.005
+				}
+			}
+		},
+		{
+			"type": "contact",
+			"material": "Si",
+			"name": "n+ contact 6",
+			"potential": 0.0,
+			"channel": 7,
+			"geometry": {
+				"type": "tube",
+				"r": {
+					"from": 0.,
+					"to": 1.0
+				},
+				"h": 1e-2,
+				"translate": {
+					"x": -1.5,
+					"y": -0.8661,
+					"z": 2.005
+				}
+			}
+		},
+		{
+			"type": "contact",
+			"material": "Si",
+			"name": "p+ contact",
+			"potential": -200.0,
+			"channel": 8,
+			"geometry": {
+				"type": "tube",
+				"r": {
+					"from": 0.0,
+					"to": 3.0
+				},
+				"h": 0.01,
+				"translate": {
+					"z": -5e-3
+				}
+			}
+		}
+	]
+}
