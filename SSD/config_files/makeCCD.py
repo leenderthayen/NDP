@@ -114,7 +114,7 @@ def make_pixel(R, nh, center, n, nC):
     x,y = center
     pixel = ("G" + str(n) + " = SolidStateDetectors.HexagonalPrism{T}"
              "(0, " + str(R) + ", " + str(nh) + ",CartesianPoint{T}(" + str(x) + 
-             ", " + str(y) + ", " + str(2-(nh/2)) +"),0)\n"
+             ", " + str(y) + ", " + str(0.002-(nh/2)) +"),0)\n"
              "CD" + str(n) + "= SolidStateDetectors.LinearChargeDensity{T}"
              "((0.0f0,0.0f0," + str(nC) + "),(0.0f0,0.0f0,0.0f0))\n")
     return pixel
@@ -124,7 +124,7 @@ def make_pspray(R,s, tw, th, center, n,N,tC):
     x,y = center
     pixel = ("G" + str(n) + " = SolidStateDetectors.HexagonalPrism{T}"
              "(" + str(R+s-tw) + ", " + str(R+s) + ", " + str(th) + 
-             ",CartesianPoint{T}(" + str(x) + ", " + str(y) + ", " + str(2-(th/2)) +"),0)\n"
+             ",CartesianPoint{T}(" + str(x) + ", " + str(y) + ", " + str(0.002-(th/2)) +"),0)\n"
              "CD" + str(n) + "= SolidStateDetectors.LinearChargeDensity{T}"
              "((0.0f0,0.0f0," + str(tC) + "),(0.0f0,0.0f0,0.0f0))\n")
     return pixel
@@ -161,7 +161,7 @@ def make_pixel_grad(R, nh, center, n, nC, sigma):
     h=4*sigma
     pixel = ("G" + str(n) + " = SolidStateDetectors.HexagonalPrism{T}"
              "(0, " + str(R) + ", " + str(h) + ",CartesianPoint{T}(" + str(x) + 
-             ", " + str(y) + ", " + str(2-nh-(h/2)) +"),0)\n"
+             ", " + str(y) + ", " + str(0.002-nh-(h/2)) +"),0)\n"
              "CD" + str(n) + "= SolidStateDetectors.LinearChargeDensity{T}"
              "((0.0f0,0.0f0," + str(nC) + "),(0.0f0,0.0f0,0.0f0))\n")
     return pixel
@@ -224,7 +224,7 @@ def make_pspray_grad(R,s, tw, th, center, n,N,tC, sigma):
     h = 4*sigma
     pixel = ("G" + str(n) + " = SolidStateDetectors.HexagonalPrism{T}"
              "(" + str(R+s-tw) + ", " + str(R+s) + ", " + str(th) + 
-             ",CartesianPoint{T}(" + str(x) + ", " + str(y) + ", " + str(2-th-(h/2)) +"),0)\n"
+             ",CartesianPoint{T}(" + str(x) + ", " + str(y) + ", " + str(0.002-th-(h/2)) +"),0)\n"
              "CD" + str(n) + "= SolidStateDetectors.LinearChargeDensity{T}"
              "((0.0f0,0.0f0," + str(tC) + "),(0.0f0,0.0f0,0.0f0))\n")
     return pixel
@@ -428,11 +428,11 @@ def main():
                          " * exp(-(pt[3]-" + str(ph) + ")^2/(2*" + str(pstraggle) + "^2)) +\n")
         for n in pixelgrads:
             file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
-                         " * exp(-(pt[3]-" + str(2-nh) + ")^2/(2*" + str(nstraggle) + "^2)) +\n")
+                         " * exp(-(pt[3]-" + str(0.002-nh) + ")^2/(2*" + str(nstraggle) + "^2)) +\n")
         if tw > 0 :
             for n in pstopgrads:
                 file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
-                                 " * exp(-(pt[3]-" + str(2-th) + ")^2/(2*" + str(psstraggle) + "^2)) +\n")
+                                 " * exp(-(pt[3]-" + str(0.002-th) + ")^2/(2*" + str(psstraggle) + "^2)) +\n")
     
     if grad == "Erf":
         file_content += ("\t(pt in cdm.G" +str(pgrad) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(pgrad) + ", pt)"
@@ -440,12 +440,12 @@ def main():
                          "))^2/(2*" + str(pstraggle) + "^2))/2 +\n")
         for n in pixelgrads:
             file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
-                             " * (1 + erf(-(pt[3]-(" + str(2-nh) + " - (1/" + str(nstraggle) + "^2)"
+                             " * (1 + erf(-(pt[3]-(" + str(0.002-nh) + " - (1/" + str(nstraggle) + "^2)"
                              "))^2/(2*" + str(nstraggle) + "^2)))/2 +\n")
         if tw > 0 :
             for n in pstopgrads:
                 file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
-                                 " * (1 + erf(-(pt[3]-(" + str(2-th) + " - (1/" + str(psstraggle) + "^2)"
+                                 " * (1 + erf(-(pt[3]-(" + str(0.002-th) + " - (1/" + str(psstraggle) + "^2)"
                                  "))^2/(2*" + str(psstraggle) + "^2)))/2 +\n")  
     
     file_content = file_content[:-2]
