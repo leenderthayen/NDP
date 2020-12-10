@@ -359,7 +359,7 @@ def main():
         
     file_content= ("using SolidStateDetectors\n"
                    "using IntervalSets\n"
-                   "using Plots; pyplot(fmt = :png);\n"
+                   "using SpecialFunctions\n"
                    "T=Float32\n\n"
                    "struct CustomChargeDensity{T, N} <: SolidStateDetectors.AbstractChargeDensity{T}\n"
                    )
@@ -401,12 +401,13 @@ def main():
             file_content += ("\tG" + str(i) + "::SolidStateDetectors.AbstractGeometry{T,N}\n"
                              "\tL" + str(i) + "::SolidStateDetectors.AbstractChargeDensity{T}\n")
         pstopgrads = []
-        for n in range(N):
-            i += 1
-            pstopgrads.append(i)
-            file_content += ("\tG" + str(i) + "::SolidStateDetectors.AbstractGeometry{T,N}\n"
-                             "\tL" + str(i) + "::SolidStateDetectors.AbstractChargeDensity{T}\n")
-    
+        if tw > 0:
+            for n in range(N):
+                i += 1
+                pstopgrads.append(i)
+                file_content += ("\tG" + str(i) + "::SolidStateDetectors.AbstractGeometry{T,N}\n"
+                                 "\tL" + str(i) + "::SolidStateDetectors.AbstractChargeDensity{T}\n")
+        
     file_content += "end\n\n"
     
     ######################## Build get_charge_density #####################
@@ -447,7 +448,8 @@ def main():
                                  " * (1 + erf(-(pt[3]-(" + str(2-th) + " - (1/" + str(psstraggle) + "^2)"
                                  "))^2/(2*" + str(psstraggle) + "^2)))/2 +\n")  
     
-    file_content += "end\n\n"
+    file_content = file_content[:-2]
+    file_content += "\nend\n\n"
     
     ############## Build Geometries and Charge Distributions ################
     
