@@ -103,7 +103,7 @@ def make_pbottom_grad(N, R, s, ph, i, sigma, pC):
     pcontact = ("G" + str(i) + " = SolidStateDetectors.Tube{T}"
                 "(0.." + str(L) + ",0..2" + unicodedata.lookup("GREEK SMALL LETTER PI")+
                 ",0.." + str(4*sigma) + ",CartesianPoint{T}(" + str(bulk_center[0]) + 
-                ", " + str(bulk_center[1]) + ", " + str(ph) + "))\n"
+                ", " + str(bulk_center[1]) + ", " + str(ph+1e-9) + "))\n"
                 "CD" + str(i) + "= SolidStateDetectors.LinearChargeDensity{T}"
                 "((0.0f0,0.0f0," + str(pC) + "),(0.0f0,0.0f0,0.0f0))\n")
     
@@ -337,7 +337,7 @@ def main():
     if bulkC == "":
         bulkC = 5.0e10
     else:
-        bulkC = float(nC.strip())
+        bulkC = float(bulkC.strip())
     
     grad = input("IDP gradient(None, Gauss, Erf): ")
     if grad == "":
@@ -346,13 +346,19 @@ def main():
         pstraggle = input("p+ straggle (sqrt(Dt)): ")
         if pstraggle == "":
             pstraggle = 0.037e-6
+        else:
+            pstraggle = float(pstraggle.strip())
         nstraggle = input("n+ straggle: ")
         if nstraggle == "":
             nstraggle = np.sqrt(1e-14*3600*5)*1e-2
+        else:
+            nstraggle = float(nstraggle.strip())
         if tw > 0 :
             psstraggle = input("pspray straggle: ")
             if psstraggle == "":
                 psstraggle = 0.037e-6
+            else:
+                psstraggle = float(psstraggle.strip())
         
         
      ################# Build CCD ######################   
