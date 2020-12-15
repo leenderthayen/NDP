@@ -442,17 +442,14 @@ def main():
     
     if grad == "Erf":
         file_content += ("\t(pt in cdm.G" +str(pgrad) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(pgrad) + ", pt)"
-                         " * erfc(-(pt[3]-(" + str(ph) + " + (1/" + str(pstraggle) + "^2)"
-                         "))^2/(2*" + str(pstraggle) + "))/2 +\n")
+                         " * erfc(-(pt[3]-(" + str(ph+2*pstraggle) + "))/(2*" + str(pstraggle) + "))/2 +\n")
         for n in pixelgrads:
             file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
-                             " * (1 + erf(-(pt[3]-(" + str(0.002-nh) + " - (1/" + str(nstraggle) + "^2)"
-                             "))^2/(2*" + str(nstraggle) + ")))/2 +\n")
+                             " * (1 + erf(-(pt[3]-(" + str(0.002-nh-(2*nstraggle)) + "))/(2*" + str(nstraggle) + ")))/2 +\n")
         if tw > 0 :
             for n in pstopgrads:
                 file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
-                                 " * (1 + erf(-(pt[3]-(" + str(0.002-th) + " - (1/" + str(psstraggle) + "^2)"
-                                 "))^2/(2*" + str(psstraggle) + ")))/2 +\n")  
+                                 " * (1 + erf(-(pt[3]-(" + str(0.002-th-(2*pstraggle)) + "))/(2*" + str(psstraggle) + ")))/2 +\n")  
     
     file_content = file_content[:-2]
     file_content += "\nend\n\n"
