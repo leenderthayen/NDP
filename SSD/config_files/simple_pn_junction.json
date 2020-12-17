@@ -26,7 +26,7 @@
                 }
             },
             "z": {
-                "from": -1,
+                "from": -2,
                 "to": 2,
                 "boundaries": {
                     "left": "inf",
@@ -53,19 +53,83 @@
 					"gradient": 0.0
 				},
 				"z": {
+					"init": 1.9e14,
+					"gradient": 0.0
+				}
+			},
+			"geometry": {
+				"type": "tube",
+				"r": {
+					"from": 0.0,
+					"to": 1.0
+				},
+				"h": 0.2,
+				"translate": {
+					"z": 0.5
+				}
+			}
+		},
+		{
+			"type": "semiconductor",
+			"material": "Si",
+			"bulk_type": "n",
+			"temperature": 140,
+			"charge_density_model": {
+				"name": "linear",
+				"r": {
+					"init": 0.0,
+					"gradient": 0.0
+				},
+				"phi": {
+					"init": 0.0,
+					"gradient": 0.0
+				},
+				"z": {
 					"init": 1.9e8,
 					"gradient": 0.0
 				}
 			},
 			"geometry": {
-				"type": "HexagonalPrism",
+				"type": "tube",
 				"r": {
 					"from": 0.0,
 					"to": 1.0
 				},
-				"h": 1.5,
+				"h": 1.0,
 				"translate": {
-					"z": 0.75
+					"z": -0.5
+				}
+			}
+		},
+		{
+			"type": "semiconductor",
+			"material": "Si",
+			"bulk_type": "p",
+			"temperature": 140,
+			"charge_density_model": {
+				"name": "linear",
+				"r": {
+					"init": 0.0,
+					"gradient": 0.0
+				},
+				"phi": {
+					"init": 0.0,
+					"gradient": 0.0
+				},
+				"z": {
+					"init": -1.9e14,
+					"gradient": 0.0
+				}
+			},
+			"geometry": {
+				"type": "tube",
+				"r": {
+					"from": 0.0,
+					"to": 1.0
+				},
+				"h": 0.2,
+				"translate": {
+					"z": -0.7
 				}
 			}
 		},
@@ -76,14 +140,14 @@
 			"potential": 0.0,
 			"channel": 1,
 			"geometry": {
-				"type": "HexagonalPrism",
+				"type": "tube",
 				"r": {
 					"from": 0.,
 					"to": 1.0
 				},
 				"h": 1e-2,
 				"translate": {
-					"z": 1.505
+					"z": 0.7
 				}
 			}
 		},
@@ -94,14 +158,14 @@
 			"potential": -150.0,
 			"channel": 2,
 			"geometry": {
-				"type": "HexagonalPrism",
+				"type": "tube",
 				"r": {
 					"from": 0.0,
 					"to": 1.0
 				},
-				"h": 0.01,
+				"h": 1e-2,
 				"translate": {
-					"z": -5e-3
+					"z": -0.701
 				}
 			}
 		}
