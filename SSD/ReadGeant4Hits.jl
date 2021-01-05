@@ -29,7 +29,7 @@ end
 
 function GetROOTHitInformation(filename::String)::GroupedDataFrame
     # Functional, but might be crappy performance. Might look into lazy evaluation?
-    @info "Reading Geant4 Hits info from ROOT"
+    @info "Reading Geant4 Hits info from ROOT $filename"
     file = TFile(filename)
     t = file["ntuple/hits"]
 

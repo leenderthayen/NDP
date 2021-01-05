@@ -1,10 +1,15 @@
 using SolidStateDetectors
 
 include("Plotting.jl")
+include("ReadGeant4Hits.jl")
+include("EventSimulation.jl")
 
 defaultDir = "plots/"
 
-function BiasVariation(simName::String, biasRange::Array{Float64})::AbstractDict{Real, Simulation}
+T = Float32
+
+function BiasVariation(simName::String, initVoltage::Real, finalVoltage::Real, length::Integer)::AbstractDict{Real, Simulation}
+    biasRange = range(initVoltage, stop=finalVoltage, length=length)
 
     @info "Constructing base detector"
     sim_base = Simulation(simName)
@@ -12,7 +17,10 @@ function BiasVariation(simName::String, biasRange::Array{Float64})::AbstractDict
 
     @info "Calculating weighting potentials"
     for i in 1:size(sim_base.detector.contacts, 1)
-        calculate_weighting_potential!(sim_base, i)
+        calculate_weighting_potential!(sim_base, i,
+        max_refinements=2,
+        convergence_limit=1e-4,
+        init_grid_spacing = T.( (2e-4, 2e-4, 2e-4) ))
     end
 
     for i in 1:size(biasRange, 1)
@@ -21,10 +29,17 @@ function BiasVariation(simName::String, biasRange::Array{Float64})::AbstractDict
         det.contacts[1].potential = -biasRange[i]
 
         sim = Simulation(det)
-        calculate_electric_potential!(sim, depletion_handling=true, max_refinements=2)
+        calculate_electric_potential!(sim,
+        depletion_handling=true,
+        max_refinements=2,
+        convergence_limit=1e-3,
+        init_grid_spacing = T.( (2e-4, 2e-4, 2e-4) ))
         calculate_electric_field!(sim)
 
         sim.weighting_potentials = sim_base.weighting_potentials
+
+        set_charge_drift_model!(sim, ADLChargeDriftModel())
+        calculate_drift_fields!(sim)
 
         sim_dict[biasRange[i]] = sim
     end
@@ -32,19 +47,59 @@ function BiasVariation(simName::String, biasRange::Array{Float64})::AbstractDict
     return sim_dict
 end
 
-function PrepareSummaryPlots(simName::String, initVoltage, finalVoltage, length, prefix::String="", dir::String=defaultDir)::AbstractDict{Real, Simulation}
-    biasRange = range(initVoltage, stop=finalVoltage, length=length)
+function GetEligibleFiles(dataDir::String,
+    minEnergy::Real=0., maxEnergy::Real=Inf,
+    minAngle::Real=0., maxAngle::Real=Inf)::Vector{String}
 
-    sims = BiasVariation(simName, collect(biasRange))
+    fileList = readdir(dataDir, join=true)
 
+    filteredList = Vector{String}()
+
+    regex = r"(\d+)+"
+
+    for s in fileList
+         m = collect(eachmatch(regex, s))
+         E = parse(Int64, m[end-1].match)
+         A = parse(Int64, m[end].match)
+         if E >= minEnergy && E <= maxEnergy && A >= minAngle && A <= maxAngle
+             push!(filteredList, s)
+         end
+    end
+
+    return filteredList
+end
+
+function PlotParticleDetectorResponse(sims::AbstractDict{Real, Simulation}, dataDir::String;
+    impactPosition::CartesianPoint=CartesianPoint{T}(0, 0, 0), minEnergy::Real=0., maxEnergy::Real=Inf,
+    minAngle::Real=0., maxAngle::Real=Inf,
+    prefix::String="", dir::String=defaultDir)::Nothing
+
+    biasRange = collect(keys(sims))
+    fileList = GetEligibleFiles(dataDir, minEnergy, maxEnergy, minAngle, maxAngle)
+
+    for i in 1:size(biasRange, 1)
+        sim = sims[biasRange[i]]
+        suffix = @sprintf "_%.1fV" biasRange[i]
+        for s in fileList
+            gdf = GetHitInformation(s)
+            events = DriftGeant4Events(gdf, sim, impactPosition)
+            PlotEvents(events, dir, prefix, suffix)
+        end
+    end
+end
+
+function PlotDetectorPerformance(sims::AbstractDict{Real, Simulation}; prefix::String="", dir::String=defaultDir)::Nothing
+    biasRange = collect(keys(sims))
     PlotGeometry(sims[biasRange[1]], dir, prefix)
+    PlotWeightingPotential(sims[biasRange[1]], dir, prefix)
+    PlotMaterialProperties(sims[biasRange[1]], dir, prefix)
 
-    for i in 1:size(collect(biasRange), 1)
-        PlotFields(sims[biasRange[i]], dir, prefix, "_" * string(biasRange[i]) * "V")
-        PlotMaterialProperties(sims[biasRange[i]], dir, prefix, "_" * string(biasRange[i]) * "V")
+    for i in 1:size(biasRange, 1)
+        suffix = @sprintf "_%.1fV" biasRange[i]
+        PlotElectricPotential(sims[biasRange[i]], dir, prefix, suffix)
+        PlotElectricField(sims[biasRange[i]], dir, prefix, suffix)
+        PlotPointType(sims[biasRange[i]], dir, prefix, suffix)
     end
 
     PlotCV(collect(values(sims)), dir, prefix)
-
-    return sims
 end

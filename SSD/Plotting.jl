@@ -6,6 +6,15 @@ using Unitful
 figSize = (1400, 1000)
 extension = ".png"
 
+function PlotEvents(events::Vector{Event}, dir::String="", prefix::String="", suffix::String="")::Nothing
+    for i in 1:size(events[1].waveforms, 1) # Loop over contacts
+        plot(events[1].waveforms.time / 1u"ns", [x.waveforms[i].value for x in events],
+        xlabel="Time [ns]", ylabel="Integrated charge [arb.]")
+
+        savefig(dir * prefix * "integrated_charge_contact_$i" * suffix * extension)
+    end
+end
+
 function PlotGeometry(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
     @info "Plotting detector geometry"
     plot(sim.detector)
@@ -13,9 +22,7 @@ function PlotGeometry(sim::Simulation, dir::String="", prefix::String="", suffix
     savefig(dir * prefix * "detector" * suffix * extension)
 end
 
-function PlotFields(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
-    @info "Plotting fields"
-
+function PlotElectricPotential(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
     thickness = 2.0e-3
     if !ismissing(sim.electric_potential)
         plot(plot(sim.electric_potential, y=0), plot(sim.electric_potential, x=0),
@@ -24,7 +31,10 @@ function PlotFields(sim::Simulation, dir::String="", prefix::String="", suffix::
 
         savefig(dir * prefix * "electric_potential" * suffix * extension)
     end
+end
 
+function PlotWeightingPotential(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
+    thickness = 2.0e-3
     for i in 1:size(sim.weighting_potentials, 1)
         if !ismissing(sim.weighting_potentials[i])
             plot(plot(sim.weighting_potentials[i], y=0), plot(sim.weighting_potentials[i], x=0),
@@ -36,7 +46,10 @@ function PlotFields(sim::Simulation, dir::String="", prefix::String="", suffix::
             savefig(dir * prefix * p * suffix * extension)
         end
     end
+end
 
+function PlotElectricField(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
+    thickness = 2.0e-3
     if !ismissing(sim.electric_field)
         p_xz = plot(sim.electric_field, y=0)
         plot_electric_fieldlines!(sim)
@@ -50,22 +63,46 @@ function PlotFields(sim::Simulation, dir::String="", prefix::String="", suffix::
     end
 end
 
-function PlotMaterialProperties(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
-    @info "Plotting material properties"
+function PlotFields(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
+    @info "Plotting fields"
+    PlotElectricPotential(sim, dir, prefix, suffix)
+    PlotWeightingPotential(sim, dir, prefix, suffix)
+    PlotElectricField(sim, dir, prefix, suffix)
+end
 
+function PlotChargeDensity(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
     thickness = 2.0e-3
     if !ismissing(sim.ρ)
         plot(plot(sim.ρ, x=0), plot(sim.ρ, y=0), plot(sim.ρ, z=0), plot(sim.ρ, z=thickness), layout=(2,2), size=figSize)
         savefig(dir * prefix * "rho" * suffix * extension)
     end
+end
+
+function PlotDielectric(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
+    thickness = 2.0e-3
     if !ismissing(sim.ϵ)
         plot(plot(sim.ϵ, x=0), plot(sim.ϵ, y=0), plot(sim.ϵ, z=0), plot(sim.ϵ, z=thickness), layout=(2,2), size=figSize)
         savefig(dir * prefix * "epsilon" * suffix * extension)
     end
+end
+
+function PlotPointType(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
+    thickness = 2.0e-3
     if !ismissing(sim.point_types)
         plot(plot(sim.point_types, x=0), plot(sim.point_types, y=0), plot(sim.point_types, z=0), plot(sim.point_types, z=thickness), layout=(2,2), size=figSize)
         savefig(dir * prefix * "point_types" * suffix * extension)
     end
+end
+
+function PlotMaterialProperties(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
+    @info "Plotting material properties"
+
+    PlotChargeDensity(sim, dir, prefix, suffix)
+    PlotDielectric(sim, dir, prefix, suffix)
+    PlotPointType(sim, dir, prefix, suffix)
+
+    thickness = 2.0e-3
+
     if !(ismissing(sim.ρ) || ismissing(sim.ϵ) || ismissing(sim.point_types))
         plot(plot(sim.ρ, x=0), plot(sim.ϵ, x=0), plot(sim.point_types, x=0), layout=(1, 3), size=figSize)
         savefig(dir * prefix * "material_properties_yz" * suffix * extension)

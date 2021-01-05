@@ -30,7 +30,7 @@ end
 
 function DriftGeant4Events(gdf::GroupedDataFrame{DataFrame}, sim::Simulation, offset::CartesianPoint{T}, time_step = 0.1u"ns")
     events = Vector{Event}()
-    println("Simulating events")
+    @info "Simulating events"
     @showprogress for i in 1:length(gdf)
         event = CreateSSDEvent(gdf[i], offset)
         DriftEvent(event, sim, time_step)
