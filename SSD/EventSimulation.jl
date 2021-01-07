@@ -28,10 +28,10 @@ function GetClusteredGeant4Events(gdf::GroupedDataFrame{DataFrame}, offset::Cart
     return events_clustered
 end
 
-function DriftGeant4Events(gdf::GroupedDataFrame{DataFrame}, sim::Simulation, offset::CartesianPoint{T}, time_step = 0.1u"ns")
+function DriftGeant4Events(gdf::GroupedDataFrame{DataFrame}, sim::Simulation, offset::CartesianPoint{T}; time_step = 0.1u"ns", stepLimiter::Integer=Inf)
     events = Vector{Event}()
     @info "Simulating events"
-    @showprogress for i in 1:length(gdf)
+    @showprogress for i in 1:min(stepLimiter, length(gdf))
         event = CreateSSDEvent(gdf[i], offset)
         DriftEvent(event, sim, time_step)
         SimulateWaveform(event, sim, time_step)

@@ -2,16 +2,56 @@ using Printf
 using Plots; pyplot(fmt = :png)
 using SolidStateDetectors
 using Unitful
+using StatsPlots
+
+include("WaveformAnalysis.jl")
 
 figSize = (1400, 1000)
 extension = ".png"
 
-function PlotEvents(events::Vector{Event}, dir::String="", prefix::String="", suffix::String="")::Nothing
-    for i in 1:size(events[1].waveforms, 1) # Loop over contacts
-        plot(events[1].waveforms.time / 1u"ns", [x.waveforms[i].value for x in events],
-        xlabel="Time [ns]", ylabel="Integrated charge [arb.]")
+function GetDetectorFacePosition(sim::Simulation)
+    thickness = sim.detector.semiconductors[1].geometry.h
+    z = sim.detector.semiconductors[1].geometry.translate.z
+    zBottom = z - thickness/2
+    zTop = z + thickness/2
 
-        savefig(dir * prefix * "integrated_charge_contact_$i" * suffix * extension)
+    return (zBottom, zTop)
+end
+
+function PlotEvents(events::Vector{Event}, dir::String="", prefix::String="", suffix::String="")::Nothing
+    if !isempty(events)
+        for i in 1:size(events[1].waveforms, 1) # Loop over contacts
+            # Plot integrated charge
+            plot(events[1].waveforms[1].time / 1u"ns", [x.waveforms[i].value for x in events],
+            xlabel="Time [ns]", ylabel="Integrated charge [arb.]", linecolor="red",
+            linealpha=1/sqrt(length(events)), legend=false, title=suffix)
+
+            savefig(dir * prefix * "integrated_charge_contact_$i" * suffix * extension)
+
+            # Histogram rise times
+
+            riseTimes = CollectRiseTimes(events)
+            histogram(riseTimes / 1u"ns", xlabel="Rise time [ns]", ylabel="Counts [arb.]",
+            title = suffix)
+
+            savefig(dir * prefix * "risetime_hist_$i" * suffix * extension)
+
+            # Histogram maximal integrated current
+
+            maxAmplitude = [maximum(abs.(x.waveforms[i].value)) for x in events]
+            # println(maxAmplitude)
+            # println(length(riseTimes), length(maxAmplitude))
+            histogram(maxAmplitude, xlabel="Maximal amplitude", ylabel="Counts [arb.]",
+            title = suffix)
+
+            savefig(dir * prefix * "amplitude_hist_$i" * suffix * extension)
+
+            # 2D Amplitude - Rise time interpolated scatter plot
+            marginalkde(riseTimes / 1u"ns", maxAmplitude)
+
+            savefig(dir * prefix * "rise_time_amplitude_kde_$i" * suffix * extension)
+
+        end
     end
 end
 
@@ -19,14 +59,15 @@ function PlotGeometry(sim::Simulation, dir::String="", prefix::String="", suffix
     @info "Plotting detector geometry"
     plot(sim.detector)
 
-    savefig(dir * prefix * "detector" * suffix * extension)
+    savefig(dir * prefix * "geometry" * suffix * extension)
 end
 
 function PlotElectricPotential(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
-    thickness = 2.0e-3
+    zBottom, thickness = GetDetectorFacePosition(sim)
+    zTop = zBottom + thickness
     if !ismissing(sim.electric_potential)
         plot(plot(sim.electric_potential, y=0), plot(sim.electric_potential, x=0),
-        plot(sim.electric_potential, z=0), plot(sim.electric_potential, z=thickness),
+        plot(sim.electric_potential, z=zBottom), plot(sim.electric_potential, z=zTop),
         layout=(2, 2), size=figSize)
 
         savefig(dir * prefix * "electric_potential" * suffix * extension)
@@ -34,11 +75,11 @@ function PlotElectricPotential(sim::Simulation, dir::String="", prefix::String="
 end
 
 function PlotWeightingPotential(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
-    thickness = 2.0e-3
+    zBottom, zTop = GetDetectorFacePosition(sim)
     for i in 1:size(sim.weighting_potentials, 1)
         if !ismissing(sim.weighting_potentials[i])
             plot(plot(sim.weighting_potentials[i], y=0), plot(sim.weighting_potentials[i], x=0),
-            plot(sim.weighting_potentials[i], z=0), plot(sim.weighting_potentials[i], z=thickness),
+            plot(sim.weighting_potentials[i], z=zBottom), plot(sim.weighting_potentials[i], z=zTop),
             layout=(2, 2), size=figSize)
 
             p = @sprintf "weighting_potential_%d" i
@@ -49,14 +90,14 @@ function PlotWeightingPotential(sim::Simulation, dir::String="", prefix::String=
 end
 
 function PlotElectricField(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
-    thickness = 2.0e-3
+    zBottom, zTop = GetDetectorFacePosition(sim)
     if !ismissing(sim.electric_field)
         p_xz = plot(sim.electric_field, y=0)
         plot_electric_fieldlines!(sim)
         p_yz = plot(sim.electric_field, x=0)
         plot_electric_fieldlines!(sim)
-        p_xy_bottom = plot(sim.electric_field, z=0)
-        p_xy_top = plot(sim.electric_field, z=thickness)
+        p_xy_bottom = plot(sim.electric_field, z=zBottom)
+        p_xy_top = plot(sim.electric_field, z=zTop)
         plot(p_xz, p_yz, p_xy_bottom, p_xy_top, layout=(2, 2), size=figSize)
 
         savefig(dir * prefix * "electric_field" * suffix * extension)
@@ -71,25 +112,25 @@ function PlotFields(sim::Simulation, dir::String="", prefix::String="", suffix::
 end
 
 function PlotChargeDensity(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
-    thickness = 2.0e-3
+    zBottom, zTop = GetDetectorFacePosition(sim)
     if !ismissing(sim.ρ)
-        plot(plot(sim.ρ, x=0), plot(sim.ρ, y=0), plot(sim.ρ, z=0), plot(sim.ρ, z=thickness), layout=(2,2), size=figSize)
+        plot(plot(sim.ρ, x=0), plot(sim.ρ, y=0), plot(sim.ρ, z=zBottom), plot(sim.ρ, z=zTop), layout=(2,2), size=figSize)
         savefig(dir * prefix * "rho" * suffix * extension)
     end
 end
 
 function PlotDielectric(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
-    thickness = 2.0e-3
+    zBottom, zTop = GetDetectorFacePosition(sim)
     if !ismissing(sim.ϵ)
-        plot(plot(sim.ϵ, x=0), plot(sim.ϵ, y=0), plot(sim.ϵ, z=0), plot(sim.ϵ, z=thickness), layout=(2,2), size=figSize)
+        plot(plot(sim.ϵ, x=0), plot(sim.ϵ, y=0), plot(sim.ϵ, z=zBottom), plot(sim.ϵ, z=zTop), layout=(2,2), size=figSize)
         savefig(dir * prefix * "epsilon" * suffix * extension)
     end
 end
 
 function PlotPointType(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
-    thickness = 2.0e-3
+    zBottom, zTop = GetDetectorFacePosition(sim)
     if !ismissing(sim.point_types)
-        plot(plot(sim.point_types, x=0), plot(sim.point_types, y=0), plot(sim.point_types, z=0), plot(sim.point_types, z=thickness), layout=(2,2), size=figSize)
+        plot(plot(sim.point_types, x=0), plot(sim.point_types, y=0), plot(sim.point_types, z=zBottom), plot(sim.point_types, z=zTop), layout=(2,2), size=figSize)
         savefig(dir * prefix * "point_types" * suffix * extension)
     end
 end
@@ -101,16 +142,16 @@ function PlotMaterialProperties(sim::Simulation, dir::String="", prefix::String=
     PlotDielectric(sim, dir, prefix, suffix)
     PlotPointType(sim, dir, prefix, suffix)
 
-    thickness = 2.0e-3
+    zBottom, zTop = GetDetectorFacePosition(sim)
 
     if !(ismissing(sim.ρ) || ismissing(sim.ϵ) || ismissing(sim.point_types))
         plot(plot(sim.ρ, x=0), plot(sim.ϵ, x=0), plot(sim.point_types, x=0), layout=(1, 3), size=figSize)
         savefig(dir * prefix * "material_properties_yz" * suffix * extension)
         plot(plot(sim.ρ, y=0), plot(sim.ϵ, y=0), plot(sim.point_types, y=0), layout=(1, 3), size=figSize)
         savefig(dir * prefix * "material_properties_xz" * suffix * extension)
-        plot(plot(sim.ρ, z=0), plot(sim.ϵ, z=0), plot(sim.point_types, z=0), layout=(1, 3), size=figSize)
+        plot(plot(sim.ρ, z=zBottom), plot(sim.ϵ, z=zBottom), plot(sim.point_types, z=zBottom), layout=(1, 3), size=figSize)
         savefig(dir * prefix * "material_properties_xy_bottom" * suffix * extension)
-        plot(plot(sim.ρ, z=thickness), plot(sim.ϵ, z=thickness), plot(sim.point_types, z=thickness), layout=(1, 3), size=figSize)
+        plot(plot(sim.ρ, z=zTop), plot(sim.ϵ, z=zTop), plot(sim.point_types, z=zTop), layout=(1, 3), size=figSize)
         savefig(dir * prefix * "material_properties_xy_top" * suffix * extension)
     end
 end
@@ -142,7 +183,7 @@ end
 function PlotWP(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
     #Edge and corner plots only work for hexagons
     @info "Plotting weighting potentials vs z"
-    
+
     WP = sim.weighting_potentials[2]
     grid = WP.grid
     Lx, Ly, Lz = size(grid)
@@ -177,15 +218,15 @@ function PlotWP(sim::Simulation, dir::String="", prefix::String="", suffix::Stri
            xe = i
         end
     end
-    
+
     ye = y0
-    
+
     for i in 1:Lx
         if grid[i,1,1][1] -corner[1] < 0.000001
            xc = i
         end
     end
-    
+
     for i in 1:Ly
         if grid[1,i,1][2] -corner[2] < 0.000001
            yc = i
@@ -208,9 +249,7 @@ function PlotWP(sim::Simulation, dir::String="", prefix::String="", suffix::Stri
     for i in eachindex(is)
         zs[i] = grid[x0,y0,i][3]
     end
-    
+
     plot(plot(zs, wp0, title="Center"), plot(zs, wpe, title="Edge"), plot(zs, wpc, title="Corner"), layout=(1, 3), size=figSize)
     savefig(dir * prefix * "weighting_potential_vs_z" * suffix * extension)
 end
-  
-    

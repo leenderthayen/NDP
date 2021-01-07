@@ -74,15 +74,18 @@ function PlotParticleDetectorResponse(sims::AbstractDict{Real, Simulation}, data
     minAngle::Real=0., maxAngle::Real=Inf,
     prefix::String="", dir::String=defaultDir)::Nothing
 
+    prefix = prefix * "particle_"
     biasRange = collect(keys(sims))
     fileList = GetEligibleFiles(dataDir, minEnergy, maxEnergy, minAngle, maxAngle)
 
-    for i in 1:size(biasRange, 1)
+    @showprogress for i in 1:size(biasRange, 1)
         sim = sims[biasRange[i]]
-        suffix = @sprintf "_%.1fV" biasRange[i]
-        for s in fileList
+        @showprogress for s in fileList
+            fileName = split(s, "/")[end]
+            strippedName = split(fileName, ".")[1]
+            suffix = @sprintf "_%s_%.1fV" strippedName biasRange[i]
             gdf = GetHitInformation(s)
-            events = DriftGeant4Events(gdf, sim, impactPosition)
+            events = DriftGeant4Events(gdf, sim, impactPosition, stepLimiter=1000)
             PlotEvents(events, dir, prefix, suffix)
         end
     end
@@ -90,6 +93,7 @@ end
 
 function PlotDetectorPerformance(sims::AbstractDict{Real, Simulation}; prefix::String="", dir::String=defaultDir)::Nothing
     biasRange = collect(keys(sims))
+    prefix = prefix * "detector_"
     PlotGeometry(sims[biasRange[1]], dir, prefix)
     PlotWeightingPotential(sims[biasRange[1]], dir, prefix)
     PlotMaterialProperties(sims[biasRange[1]], dir, prefix)
