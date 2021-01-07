@@ -69,10 +69,26 @@ function GetEligibleFiles(dataDir::String,
     return filteredList
 end
 
+function PlotSingleParticleDetectorResponse(sim::Simulation, fullPath::String,
+    impactPosition::CartesianPoint=CartesianPoint{T}(0, 0, 0), prefix::String="",
+    suffix::String="", dir::String=defaultDir, stepLimiter::Number=Inf)::Nothing
+
+    fileName = split(fullPath, "/")[end]
+    strippedName = split(fileName, ".")[1]
+    suffix = "_" * strippedName * suffix
+
+    gdf = GetHitInformation(fullPath)
+    events = DriftGeant4Events(gdf, sim, impactPosition, stepLimiter=stepLimiter)
+    PlotEvents(events, dir, prefix, suffix)
+
+end
+
 function PlotParticleDetectorResponse(sims::AbstractDict{Real, Simulation}, dataDir::String;
     impactPosition::CartesianPoint=CartesianPoint{T}(0, 0, 0), minEnergy::Real=0., maxEnergy::Real=Inf,
     minAngle::Real=0., maxAngle::Real=Inf,
-    prefix::String="", dir::String=defaultDir)::Nothing
+    prefix::String="", dir::String=defaultDir, maxEvents::Number=100)::Nothing
+
+    println(impactPosition)
 
     prefix = prefix * "particle_"
     biasRange = collect(keys(sims))
@@ -80,13 +96,9 @@ function PlotParticleDetectorResponse(sims::AbstractDict{Real, Simulation}, data
 
     @showprogress for i in 1:size(biasRange, 1)
         sim = sims[biasRange[i]]
+        suffix = @sprintf "_%.1fV" biasRange[i]
         @showprogress for s in fileList
-            fileName = split(s, "/")[end]
-            strippedName = split(fileName, ".")[1]
-            suffix = @sprintf "_%s_%.1fV" strippedName biasRange[i]
-            gdf = GetHitInformation(s)
-            events = DriftGeant4Events(gdf, sim, impactPosition, stepLimiter=1000)
-            PlotEvents(events, dir, prefix, suffix)
+            PlotSingleParticleDetectorResponse(sim, s, impactPosition, prefix, suffix, dir, maxEvents)
         end
     end
 end

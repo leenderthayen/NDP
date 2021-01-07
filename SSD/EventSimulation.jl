@@ -7,9 +7,9 @@ T = Float32
 
 function CreateSSDEvent(df::SubDataFrame, offset::CartesianPoint{T})
     pos = Matrix(df[:, [:X, :Y, :Z]])
-    starting_positions = Vector{CylindricalPoint{T}}()
+    starting_positions = Vector{CartesianPoint{T}}()
     for i in 1:size(pos, 1)
-        push!(starting_positions, CylindricalPoint{T}(CartesianPoint{T}(pos[i, :]/1000) + offset))
+        push!(starting_positions, CartesianPoint{T}(CartesianPoint{T}(pos[i, :]/1000) + offset))
     end
     energy_deps = convert(Array{T}, df[:, :E]) * u"keV"
 

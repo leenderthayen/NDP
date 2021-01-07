@@ -22,42 +22,43 @@ function PlotEvents(events::Vector{Event}, dir::String="", prefix::String="", su
     if !isempty(events)
         for i in 1:size(events[1].waveforms, 1) # Loop over contacts
             # Plot integrated charge
-            plot(events[1].waveforms[1].time / 1u"ns", [x.waveforms[i].value for x in events],
+            pIC = plot(events[1].waveforms[1].time / 1u"ns", [x.waveforms[i].value for x in events],
             xlabel="Time [ns]", ylabel="Integrated charge [arb.]", linecolor="red",
-            linealpha=1/sqrt(length(events)), legend=false, title=suffix)
+            linealpha=1/sqrt(length(events)), legend=false)
 
-            savefig(dir * prefix * "integrated_charge_contact_$i" * suffix * extension)
+            #savefig(dir * prefix * "integrated_charge_contact_$i" * suffix * extension)
 
             # Histogram rise times
 
             riseTimes = CollectRiseTimes(events)
-            histogram(riseTimes / 1u"ns", xlabel="Rise time [ns]", ylabel="Counts [arb.]",
-            title = suffix)
+            pRT = histogram(riseTimes / 1u"ns", bins=:scott, xlabel="Rise time [ns]", ylabel="Counts [arb.]")
 
-            savefig(dir * prefix * "risetime_hist_$i" * suffix * extension)
+            #savefig(dir * prefix * "risetime_hist_$i" * suffix * extension)
 
             # Histogram maximal integrated current
 
             maxAmplitude = [maximum(abs.(x.waveforms[i].value)) for x in events]
             # println(maxAmplitude)
             # println(length(riseTimes), length(maxAmplitude))
-            histogram(maxAmplitude, xlabel="Maximal amplitude", ylabel="Counts [arb.]",
-            title = suffix)
+            pMA = histogram(maxAmplitude, bins=:scott, xlabel="Maximal amplitude", ylabel="Counts [arb.]")
 
-            savefig(dir * prefix * "amplitude_hist_$i" * suffix * extension)
+            #savefig(dir * prefix * "amplitude_hist_$i" * suffix * extension)
 
             # 2D Amplitude - Rise time interpolated scatter plot
-            marginalkde(riseTimes / 1u"ns", maxAmplitude)
+            pKDE = marginalkde(riseTimes / 1u"ns", maxAmplitude)
 
-            savefig(dir * prefix * "rise_time_amplitude_kde_$i" * suffix * extension)
+            #savefig(dir * prefix * "rise_time_amplitude_kde_$i" * suffix * extension)
 
+            plot(pRT, pIC, pKDE, pMA, layout=(2, 2), size=figSize)
+
+            savefig(dir * prefix * "event_contact_$i" * suffix * extension)
         end
     end
 end
 
 function PlotGeometry(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
     @info "Plotting detector geometry"
-    plot(sim.detector)
+    plot(sim.detector, size=figSize)
 
     savefig(dir * prefix * "geometry" * suffix * extension)
 end
@@ -74,7 +75,7 @@ function PlotElectricPotential(sim::Simulation, dir::String="", prefix::String="
     end
 end
 
-function PlotWeightingPotential(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
+function Plot2DWeightingPotential(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
     zBottom, zTop = GetDetectorFacePosition(sim)
     for i in 1:size(sim.weighting_potentials, 1)
         if !ismissing(sim.weighting_potentials[i])
@@ -165,7 +166,7 @@ function PlotCV(sims::AbstractVector{Simulation}, dir::String="", prefix::String
 
     sort!(cv, dims=1)
 
-    plot(cv[:, 1], cv[:, 2], xlabel="Voltage [V]", ylabel="Capacitance [pF]")
+    pCV = plot(cv[:, 1], cv[:, 2], xlabel="Voltage [V]", ylabel="Capacitance [pF]", size=figSize)
 
     savefig(dir * prefix * "cv" * suffix * extension)
 
@@ -175,81 +176,44 @@ function PlotCV(sims::AbstractVector{Simulation}, dir::String="", prefix::String
         dCm2dV[i, 2] = ((cv[i+1, 2])^(-2)-cv[i, 2]^(-2))/(cv[i+1, 1] - cv[i, 1])
     end
 
-    plot(dCm2dV[:, 1], dCm2dV[:, 2], xlabel="Voltage [V]", ylabel="d(1/C^2)/dV")
+    pDerivCV = plot(dCm2dV[:, 1], dCm2dV[:, 2], xlabel="Voltage [V]", ylabel="d(1/C^2)/dV", size=figSize)
 
     savefig(dir * prefix * "deriv_cv" * suffix * extension)
+
+    plot(pCV, pDerivCV, layout=(1, 2), size=figSize)
+
+    savefig(dir * prefix * "cv_deriv_cv" * suffix * extension)
 end
 
-function PlotWP(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
+function Plot1DWeightingPotential(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
     #Edge and corner plots only work for hexagons
     @info "Plotting weighting potentials vs z"
 
-    WP = sim.weighting_potentials[2]
-    grid = WP.grid
-    Lx, Ly, Lz = size(grid)
-    R = sim.detector.contacts[2].geometry.rOuter
-    r = sqrt(3)*R/2
-    edge = (r, 0.0)
-    corner = (r, R/2)
+    for i in 1:length(sim.weighting_potentials)
+        grid = sim.weighting_potentials[i].grid
+        gridX = collect(grid.x)
+        gridY = collect(grid.y)
+        R = sim.detector.contacts[i].geometry.rOuter
+        r = sqrt(3)*R/2
+        edge = (r, 0.0)
+        corner = (r, R/2)
 
-    x0 = 0
-    y0 = 0
-    xe = 0
-    ye = 0
-    xc = 0
-    yc = 0
+        threshold = max(grid[2, 1, 1][1]-grid[1, 1, 1][1], grid[2, 1, 1][2]-grid[1, 1, 1][2])/2.0 # Maximal spacing in x and y
 
+        x0 = findlast(x->x==0, collect(grid.x))
+        y0 = findlast(x->x==0, collect(grid.y))
+        xc = findlast(x->abs(x-corner[1]) < threshold, collect(gridX))
+        yc = findlast(x->abs(x-corner[2]) < threshold, collect(gridY))
+        xe = findlast(x->abs(x-edge[1]) < threshold, collect(gridX))
+        ye = findlast(x->abs(x-edge[2]) < threshold, collect(gridY))
 
-    for i in 1:Lx
-        if grid[i,1,1][1] == 0
-           x0 = i
-        end
+        wp0 = sim.weighting_potentials[i][x0, y0, :]
+        wpe = sim.weighting_potentials[i][xe, ye, :]
+        wpc = sim.weighting_potentials[i][xc, yc, :]
+
+        plot(collect(grid.z), [wp0, wpe, wpc], labels = ["Center" "Edge" "Corner"],
+        xlabel = "Z [m]", ylabel="Weighting potential", size=figSize)
+
+        savefig(dir * prefix * "weighting_potential_vs_z_$i" * suffix * extension)
     end
-
-
-    for i in 1:Ly
-        if grid[1,i,1][2] == 0
-           y0 = i
-        end
-    end
-
-    for i in 1:Lx
-        if grid[i,1,1][1] -edge[1] < 0.000001
-           xe = i
-        end
-    end
-
-    ye = y0
-
-    for i in 1:Lx
-        if grid[i,1,1][1] -corner[1] < 0.000001
-           xc = i
-        end
-    end
-
-    for i in 1:Ly
-        if grid[1,i,1][2] -corner[2] < 0.000001
-           yc = i
-        end
-    end
-
-    is = 1:1:Lz
-    wp0 = convert(Array{T},similar(is))
-    wpe = convert(Array{T},similar(is))
-    wpc = convert(Array{T},similar(is))
-
-    for i in is
-        wp0[i] = WP[x0,y0,i]
-        wpe[i] = WP[xe,ye,i]
-        wpc[i] = WP[xc,yc,i]
-    end
-
-    zs = convert(Array{T},similar(is))
-
-    for i in eachindex(is)
-        zs[i] = grid[x0,y0,i][3]
-    end
-
-    plot(plot(zs, wp0, title="Center"), plot(zs, wpe, title="Edge"), plot(zs, wpc, title="Corner"), layout=(1, 3), size=figSize)
-    savefig(dir * prefix * "weighting_potential_vs_z" * suffix * extension)
 end
