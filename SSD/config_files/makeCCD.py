@@ -63,7 +63,7 @@ def make_bulk(N, R, s):
     bulk_center = tuple_average(centers)
     
     #determine radius  
-    L = max_dist(bulk_center, centers) + R + s + 2
+    L = max_dist(bulk_center, centers) + R + s + 2e-3
     
     bulk = ("SolidStateDetectors.Tube{T}"
             "(0.." + str(L) + ",0..2" + unicodedata.lookup("GREEK SMALL LETTER PI")+
@@ -80,7 +80,7 @@ def make_pbottom(N, R, s, ph):
     bulk_center = tuple_average(centers)
     
     #determine radius  
-    L = max_dist(bulk_center, centers) + R + s + 2
+    L = max_dist(bulk_center, centers) + R + s + 2e-3
     
         
     pcontact = ("SolidStateDetectors.Tube{T}"
@@ -97,7 +97,7 @@ def make_pbottom_grad(N, R, s, ph, i, sigma, pC):
     bulk_center = tuple_average(centers)
     
     #determine radius  
-    L = max_dist(bulk_center, centers) + R + s + 2
+    L = max_dist(bulk_center, centers) + R + s + 2e-3
     
         
     pcontact = ("G" + str(i) + " = SolidStateDetectors.Tube{T}"
@@ -130,7 +130,7 @@ def make_pspray(R,s, tw, th, center, n,N,tC):
     return pixel
 
 #make N pixels starting with center and then moving counterclockwise around
-def make_pixels(N,R,s,nh, nC):    
+def make_pixels(N,R,s,nh, nC, n0):    
     centers = [(0,0)]
     o_centers = [(0,0)]
     
@@ -152,7 +152,7 @@ def make_pixels(N,R,s,nh, nC):
         
     pixels = []
     for n in range(N):
-        pixels.append(make_pixel(R,nh,centers[n],n+3, nC))
+        pixels.append(make_pixel(R,nh,centers[n],n+n0, nC))
     
     return pixels
 
@@ -166,7 +166,7 @@ def make_pixel_grad(R, nh, center, n, nC, sigma):
              "((0.0f0,0.0f0," + str(nC) + "),(0.0f0,0.0f0,0.0f0))\n")
     return pixel
 
-def make_pixels_grad(N,R,s,nh, nC, i, nstraggle):    
+def make_pixels_grad(N,R,s,nh, nC, n0, nstraggle):    
     centers = [(0,0)]
     o_centers = [(0,0)]
     
@@ -188,12 +188,12 @@ def make_pixels_grad(N,R,s,nh, nC, i, nstraggle):
         
     pixels = []
     for n in range(N):
-        pixels.append(make_pixel_grad(R,nh,centers[n],n+i, nC, nstraggle))
+        pixels.append(make_pixel_grad(R,nh,centers[n],n+n0, nC, nstraggle))
     
     return pixels
 
 #make pspray/pstop around every pixel
-def make_psprays(N,R,s,tw, th, tC, i):    
+def make_psprays(N,R,s,tw, th, tC, n0):    
     centers = [(0,0)]
     o_centers = [(0,0)]
     
@@ -215,7 +215,7 @@ def make_psprays(N,R,s,tw, th, tC, i):
         
     pixels = []
     for n in range(N):
-        pixels.append(make_pspray(R,s,tw,th,centers[n],n+i,N, tC))
+        pixels.append(make_pspray(R,s,tw,th,centers[n],n+n0,N, tC))
     
     return pixels
 
@@ -229,7 +229,7 @@ def make_pspray_grad(R,s, tw, th, center, n,N,tC, sigma):
              "((0.0f0,0.0f0," + str(tC) + "),(0.0f0,0.0f0,0.0f0))\n")
     return pixel
 
-def make_psprays_grad(N,R,s,tw, th, tC, i, psstraggle):    
+def make_psprays_grad(N,R,s,tw, th, tC, n0, psstraggle):    
     centers = [(0,0)]
     o_centers = [(0,0)]
     
@@ -251,7 +251,7 @@ def make_psprays_grad(N,R,s,tw, th, tC, i, psstraggle):
         
     pixels = []
     for n in range(N):
-        pixels.append(make_pspray_grad(R,s,tw,th,centers[n],n+i,N, tC, psstraggle))
+        pixels.append(make_pspray_grad(R,s,tw,th,centers[n],n+n0,N, tC, psstraggle))
     
     return pixels
 
@@ -360,6 +360,32 @@ def main():
             else:
                 psstraggle = float(psstraggle.strip())
         
+    rad = input("Radial IDP gradient(None, Linear, Erf): ")
+    if rad == "":
+        rad = "None"
+    if rad != "None":
+        if rad == "Linear":
+            slope = input("Slope of gradient: ")
+            if slope == "":
+                slope = 6e10
+            else:
+                slope = float(slope.strip())
+        if rad == "Erf":
+            stdev = input("Standard Deviation: ")
+            if stdev == "":
+                stdev = 10e-2
+            else:
+                stdev = float(stdev.strip())
+            height = input("Height: ")
+            if height == "":
+                height = 8e10
+            else:
+                height = float(height.strip())
+            shift = input("Shift: ")
+            if shift == "":
+                shift = 70e-2
+            else:
+                shift = float(height.strip())
         
      ################# Build CCD ######################   
         
@@ -418,9 +444,15 @@ def main():
     
     ######################## Build get_charge_density #####################
     
-    file_content += ("function SolidStateDetectors.get_charge_density(cdm::CustomChargeDensity{T}, pt::SolidStateDetectors.AbstractCoordinatePoint{T})::T where {T}\n"
-                     "\t(pt in cdm.G1) * SolidStateDetectors.get_charge_density(cdm.L1, pt) +\n"
-                     "\t(pt in cdm.G2) * SolidStateDetectors.get_charge_density(cdm.L2, pt) +\n")
+    file_content += "function SolidStateDetectors.get_charge_density(cdm::CustomChargeDensity{T}, pt::SolidStateDetectors.AbstractCoordinatePoint{T})::T where {T}\n"
+    
+    if rad == "Erf":
+        file_content += ("\t(pt in cdm.G1) * SolidStateDetectors.get_charge_density(cdm.L1, pt)"
+                         " + " + str(height) + " * (1 + erf((sqrt(pt[1]^2+pt[2]^2)-(" + str(shift) + "))/(2*" + str(stdev) + ")))/2 +\n")
+                     
+    else: file_content += "\t(pt in cdm.G1) * SolidStateDetectors.get_charge_density(cdm.L1, pt) +\n"
+                     
+    file_content += "\t(pt in cdm.G2) * SolidStateDetectors.get_charge_density(cdm.L2, pt) +\n"
     
     for n in pixels:
         file_content += "\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt) +\n"
@@ -457,11 +489,16 @@ def main():
     ############## Build Geometries and Charge Distributions ################
     
     file_content += ("G1 = " + make_bulk(N,R,s) + "\n"
-                     "G2 = " + make_pbottom(N,R,s,ph) + "\n"
-                     "CD1 = SolidStateDetectors.LinearChargeDensity{T}((0.0f0,0.0f0," + str(bulkC) + "),(0.0f0,0.0f0,0.0f0))\n"
-                     "CD2 = SolidStateDetectors.LinearChargeDensity{T}((0.0f0,0.0f0," + str(pC) + "),(0.0f0,0.0f0,0.0f0))\n")
+                     "G2 = " + make_pbottom(N,R,s,ph) + "\n")
     
-    for pixel in make_pixels(N,R,s,nh,nC):
+    if rad == "Linear":
+        file_content += "CD1 = SolidStateDetectors.CylindricalChargeDensity{T}((0.0f0,0.0f0," + str(bulkC) + "),(" + str(slope) +",0.0f0,0.0f0))\n"
+    
+    else: file_content += "CD1 = SolidStateDetectors.LinearChargeDensity{T}((0.0f0,0.0f0," + str(bulkC) + "),(0.0f0,0.0f0,0.0f0))\n"
+    
+    file_content += "CD2 = SolidStateDetectors.LinearChargeDensity{T}((0.0f0,0.0f0," + str(pC) + "),(0.0f0,0.0f0,0.0f0))\n"
+    
+    for pixel in make_pixels(N,R,s,nh,nC, pixels[0]):
         file_content += pixel
     
     if tw > 0 :
