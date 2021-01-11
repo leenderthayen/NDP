@@ -7,7 +7,7 @@ def find_centers(N,R,s):
     centers = [(0,0)]
     o_centers = [(0,0)]
     
-    r = (2*R+s)
+    r = (np.sqrt(3)*R+s)
     theta = np.radians(np.arange(0,360,60))
     dx = r*np.cos(theta)
     dy = r*np.sin(theta)
@@ -141,24 +141,7 @@ def make_pixel_contact(R, center, n):
     return pixel
 
 def make_pixel_contacts(N,R,s):    
-    centers = [(0,0)]
-    o_centers = [(0,0)]
-    
-    r = (2*R+s)
-    theta = np.radians(np.arange(0,360,60))
-    dx = r*np.cos(theta)
-    dy = r*np.sin(theta)
-    
-    while len(centers) < N:
-        new_centers = []
-        for center in o_centers:
-            oldx, oldy = center
-            for i in range(len(theta)):
-                new_center = (oldx+dx[i], oldy+dy[i])
-                if new_center not in centers:
-                    new_centers.append(new_center)
-        centers = centers + new_centers
-        o_centers = new_centers
+    centers = find_centers(N,R,s)
         
     pixels = []
     for n in range(N):
