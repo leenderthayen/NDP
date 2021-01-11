@@ -51,7 +51,7 @@ def max_dist(center, point_list):
     return max_dist
 
 #make bulk N type silicon tube large enough to fit pixels
-def make_bulk(N, R, s, T=140):
+def make_bulk(N, R, s, H, T=140):
     centers = find_centers(N,R,s)
     
     #place center in center of hexagon centers
@@ -71,7 +71,7 @@ def make_bulk(N, R, s, T=140):
 				"from": 0.0,
 				"to": L
 				},
-			"h": 2.0,
+			"h": H,
 			"translate": {
                     "x": bulk_center[0],
                     "y": bulk_center[1],
@@ -115,7 +115,7 @@ def make_pcontact(N, R, s):
     
     return pcontact
 
-def make_pixel_contact(R, center, n):
+def make_pixel_contact(R, center, n, H):
     x,y = center
     name = "pixel contact" + str(n+1)
     pixel = {
@@ -134,18 +134,18 @@ def make_pixel_contact(R, center, n):
 				"translate": {
                     "x": x,
                     "y": y,
- 					"z": 2 + 0.5e-2
+ 					"z": H + 0.5e-2
 				}
  			}
         }
     return pixel
 
-def make_pixel_contacts(N,R,s):    
+def make_pixel_contacts(N,R,s, H):    
     centers = find_centers(N,R,s)
         
     pixels = []
     for n in range(N):
-        pixels.append(make_pixel_contact(R,centers[n],n))
+        pixels.append(make_pixel_contact(R,centers[n],n, H))
         
     return pixels
 
@@ -155,6 +155,12 @@ def main():
         N=1
     else:
         N = int(N.strip())
+        
+    H = input("Detector height(mm): ")
+    if H == "":
+        H=2
+    else:
+        H = float(N.strip())
         
     D = input("Pixel size(mm): ")
     if D == "":
@@ -187,7 +193,7 @@ def main():
         yto = float(grid[3].strip())
         
     zfrom = -1
-    zto = 3
+    zto = H + 1
         
     #naming scheme "Si NHexagon D-twth-sphnh"
     name = "Si " + str(N) + "Hexagon " + str(D) +"-" + str(s)
@@ -232,7 +238,7 @@ def main():
         "medium": "vacuum"  
     }
     
-    dictionary["objects"] = [make_bulk(N,R,s), make_pcontact(N,R,s)] + make_pixel_contacts(N,R,s)
+    dictionary["objects"] = [make_bulk(N,R,s,H), make_pcontact(N,R,s)] + make_pixel_contacts(N,R,s,H)
     
     json_object = json.dumps(dictionary, indent = 2)
     
