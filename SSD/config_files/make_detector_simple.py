@@ -160,7 +160,7 @@ def main():
     if H == "":
         H=2
     else:
-        H = float(N.strip())
+        H = float(H.strip())
         
     D = input("Pixel size(mm): ")
     if D == "":
