@@ -12,7 +12,7 @@ def find_centers(N,R,s):
     centers = [(0,0)]
     o_centers = [(0,0)]
     
-    r = (2*R+s)
+    r = (np.sqrt(3)*R+s)
     theta = np.radians(np.arange(0,360,60))
     dx = r*np.cos(theta)
     dy = r*np.sin(theta)
@@ -123,7 +123,7 @@ def make_pixel(R, nh, center, n, nC):
 def make_pspray(R,s, tw, th, center, n,N,tC):
     x,y = center
     pixel = ("G" + str(n) + " = SolidStateDetectors.HexagonalPrism{T}"
-             "(" + str(R+s-tw) + ", " + str(R+s) + ", " + str(th) + 
+             "(" + str(R+(s/2)-(tw/2)) + ", " + str(R+(s/2)) + ", " + str(th) + 
              ",CartesianPoint{T}(" + str(x) + ", " + str(y) + ", " + str(0.002-(th/2)) +"),0)\n"
              "CD" + str(n) + "= SolidStateDetectors.LinearChargeDensity{T}"
              "((0.0f0,0.0f0," + str(tC) + "),(0.0f0,0.0f0,0.0f0))\n")
@@ -131,25 +131,8 @@ def make_pspray(R,s, tw, th, center, n,N,tC):
 
 #make N pixels starting with center and then moving counterclockwise around
 def make_pixels(N,R,s,nh, nC, n0):    
-    centers = [(0,0)]
-    o_centers = [(0,0)]
+    centers = find_centers(N,R,s)
     
-    r = (2*R+s)
-    theta = np.radians(np.arange(0,360,60))
-    dx = r*np.cos(theta)
-    dy = r*np.sin(theta)
-    
-    while len(centers) < N:
-        new_centers = []
-        for center in o_centers:
-            oldx, oldy = center
-            for i in range(len(theta)):
-                new_center = (oldx+dx[i], oldy+dy[i])
-                if new_center not in centers:
-                    new_centers.append(new_center)
-        centers = centers + new_centers
-        o_centers = new_centers
-        
     pixels = []
     for n in range(N):
         pixels.append(make_pixel(R,nh,centers[n],n+n0, nC))
@@ -167,24 +150,7 @@ def make_pixel_grad(R, nh, center, n, nC, sigma):
     return pixel
 
 def make_pixels_grad(N,R,s,nh, nC, n0, nstraggle):    
-    centers = [(0,0)]
-    o_centers = [(0,0)]
-    
-    r = (2*R+s)
-    theta = np.radians(np.arange(0,360,60))
-    dx = r*np.cos(theta)
-    dy = r*np.sin(theta)
-    
-    while len(centers) < N:
-        new_centers = []
-        for center in o_centers:
-            oldx, oldy = center
-            for i in range(len(theta)):
-                new_center = (oldx+dx[i], oldy+dy[i])
-                if new_center not in centers:
-                    new_centers.append(new_center)
-        centers = centers + new_centers
-        o_centers = new_centers
+    centers = find_centers(N,R,s)
         
     pixels = []
     for n in range(N):
@@ -194,24 +160,7 @@ def make_pixels_grad(N,R,s,nh, nC, n0, nstraggle):
 
 #make pspray/pstop around every pixel
 def make_psprays(N,R,s,tw, th, tC, n0):    
-    centers = [(0,0)]
-    o_centers = [(0,0)]
-    
-    r = (2*R+s)
-    theta = np.radians(np.arange(0,360,60))
-    dx = r*np.cos(theta)
-    dy = r*np.sin(theta)
-    
-    while len(centers) < N:
-        new_centers = []
-        for center in o_centers:
-            oldx, oldy = center
-            for i in range(len(theta)):
-                new_center = (oldx+dx[i], oldy+dy[i])
-                if new_center not in centers:
-                    new_centers.append(new_center)
-        centers = centers + new_centers
-        o_centers = new_centers
+    centers = find_centers(N,R,s)
         
     pixels = []
     for n in range(N):
@@ -223,31 +172,14 @@ def make_pspray_grad(R,s, tw, th, center, n,N,tC, sigma):
     x,y = center
     h = 4*sigma
     pixel = ("G" + str(n) + " = SolidStateDetectors.HexagonalPrism{T}"
-             "(" + str(R+s-tw) + ", " + str(R+s) + ", " + str(th) + 
+             "(" + str(R+(s/2)-(tw/2)) + ", " + str(R+(s/2)) + ", " + str(th) + 
              ",CartesianPoint{T}(" + str(x) + ", " + str(y) + ", " + str(0.002-th-(h/2)) +"),0)\n"
              "CD" + str(n) + "= SolidStateDetectors.LinearChargeDensity{T}"
              "((0.0f0,0.0f0," + str(tC) + "),(0.0f0,0.0f0,0.0f0))\n")
     return pixel
 
 def make_psprays_grad(N,R,s,tw, th, tC, n0, psstraggle):    
-    centers = [(0,0)]
-    o_centers = [(0,0)]
-    
-    r = (2*R+s)
-    theta = np.radians(np.arange(0,360,60))
-    dx = r*np.cos(theta)
-    dy = r*np.sin(theta)
-    
-    while len(centers) < N:
-        new_centers = []
-        for center in o_centers:
-            oldx, oldy = center
-            for i in range(len(theta)):
-                new_center = (oldx+dx[i], oldy+dy[i])
-                if new_center not in centers:
-                    new_centers.append(new_center)
-        centers = centers + new_centers
-        o_centers = new_centers
+    centers = find_centers(N,R,s)
         
     pixels = []
     for n in range(N):
