@@ -8,12 +8,14 @@ defaultDir = "plots/"
 
 T = Float32
 
-function BiasVariation(simName::String, initVoltage::Real, finalVoltage::Real, length::Integer)::AbstractDict{Real, Simulation}
+function BiasVariation(simName::String, CCDName::string, initVoltage::Real, finalVoltage::Real, length::Integer)::AbstractDict{Real, Simulation}
     biasRange = range(initVoltage, stop=finalVoltage, length=length)
 
     @info "Constructing base detector"
+    include(CCDName)
     sim_base = Simulation(simName)
     sim_dict = Dict{Real, Simulation}()
+    sim_base.detector.semiconductors[1].charge_density_model = ccdm
 
     @info "Calculating weighting potentials"
     for i in 1:size(sim_base.detector.contacts, 1)
