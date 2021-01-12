@@ -8,7 +8,7 @@ defaultDir = "plots/"
 
 T = Float32
 
-function BiasVariation(simName::String, CCDName::string, initVoltage::Real, finalVoltage::Real, length::Integer)::AbstractDict{Real, Simulation}
+function BiasVariation(simName::String, CCDName::String, initVoltage::Real, finalVoltage::Real, length::Integer)::AbstractDict{Real, Simulation}
     biasRange = range(initVoltage, stop=finalVoltage, length=length)
 
     @info "Constructing base detector"
