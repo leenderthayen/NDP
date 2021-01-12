@@ -38,7 +38,7 @@ function CalculateDefaultDetectorFields!(sim::Simulation{T},
     SetChargeDriftModel!(sim, driftConfigFile)
 end
 
-function SetupSimulation(geomConfigFile::String)::Simulation{T}
+function SetupDefaultSimulation(geomConfigFile::String)::Simulation{T}
     simulation = Simulation{T}(geomConfigFile)
     apply_initial_state!(simulation, ElectricPotential)
     for c in simulation.detector.contacts

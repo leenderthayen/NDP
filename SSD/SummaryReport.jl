@@ -19,8 +19,9 @@ function BiasVariation(simName::String, initVoltage::Real, finalVoltage::Real, l
     for i in 1:size(sim_base.detector.contacts, 1)
         calculate_weighting_potential!(sim_base, i,
         max_refinements=2,
-        convergence_limit=1e-4,
-        init_grid_spacing = T.( (2e-4, 2e-4, 2e-4) ))
+        convergence_limit=1e-3
+        #init_grid_spacing = T.( (2e-4, 2e-4, 2e-4) )
+        )
     end
 
     for i in 1:size(biasRange, 1)
@@ -32,8 +33,9 @@ function BiasVariation(simName::String, initVoltage::Real, finalVoltage::Real, l
         calculate_electric_potential!(sim,
         depletion_handling=true,
         max_refinements=2,
-        convergence_limit=1e-3,
-        init_grid_spacing = T.( (2e-4, 2e-4, 2e-4) ))
+        convergence_limit=1e-3
+        #init_grid_spacing = T.( (2e-4, 2e-4, 2e-4) )
+        )
         calculate_electric_field!(sim)
 
         sim.weighting_potentials = sim_base.weighting_potentials
@@ -71,7 +73,7 @@ end
 
 function PlotSingleParticleDetectorResponse(sim::Simulation, fullPath::String,
     impactPosition::CartesianPoint=CartesianPoint{T}(0, 0, 0), prefix::String="",
-    suffix::String="", dir::String=defaultDir, stepLimiter::Number=Inf)::Nothing
+    suffix::String="", dir::String=defaultDir, stepLimiter::Integer=1000)::Vector{Event}
 
     fileName = split(fullPath, "/")[end]
     strippedName = split(fileName, ".")[1]
@@ -80,13 +82,13 @@ function PlotSingleParticleDetectorResponse(sim::Simulation, fullPath::String,
     gdf = GetHitInformation(fullPath)
     events = DriftGeant4Events(gdf, sim, impactPosition, stepLimiter=stepLimiter)
     PlotEvents(events, dir, prefix, suffix)
-
+    return events
 end
 
 function PlotParticleDetectorResponse(sims::AbstractDict{Real, Simulation}, dataDir::String;
     impactPosition::CartesianPoint=CartesianPoint{T}(0, 0, 0), minEnergy::Real=0., maxEnergy::Real=Inf,
     minAngle::Real=0., maxAngle::Real=Inf,
-    prefix::String="", dir::String=defaultDir, maxEvents::Number=100)::Nothing
+    prefix::String="", dir::String=defaultDir, maxEvents::Integer=100)::Nothing
 
     println(impactPosition)
 
@@ -107,7 +109,8 @@ function PlotDetectorPerformance(sims::AbstractDict{Real, Simulation}; prefix::S
     biasRange = collect(keys(sims))
     prefix = prefix * "detector_"
     PlotGeometry(sims[biasRange[1]], dir, prefix)
-    PlotWeightingPotential(sims[biasRange[1]], dir, prefix)
+    Plot2DWeightingPotential(sims[biasRange[1]], dir, prefix)
+    Plot1DWeightingPotential(sims[biasRange[1]], dir, prefix)
     PlotMaterialProperties(sims[biasRange[1]], dir, prefix)
 
     for i in 1:size(biasRange, 1)

@@ -10,24 +10,24 @@
 		"coordinates": "cartesian",
 		"axes": {
             "x": {
-								"from": -28,
-                "to": 28,
+								"from": -30,
+                "to": 30,
                 "boundaries": {
                     "left": "inf",
                     "right": "inf"
                 }
             },
             "y": {
-                "from": -28,
-                "to": 28,
+                "from": -30,
+                "to": 30,
 								"boundaries": {
                     "left": "inf",
                     "right": "inf"
                 }
             },
             "z": {
-                "from": -1,
-                "to": 3,
+                "from": -30,
+                "to": 30,
                 "boundaries": {
                     "left": "inf",
                     "right": "inf"
@@ -61,9 +61,9 @@
 				"type": "tube",
 				"r": {
 					"from": 0.0,
-					"to": 12.0
+					"to": 1e-3
 				},
-				"h": 2.0,
+				"h": 10.0,
 				"translate": {
 					"z": 0.0
 				}
@@ -73,17 +73,17 @@
 			"type": "contact",
 			"material": "Si",
 			"name": "p+ contact",
-			"potential": -10.0,
+			"potential": -1500.0,
 			"channel": 1,
 			"geometry": {
 				"type": "tube",
 				"r": {
 					"from": 0.0,
-					"to": 12.0
+					"to": 1e-3
 				},
-				"h": 0.01,
+				"h": 1e-6,
 				"translate": {
-					"z": -0.01
+					"z": -1e-6
 				}
 			}
 		},
@@ -94,14 +94,14 @@
 			"potential": 0.0,
 			"channel": 2,
 			"geometry": {
-				"type": "HexagonalPrism",
+				"type": "tube",
 				"r": {
 					"from": 0.,
-					"to": 5.0
+					"to": 1e-3
 				},
-				"h": 1e-2,
+				"h": 1e-6,
 				"translate": {
-					"z": 2.005
+					"z": 10.0
 				}
 			}
 		}
