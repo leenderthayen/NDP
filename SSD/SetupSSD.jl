@@ -38,7 +38,7 @@ function CalculateDefaultDetectorFields!(sim::Simulation{T},
     SetChargeDriftModel!(sim, driftConfigFile)
 end
 
-function SetupSimulation(geomConfigFile::String, CCDName::String="")::Simulation{T}
+function SetupDefaultSimulation(geomConfigFile::String, CCDName::String="")::Simulation{T}
     simulation = Simulation{T}(geomConfigFile)
     
     if CCDName != ""

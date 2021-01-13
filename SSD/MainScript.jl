@@ -17,7 +17,7 @@ max_ref = 3
 # Get either a saved simulation or a new one
 sim = ReadSimulation(simFilename)
 if isnothing(sim)
-    sim = SetupSimulation(geometryFile)
+    sim = SetupDefaultSimulation(geometryFile)
     CalculateDefaultDetectorFields!(sim, chargeDriftConfigFile, max_ref)
     SaveSimulation(simFilename, sim)
 end

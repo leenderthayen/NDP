@@ -10,16 +10,16 @@
 		"coordinates": "cartesian",
 		"axes": {
             "x": {
-								"from": -28,
-                "to": 28,
+								"from": -10,
+                "to": 10,
                 "boundaries": {
                     "left": "inf",
                     "right": "inf"
                 }
             },
             "y": {
-                "from": -28,
-                "to": 28,
+                "from": -10,
+                "to": 10,
 								"boundaries": {
                     "left": "inf",
                     "right": "inf"
@@ -61,7 +61,7 @@
 				"type": "tube",
 				"r": {
 					"from": 0.0,
-					"to": 12.0
+					"to": 5.0
 				},
 				"h": 2.0,
 				"translate": {
@@ -79,11 +79,11 @@
 				"type": "tube",
 				"r": {
 					"from": 0.0,
-					"to": 12.0
+					"to": 5.0
 				},
-				"h": 0.01,
+				"h": 1e-6,
 				"translate": {
-					"z": -0.01
+					"z": -1e-6
 				}
 			}
 		},
@@ -94,14 +94,14 @@
 			"potential": 0.0,
 			"channel": 2,
 			"geometry": {
-				"type": "HexagonalPrism",
+				"type": "tube",
 				"r": {
 					"from": 0.,
 					"to": 5.0
 				},
-				"h": 1e-2,
+				"h": 1e-6,
 				"translate": {
-					"z": 2.005
+					"z": 2.0
 				}
 			}
 		}
