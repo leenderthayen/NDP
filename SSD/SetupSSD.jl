@@ -43,7 +43,7 @@ function SetupSimulation(geomConfigFile::String, CCDName::String="")::Simulation
     
     if CCDName != ""
         include(CCDName)
-        sim_base.detector.semiconductors[1].charge_density_model = ccdm
+        simulation.detector.semiconductors[1].charge_density_model = ccdm
     end
     
     apply_initial_state!(simulation, ElectricPotential)
