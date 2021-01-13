@@ -195,8 +195,8 @@ def main():
     zfrom = -1
     zto = H + 1
         
-    #naming scheme "Si NHexagon D-twth-sphnh"
-    name = "Si " + str(N) + "Hexagon " + str(D) +"-" + str(s)
+    #naming scheme "Si NHexagon H-D-s"
+    name = "Si " + str(N) + "Hexagon " + str(H) +"-" + str(D) +"-" + str(s)
     
     dictionary = {
         "name": name,

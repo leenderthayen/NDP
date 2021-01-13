@@ -38,8 +38,14 @@ function CalculateDefaultDetectorFields!(sim::Simulation{T},
     SetChargeDriftModel!(sim, driftConfigFile)
 end
 
-function SetupDefaultSimulation(geomConfigFile::String)::Simulation{T}
+function SetupDefaultSimulation(geomConfigFile::String, CCDName::String="")::Simulation{T}
     simulation = Simulation{T}(geomConfigFile)
+    
+    if CCDName != ""
+        include(CCDName)
+        simulation.detector.semiconductors[1].charge_density_model = ccdm
+    end
+    
     apply_initial_state!(simulation, ElectricPotential)
     for c in simulation.detector.contacts
         apply_initial_state!(simulation, WeightingPotential, c.id)
