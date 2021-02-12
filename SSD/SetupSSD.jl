@@ -1,5 +1,6 @@
-using HDF5
+#using HDF5
 #using LegendHDF5IO: readdata, writedata
+using JLD2
 using SolidStateDetectors
 using Unitful
 
@@ -11,16 +12,16 @@ T = Float32
 function SaveSimulation(filename::String, simulation::Simulation{T})::Nothing
     @info "Saving simulation"
     if !isfile(filename) mkpath(dirname(filename)) end
-    HDF5.h5open(filename, "w") do h5f
-        writedata(h5f, "Simulation", NamedTuple(sim))
+    jldopen(filename, "w") do f
+        write(f, "Simulation", NamedTuple(sim))
     end
 end
 
 function ReadSimulation(filename)::Union{Nothing, Simulation{T}}
     if isfile(filename)
         @info "Reading simulation"
-        simulation = HDF5.h5open(filename, "r") do h5f
-            Simulation(readdata(h5f, "Simulation"))
+        simulation = jldopen(filename, "r") do f
+            Simulation(read(f, "Simulation"))
         end
         set_charge_drift_model!(simulation, ADLChargeDriftModel())
         return simulation
@@ -40,12 +41,12 @@ end
 
 function SetupDefaultSimulation(geomConfigFile::String, CCDName::String="")::Simulation{T}
     simulation = Simulation{T}(geomConfigFile)
-    
+
     if CCDName != ""
         include(CCDName)
         simulation.detector.semiconductors[1].charge_density_model = ccdm
     end
-    
+
     apply_initial_state!(simulation, ElectricPotential)
     for c in simulation.detector.contacts
         apply_initial_state!(simulation, WeightingPotential, c.id)
