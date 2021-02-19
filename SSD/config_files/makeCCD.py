@@ -430,7 +430,7 @@ def main():
                      "G2 = " + make_pbottom(N,R,s,ph) + "\n")
     
     if rad == "Linear":
-        file_content += "CD1 = SolidStateDetectors.CylindricalChargeDensity{T}((0.0f0,0.0f0," + str(bulkC) + "),(" + str(slope) +",0.0f0,0.0f0))\n"
+        file_content += "CD1 = SolidStateDetectors.CylindricalChargeDensity{T}(("+ str(bulkC) +",0.0f0,0.0f0),(" + str(slope) +",0.0f0,0.0f0))\n"
     
     else: file_content += "CD1 = SolidStateDetectors.LinearChargeDensity{T}((0.0f0,0.0f0," + str(bulkC) + "),(0.0f0,0.0f0,0.0f0))\n"
     
