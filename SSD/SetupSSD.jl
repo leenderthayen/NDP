@@ -13,7 +13,7 @@ function SaveSimulation(filename::String, simulation::Simulation{T})::Nothing
     @info "Saving simulation"
     if !isfile(filename) mkpath(dirname(filename)) end
     jldopen(filename, "w") do f
-        write(f, "Simulation", NamedTuple(sim))
+        write(f, "Simulation", NamedTuple(simulation))
     end
 end
 
@@ -21,10 +21,41 @@ function ReadSimulation(filename)::Union{Nothing, Simulation{T}}
     if isfile(filename)
         @info "Reading simulation"
         simulation = jldopen(filename, "r") do f
-            Simulation(read(f, "Simulation"))
+            ConvertNamedTuple(read(f, "Simulation"))
         end
-        set_charge_drift_model!(simulation, ADLChargeDriftModel())
+        # SetChargeDriftModel!(simulation)
+
         return simulation
+    end
+    return nothing
+end
+
+function ConvertNamedTuple(nt::NamedTuple)::Union{Nothing, Simulation{T}}
+    if !ismissing( nt.detector_json_string )
+        det = SolidStateDetector{T}( Dict(nt.detector_json_string) )
+        sim = Simulation(det)
+
+        if hasproperty(nt, :weighting_potentials)
+            for contact in sim.detector.contacts
+                if !ismissing( values( nt.weighting_potentials[contact.id] )[1] )
+                    sim.weighting_potentials[contact.id] = WeightingPotential( nt.weighting_potentials[contact.id] )
+                end
+            end
+        end
+
+        d = Dict(:ρ => EffectiveChargeDensity,
+                 :ρ_fix => EffectiveChargeDensity,
+                 :ϵ => DielectricDistribution,
+                 :point_types => PointTypes,
+                 :electric_potential => ElectricPotential,
+                 :electric_field => ElectricField,
+                 :electron_drift_field => ElectricField,
+                 :hole_drift_field => ElectricField)
+
+        for (prop, func) in d
+            if !ismissing( nt[prop][1] ) setproperty!( sim, prop, func( nt[prop] ) ) end
+        end
+        return sim
     end
     return nothing
 end
