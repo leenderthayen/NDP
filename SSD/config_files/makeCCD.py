@@ -122,8 +122,10 @@ def make_pixel(R, nh, center, n, nC, H):
 #make pspray or pstop around a single pixel
 def make_pspray(R,s, tw, th, center, n,N,tC, H):
     x,y = center
+    S = s/np.sqrt(3)
+    Tw = tw/np.sqrt(3) 
     pixel = ("G" + str(n) + " = SolidStateDetectors.HexagonalPrism{T}"
-             "(" + str(R+(s/2)-(tw/2)) + ", " + str(R+(s/2)) + ", " + str(th) + 
+             "(" + str(R+S-Tw) + ", " + str(R+S) + ", " + str(th) + 
              ",CartesianPoint{T}(" + str(x) + ", " + str(y) + ", " + str(H-(th/2)) +"),0)\n"
              "CD" + str(n) + "= SolidStateDetectors.LinearChargeDensity{T}"
              "((0.0f0,0.0f0," + str(tC) + "),(0.0f0,0.0f0,0.0f0))\n")
