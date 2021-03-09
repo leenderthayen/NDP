@@ -213,65 +213,84 @@ def main():
         D = float(D.strip()) * 1e-3
     R = D/2
     
-    s = input("Pixel seperation: ")
+    s = input("Pixel seperation(mm): ")
     if s == "":
         s=0.1e-3
     else:
         s = float(s.strip()) * 1e-3
-
-    tw = input("pspray width: ")
-    if tw == "":
-        tw=0
-    else:
-        tw = float(tw.strip()) * 1e-3
-    
-    if tw > s:
-        tw = input("pspray width was larger than seperation, try again: ")
+        
+    ptype = input("pstop, pspray or both: ")
+    if ptype == "pstop" or "both":
+        
+        tw = input("pstop width(mm): ")
         if tw == "":
             tw=0
         else:
             tw = float(tw.strip()) * 1e-3
-    
-    if tw > s:
-        print("Still too large... we no longer take responsibility for what happens.")
-            
-    th = input("pspray thickness: ")
-    if th == "":
-        th=0
-    else:
-        th = float(th.strip()) * 1e-3
         
-    tC = input("pspray impurity concentration: ")
-    if tC == "":
-        tC = -1.9e16
-    else:
-        tC = float(tC.strip()) * 1e-3
+        if tw > s:
+            tw = input("pstop width was larger than seperation, try again: ")
+            if tw == "":
+                tw=0
+            else:
+                tw = float(tw.strip()) * 1e-3
+        
+        if tw > s:
+            print("Still too large... we no longer take responsibility for what happens.")
+                
+        th = input("pstop thickness(mm): ")
+        if th == "":
+            th=200e-9
+        else:
+            th = float(th.strip()) * 1e-3
+        
+        tC = input("pstop impurity concentration(mm^-3): ")
+        if tC == "":
+            tC = -1.9e16
+        else:
+            tC = float(tC.strip()) * 1e9
+            
+    if ptype == "both" or "pspray":
+        sth = input("pspray thickness(mm): ")
+        if sth == "":
+            sth=100e-9
+        else:
+            sth = float(sth.strip()) * 1e-3
+        
+        stC = input("pspray impurity concentration(mm^-3): ")
+        if stC == "":
+            stC = -1.9e16
+        else:
+            stC = float(stC.strip()) * 1e9
     
-    ph = input("p+ thickness: ")
+        
+    
+    
+    ph = input("p+ thickness(mm): ")
     if ph == "":
         ph = 0.01e-3
     else:
         ph = float(ph.strip()) * 1e-3
         
-    pC = input("p+ impurity concentration: ")
+    pC = input("p+ impurity concentration(mm^-3): ")
     if pC == "":
         pC = -1.9e16
     else:
-        pC = float(pC.strip()) * 1e-3
+        pC = float(pC.strip()) * 1e9
     
-    nh = input("n+ thickness: ")
+    nh = input("n+ thickness(mm): ")
     if nh == "":
         nh = 0.02e-3
     else:
         nh = float(nh.strip()) * 1e-3
     
-    nC = input("n+ impurity concentration: ")
+    nC = input("n+ impurity concentration(mm^-3): ")
     if nC == "":
         nC = 1.9e16
     else:
         nC = float(nC.strip()) * 1e9
         
-    bulkC = input("Bulk impurity concentration: ")
+    bulkC = input("Bulk impurity concentration(mm^-3): ")
     if bulkC == "":
         bulkC = 5.0e10
     else:
@@ -309,17 +328,17 @@ def main():
             else:
                 slope = float(slope.strip()) * 1e12
         if rad == "Erf":
-            stdev = input("Standard Deviation: ")
+            stdev = input("Standard Deviation (mm): ")
             if stdev == "":
                 stdev = 10e-2
             else:
                 stdev = float(stdev.strip()) * 1e-3
-            height = input("Height: ")
+            height = input("Height (mm^-3): ")
             if height == "":
                 height = 8e10
             else:
-                height = float(height.strip())
-            shift = input("Shift: ")
+                height = float(height.strip())*1e9
+            shift = input("Shift (mm): ")
             if shift == "":
                 shift = 70e-2
             else:
@@ -350,14 +369,22 @@ def main():
                          "\tL" + str(i) + "::SolidStateDetectors.AbstractChargeDensity{T}\n")
     
     #add pspray/pstop to CCD struct
-        
-    if tw > 0:
-        pstops = []
+    if ptype == "pspray" or "both":
+        psprays = []
         for n in range(N):
             i += 1
-            pstops.append(i)
+            psprays.append(i)
             file_content += ("\tG" + str(i) + "::SolidStateDetectors.AbstractGeometry{T,N}\n"
                              "\tL" + str(i) + "::SolidStateDetectors.AbstractChargeDensity{T}\n")
+    
+    if ptype == "pstop" or "both":
+        if tw > 0:
+            pstops = []
+            for n in range(N):
+                i += 1
+                pstops.append(i)
+                file_content += ("\tG" + str(i) + "::SolidStateDetectors.AbstractGeometry{T,N}\n"
+                                 "\tL" + str(i) + "::SolidStateDetectors.AbstractChargeDensity{T}\n")
     
     if grad != "None":
         i+= 1
@@ -370,13 +397,23 @@ def main():
             pixelgrads.append(i)
             file_content += ("\tG" + str(i) + "::SolidStateDetectors.AbstractGeometry{T,N}\n"
                              "\tL" + str(i) + "::SolidStateDetectors.AbstractChargeDensity{T}\n")
-        pstopgrads = []
-        if tw > 0:
+       
+        if ptype == "pspray" or "both":
+            pspraygrads = []
             for n in range(N):
                 i += 1
-                pstopgrads.append(i)
+                pspraygrads.append(i)
                 file_content += ("\tG" + str(i) + "::SolidStateDetectors.AbstractGeometry{T,N}\n"
-                                 "\tL" + str(i) + "::SolidStateDetectors.AbstractChargeDensity{T}\n")
+                                 "\tL" + str(i) + "::SolidStateDetectors.AbstractChargeDensity{T}\n")    
+            
+        if ptype == "pstop" or "both":
+            pstopgrads = []
+            if tw > 0:
+                for n in range(N):
+                    i += 1
+                    pstopgrads.append(i)
+                    file_content += ("\tG" + str(i) + "::SolidStateDetectors.AbstractGeometry{T,N}\n"
+                                     "\tL" + str(i) + "::SolidStateDetectors.AbstractChargeDensity{T}\n")
         
     file_content += "end\n\n"
     
@@ -395,9 +432,14 @@ def main():
     for n in pixels:
         file_content += "\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt) +\n"
     
-    if tw > 0 :
-        for n in pstops:
+    if ptype == "pspray" or "both":
+        for n in psprays:
             file_content += "\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt) +\n"
+    
+    if ptype == "pstop" or "both":
+        if tw > 0 :
+            for n in pstops:
+                file_content += "\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt) +\n"
     
     if grad == "Gauss":
         file_content += ("\t(pt in cdm.G" +str(pgrad) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(pgrad) + ", pt)"
@@ -405,10 +447,17 @@ def main():
         for n in pixelgrads:
             file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
                          " * exp(-(pt[3]-" + str(H-nh) + ")^2/(2*" + str(nstraggle) + "^2)) +\n")
-        if tw > 0 :
-            for n in pstopgrads:
+        
+        if ptype == "pspray" or "both":
+            for n in pspraygrads:
                 file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
                                  " * exp(-(pt[3]-" + str(H-th) + ")^2/(2*" + str(psstraggle) + "^2)) +\n")
+            
+        if ptype == "pstop" or "both":
+            if tw > 0 :
+                for n in pstopgrads:
+                    file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
+                                     " * exp(-(pt[3]-" + str(H-th) + ")^2/(2*" + str(psstraggle) + "^2)) +\n")
     
     if grad == "Erf":
         file_content += ("\t(pt in cdm.G" +str(pgrad) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(pgrad) + ", pt)"
@@ -416,10 +465,17 @@ def main():
         for n in pixelgrads:
             file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
                              " * (1 + erf(-(pt[3]-(" + str(H-nh-(2*nstraggle)) + "))/(2*" + str(nstraggle) + ")))/2 +\n")
-        if tw > 0 :
-            for n in pstopgrads:
+        
+        if ptype == "pspray" or "both":
+            for n in pspraygrads:
                 file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
                                  " * (1 + erf(-(pt[3]-(" + str(H-th-(2*pstraggle)) + "))/(2*" + str(psstraggle) + ")))/2 +\n")  
+        
+        if ptype == "pstop" or "both":
+            if tw > 0 :
+                for n in pstopgrads:
+                    file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
+                                     " * (1 + erf(-(pt[3]-(" + str(H-th-(2*pstraggle)) + "))/(2*" + str(psstraggle) + ")))/2 +\n")  
     
     file_content = file_content[:-2]
     file_content += "\nend\n\n"
@@ -439,35 +495,57 @@ def main():
     for pixel in make_pixels(N,R,s,nh,nC,H, pixels[0]):
         file_content += pixel
     
-    if tw > 0 :
-        for pixel in make_psprays(N,R,s,tw, th, tC,H, pstops[0]):
+    if ptype == "pspray" or "both":
+        for pixel in make_psprays(N,R,s,s, sth, stC,H, psprays[0]):
             file_content += pixel
+    
+    if ptype == "pstop" or "both":
+        if tw > 0 :
+            for pixel in make_psprays(N,R,s,tw, th, tC,H, pstops[0]):
+                file_content += pixel
     
     if grad != "None":
         file_content += make_pbottom_grad(N, R, s, ph, pgrad, pstraggle, pC)
         for pixel in make_pixels_grad(N,R,s,nh, nC,H, pixelgrads[0], nstraggle):
             file_content += pixel
-        if tw > 0 :
-            for pixel in make_psprays_grad(N,R,s,tw,th, nC,H, pstopgrads[0], psstraggle):
-                file_content += pixel
+            
+        if ptype == "pspray" or "both":
+            for pixel in make_psprays_grad(N,R,s,s,th, nC,H, pspraygrads[0], psstraggle):
+                file_content += pixel    
+            
+        if ptype == "pstop" or "both":
+            if tw > 0 :
+                for pixel in make_psprays_grad(N,R,s,tw,th, nC,H, pstopgrads[0], psstraggle):
+                    file_content += pixel
                 
     ###################### instantiate ccdm ##########################
     file_content += "\nccdm = CustomChargeDensity(G1,G2,CD1,CD2"
     
     for n in pixels:
         file_content += ",G" + str(n) + ",CD" + str(n)
-        
-    if tw > 0:
-        for n in pstops:
-            file_content += ",G" + str(n) + ",CD" + str(n)
+    
+    if ptype == "pspray" or "both":
+            for n in psprays:
+                file_content += ",G" + str(n) + ",CD" + str(n)
+    
+    if ptype == "pstop" or "both":
+        if tw > 0:
+            for n in pstops:
+                file_content += ",G" + str(n) + ",CD" + str(n)
             
     if grad != "None":
         file_content += ",G" + str(pgrad) + ",CD" + str(pgrad)
         for n in pixelgrads:
             file_content += ",G" + str(n) + ",CD" + str(n)
-        if tw > 0 :
-            for n in pstopgrads:
-                file_content += ",G" + str(n) + ",CD" + str(n)
+        
+        if ptype == "pspray" or "both":
+                for n in pspraygrads:
+                    file_content += ",G" + str(n) + ",CD" + str(n)
+        
+        if ptype == "pstop" or "both":
+            if tw > 0 :
+                for n in pstopgrads:
+                    file_content += ",G" + str(n) + ",CD" + str(n)
     
     file_content += ")\n"
     
