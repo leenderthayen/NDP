@@ -45,7 +45,7 @@ end
 riseTimes0 = CollectRiseTimesFiltered(events0, dt=0.1e-9)
 
 histogram(riseTimes0 / 1u"ns", bins = 50, alpha = 0.5, label=string(particle," ",temp))
-savefig(string("plots/", particle, strin("RiseTimeFiltered",temp,".png")))
+savefig(string("plots/", particle, string("RiseTimeFiltered",temp,".png")))
 
 
 @info "Stop"
