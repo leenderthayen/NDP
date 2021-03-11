@@ -222,7 +222,7 @@ def main():
         s = float(s.strip()) * 1e-3
         
     ptype = input("pstop, pspray or both: ")
-    if ptype == "pstop" or "both":
+    if (ptype == "pstop" or ptype == "both"):
         
         tw = input("pstop width(mm): ")
         if tw == "":
@@ -252,7 +252,7 @@ def main():
         else:
             tC = float(tC.strip()) * 1e9
             
-    if ptype == "both" or "pspray":
+    if (ptype == "both" or ptype == "pspray"):
         sth = input("pspray thickness(mm): ")
         if sth == "":
             sth=100e-9
@@ -371,7 +371,7 @@ def main():
                          "\tL" + str(i) + "::SolidStateDetectors.AbstractChargeDensity{T}\n")
     
     #add pspray/pstop to CCD struct
-    if ptype == "pspray" or "both":
+    if (ptype == "pspray" or ptype == "both"):
         psprays = []
         for n in range(N):
             i += 1
@@ -379,7 +379,7 @@ def main():
             file_content += ("\tG" + str(i) + "::SolidStateDetectors.AbstractGeometry{T,N}\n"
                              "\tL" + str(i) + "::SolidStateDetectors.AbstractChargeDensity{T}\n")
     
-    if ptype == "pstop" or "both":
+    if (ptype == "pstop" or ptype == "both"):
         if tw > 0:
             pstops = []
             for n in range(N):
@@ -400,7 +400,7 @@ def main():
             file_content += ("\tG" + str(i) + "::SolidStateDetectors.AbstractGeometry{T,N}\n"
                              "\tL" + str(i) + "::SolidStateDetectors.AbstractChargeDensity{T}\n")
        
-        if ptype == "pspray" or "both":
+        if (ptype == "pspray" or ptype == "both"):
             pspraygrads = []
             for n in range(N):
                 i += 1
@@ -408,7 +408,7 @@ def main():
                 file_content += ("\tG" + str(i) + "::SolidStateDetectors.AbstractGeometry{T,N}\n"
                                  "\tL" + str(i) + "::SolidStateDetectors.AbstractChargeDensity{T}\n")    
             
-        if ptype == "pstop" or "both":
+        if (ptype == "pstop" or ptype == "both"):
             pstopgrads = []
             if tw > 0:
                 for n in range(N):
@@ -434,11 +434,11 @@ def main():
     for n in pixels:
         file_content += "\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt) +\n"
     
-    if ptype == "pspray" or "both":
+    if (ptype == "pspray" or ptype == "both"):
         for n in psprays:
             file_content += "\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt) +\n"
     
-    if ptype == "pstop" or "both":
+    if (ptype == "pstop" or ptype == "both"):
         if tw > 0 :
             for n in pstops:
                 file_content += "\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt) +\n"
@@ -450,12 +450,12 @@ def main():
             file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
                          " * exp(-(pt[3]-" + str(H-nh) + ")^2/(2*" + str(nstraggle) + "^2)) +\n")
         
-        if ptype == "pspray" or "both":
+        if (ptype == "pspray" or ptype == "both"):
             for n in pspraygrads:
                 file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
                                  " * exp(-(pt[3]-" + str(H-th) + ")^2/(2*" + str(psstraggle) + "^2)) +\n")
             
-        if ptype == "pstop" or "both":
+        if (ptype == "pstop" or ptype == "both"):
             if tw > 0 :
                 for n in pstopgrads:
                     file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
@@ -468,12 +468,12 @@ def main():
             file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
                              " * (1 + erf(-(pt[3]-(" + str(H-nh-(2*nstraggle)) + "))/(2*" + str(nstraggle) + ")))/2 +\n")
         
-        if ptype == "pspray" or "both":
+        if (ptype == "pspray" or ptype == "both"):
             for n in pspraygrads:
                 file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
                                  " * (1 + erf(-(pt[3]-(" + str(H-th-(2*pstraggle)) + "))/(2*" + str(psstraggle) + ")))/2 +\n")  
         
-        if ptype == "pstop" or "both":
+        if (ptype == "pstop" or ptype == "both"):
             if tw > 0 :
                 for n in pstopgrads:
                     file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
@@ -497,11 +497,11 @@ def main():
     for pixel in make_pixels(N,R,s,nh,nC,H, pixels[0]):
         file_content += pixel
     
-    if ptype == "pspray" or "both":
+    if (ptype == "pspray" or ptype == "both"):
         for pixel in make_psprays(N,R,s,s, sth, stC,H, psprays[0]):
             file_content += pixel
     
-    if ptype == "pstop" or "both":
+    if (ptype == "pstop" or ptype == "both"):
         if tw > 0 :
             for pixel in make_psprays(N,R,s,tw, th, tC,H, pstops[0]):
                 file_content += pixel
@@ -511,11 +511,11 @@ def main():
         for pixel in make_pixels_grad(N,R,s,nh, nC,H, pixelgrads[0], nstraggle):
             file_content += pixel
             
-        if ptype == "pspray" or "both":
+        if (ptype == "pspray" or ptype == "both"):
             for pixel in make_psprays_grad(N,R,s,s,th, nC,H, pspraygrads[0], psstraggle):
                 file_content += pixel    
             
-        if ptype == "pstop" or "both":
+        if (ptype == "pstop" or ptype == "both"):
             if tw > 0 :
                 for pixel in make_psprays_grad(N,R,s,tw,th, nC,H, pstopgrads[0], psstraggle):
                     file_content += pixel
@@ -526,11 +526,11 @@ def main():
     for n in pixels:
         file_content += ",G" + str(n) + ",CD" + str(n)
     
-    if ptype == "pspray" or "both":
+    if (ptype == "pspray" or ptype == "both"):
             for n in psprays:
                 file_content += ",G" + str(n) + ",CD" + str(n)
     
-    if ptype == "pstop" or "both":
+    if (ptype == "pstop" or ptype == "both"):
         if tw > 0:
             for n in pstops:
                 file_content += ",G" + str(n) + ",CD" + str(n)
@@ -540,11 +540,11 @@ def main():
         for n in pixelgrads:
             file_content += ",G" + str(n) + ",CD" + str(n)
         
-        if ptype == "pspray" or "both":
+        if (ptype == "pspray" or ptype == "both"):
                 for n in pspraygrads:
                     file_content += ",G" + str(n) + ",CD" + str(n)
         
-        if ptype == "pstop" or "both":
+        if (ptype == "pstop" or ptype == "both"):
             if tw > 0 :
                 for n in pstopgrads:
                     file_content += ",G" + str(n) + ",CD" + str(n)
