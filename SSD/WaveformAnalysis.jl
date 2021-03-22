@@ -24,18 +24,18 @@ function CalculateRiseTime(w::RadiationDetectorSignals.RDWaveform, low::Real, hi
     return CalculateRiseTime(w.time, abs.(w.value), low, high)
 end
 
-function CollectRiseTimes(events, low = 0.1, high = 0.9)
+function CollectRiseTimes(events, low = 0.1, high = 0.9; contact = 1)
     riseTimes = Vector{Unitful.Time}()
     for i in 1:length(events)
-        push!(riseTimes, CalculateRiseTime(events[i].waveforms[1], low, high))
+        push!(riseTimes, CalculateRiseTime(events[i].waveforms[contact], low, high))
     end
     return riseTimes
 end
 
-function CollectRiseTimesFiltered(events, low = 0.1, high = 0.9; dt = 1e-9)
+function CollectRiseTimesFiltered(events, low = 0.1, high = 0.9; dt = 1e-9, contact = 1)
     riseTimes = Vector{Unitful.Time}()
     for i in 1:length(events)
-        push!(riseTimes, CalculateRiseTime(events[i].waveforms[1].time, CustomFilter(events[i].waveforms[1].value, dt), low, high))
+        push!(riseTimes, CalculateRiseTime(events[i].waveforms[contact].time, CustomFilter(events[i].waveforms[contact].value, dt), low, high))
     end
     return riseTimes
 end
