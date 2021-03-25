@@ -1,0 +1,235 @@
+{
+  "name": "Si 7Hexagon 2.0-10.3-0.1",
+  "units": {
+    "length": "mm",
+    "angle": "deg",
+    "potential": "V",
+    "temperature": "K"
+  },
+  "grid": {
+    "coordinates": "cartesian",
+    "axes": {
+      "x": {
+        "from": -17.0,
+        "to": 17.0,
+        "boundaries": {
+          "left": "inf",
+          "right": "inf"
+        }
+      },
+      "y": {
+        "from": -17.0,
+        "to": 17.0,
+        "boundaries": {
+          "left": "inf",
+          "right": "inf"
+        }
+      },
+      "z": {
+        "from": -1,
+        "to": 3.0,
+        "boundaries": {
+          "left": "inf",
+          "right": "inf"
+        }
+      }
+    }
+  },
+  "medium": "vacuum",
+  "objects": [
+    {
+      "type": "semiconductor",
+      "material": "Si",
+      "bulk_type": "n",
+      "temperature": 140,
+      "charge_density_model": {
+				"name": "linear",
+				"r": {
+					"init": 0.0,
+					"gradient": 0.0
+				},
+				"phi": {
+					"init": 0.0,
+					"gradient": 0.0
+				},
+				"z": {
+					"init": 1.9e8,
+					"gradient": 1e8
+				}
+			},
+      "geometry": {
+        "type": "tube",
+        "r": {
+          "from": 0.0,
+          "to": 16.270061658979717
+        },
+        "h": 2.0,
+        "translate": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      }
+    },
+    {
+      "type": "contact",
+      "material": "Al",
+      "name": "p+ contact",
+      "potential": -300.0,
+      "channel": 1,
+      "geometry": {
+        "type": "tube",
+        "r": {
+          "from": 0.0,
+          "to": 16.270061658979717
+        },
+        "h": 0.01,
+        "translate": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": -0.01
+        }
+      }
+    },
+    {
+      "type": "contact",
+      "material": "Al",
+      "name": "pixel contact1",
+      "potential": 0.0,
+      "channel": 2,
+      "geometry": {
+        "type": "HexagonalPrism",
+        "r": {
+          "from": 0.0,
+          "to": 5.15
+        },
+        "h": 0.01,
+        "translate": {
+          "x": 0,
+          "y": 0,
+          "z": 2.005
+        }
+      }
+    },
+    {
+      "type": "contact",
+      "material": "Al",
+      "name": "pixel contact2",
+      "potential": 0.0,
+      "channel": 3,
+      "geometry": {
+        "type": "HexagonalPrism",
+        "r": {
+          "from": 0.0,
+          "to": 5.15
+        },
+        "h": 0.01,
+        "translate": {
+          "x": 9.020061658979717,
+          "y": 0.0,
+          "z": 2.005
+        }
+      }
+    },
+    {
+      "type": "contact",
+      "material": "Al",
+      "name": "pixel contact3",
+      "potential": 0.0,
+      "channel": 4,
+      "geometry": {
+        "type": "HexagonalPrism",
+        "r": {
+          "from": 0.0,
+          "to": 5.15
+        },
+        "h": 0.01,
+        "translate": {
+          "x": 4.5100308294898594,
+          "y": 7.811602540378443,
+          "z": 2.005
+        }
+      }
+    },
+    {
+      "type": "contact",
+      "material": "Al",
+      "name": "pixel contact4",
+      "potential": 0.0,
+      "channel": 5,
+      "geometry": {
+        "type": "HexagonalPrism",
+        "r": {
+          "from": 0.0,
+          "to": 5.15
+        },
+        "h": 0.01,
+        "translate": {
+          "x": -4.510030829489857,
+          "y": 7.811602540378444,
+          "z": 2.005
+        }
+      }
+    },
+    {
+      "type": "contact",
+      "material": "Al",
+      "name": "pixel contact5",
+      "potential": 0.0,
+      "channel": 6,
+      "geometry": {
+        "type": "HexagonalPrism",
+        "r": {
+          "from": 0.0,
+          "to": 5.15
+        },
+        "h": 0.01,
+        "translate": {
+          "x": -9.020061658979717,
+          "y": 1.1046389638781275e-15,
+          "z": 2.005
+        }
+      }
+    },
+    {
+      "type": "contact",
+      "material": "Al",
+      "name": "pixel contact6",
+      "potential": 0.0,
+      "channel": 7,
+      "geometry": {
+        "type": "HexagonalPrism",
+        "r": {
+          "from": 0.0,
+          "to": 5.15
+        },
+        "h": 0.01,
+        "translate": {
+          "x": -4.510030829489863,
+          "y": -7.81160254037844,
+          "z": 2.005
+        }
+      }
+    },
+    {
+      "type": "contact",
+      "material": "Al",
+      "name": "pixel contact7",
+      "potential": 0.0,
+      "channel": 8,
+      "geometry": {
+        "type": "HexagonalPrism",
+        "r": {
+          "from": 0.0,
+          "to": 5.15
+        },
+        "h": 0.01,
+        "translate": {
+          "x": 4.5100308294898594,
+          "y": -7.811602540378443,
+          "z": 2.005
+        }
+      }
+    }
+  ]
+}
