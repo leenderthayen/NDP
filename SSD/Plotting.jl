@@ -235,31 +235,33 @@ end
 
 function PlotIDP(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
     @info "Plotting IDP along z and top of detector"
-    
-    
+
+
     bulk = sim.detector.semiconductors[1]
     bulk_geom = bulk.geometry
     center = bulk_geom.translate === missing ? (0,0) : bulk_geom.translate
     R = bulk_geom.r_interval.right
     H = bulk_geom.z_interval.right
-    
+
     zs = 0:1e-8:H
     charge_vecz = similar(zs)
     for iz in eachindex(zs)
         pt = CartesianPoint{T}(0,0,zs[iz])
-        charge_vecz[iz] = pt in bulk?
+        charge_vecz[iz] = pt in bulk ?
                             SolidStateDetectors.get_charge_density(bulk, pt) : 0
     end
-    
+
     xs = -R:1e-7:R
     charge_vecx = similar(xs)
+    charge_vecr = similar(xs)
     for ix in eachindex(xs)
         pt = CartesianPoint{T}(xs[ix]+center[1], 0, H-1e-6)
-        charge_vecx[ix] = pt in bulk?
+        charge_vecx[ix] = pt in bulk ?
                             SolidStateDetectors.get_charge_density(bulk, pt) : 0
+        pt = CartesianPoint{T}(xs[ix] + center[1], 0, H/2)
+        charge_vecr[ix] = pt in bulk ? SolidStateDetectors.get_charge_density(bulk, pt) : 0
     end
-    
-    plot(plot(zs, charge_vecz), plot(xs, charge_vecx), layout=(1, 2), size=figSize)
-    savefig(dir * prefix * "IDP_z_and_top" * suffix * extension)
+
+    plot(plot(zs, charge_vecz), plot(xs, charge_vecx), plot(xs, charge_vecr), layout=(1, 3), size=figSize)
+    savefig(dir * prefix * "IDP_z_and_top_and_r" * suffix * extension)
 end
-    

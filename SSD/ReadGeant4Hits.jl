@@ -17,6 +17,7 @@ function GetHDF5HitInformation(filename::String)::GroupedDataFrame
     @info "Reading Geant4 Hits info from HDF5"
     fid = h5open(filename, "r")
     id::Array{Int64, 1} = read(fid, "ntuple/hits/iD/pages")
+    # All distances in mm
     x::Array{Float64, 1} = read(fid, "ntuple/hits/x/pages")
     y::Array{Float64, 1} = read(fid, "ntuple/hits/y/pages")
     z::Array{Float64, 1} = read(fid, "ntuple/hits/z/pages")

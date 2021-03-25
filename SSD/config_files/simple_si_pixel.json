@@ -10,16 +10,16 @@
 		"coordinates": "cartesian",
 		"axes": {
             "x": {
-								"from": -28,
-                "to": 28,
+								"from": -15,
+                "to": 15,
                 "boundaries": {
                     "left": "inf",
                     "right": "inf"
                 }
             },
             "y": {
-                "from": -28,
-                "to": 28,
+                "from": -15,
+                "to": 15,
 								"boundaries": {
                     "left": "inf",
                     "right": "inf"
@@ -53,7 +53,7 @@
 					"gradient": 0.0
 				},
 				"z": {
-					"init": 1.9e8,
+					"init": 2e7,
 					"gradient": 0.0
 				}
 			},
@@ -73,7 +73,7 @@
 			"type": "contact",
 			"material": "Si",
 			"name": "p+ contact",
-			"potential": -10.0,
+			"potential": -200.0,
 			"channel": 1,
 			"geometry": {
 				"type": "tube",

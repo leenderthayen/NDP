@@ -8,13 +8,13 @@ defaultDir = "plots/"
 
 T = Float32
 
-function BiasVariation(simName::String, initVoltage::Real, finalVoltage::Real, length::Integer, CCDName::String="")::AbstractDict{Real, Simulation}
+function BiasVariation(configFile::String, initVoltage::Real, finalVoltage::Real, length::Integer, CCDName::String="")::AbstractDict{Real, Simulation}
     biasRange = range(initVoltage, stop=finalVoltage, length=length)
 
     @info "Constructing base detector"
-    sim_base = Simulation(simName)
+    sim_base = Simulation(configFile)
     sim_dict = Dict{Real, Simulation}()
-    
+
     if CCDName != ""
         include(CCDName)
         sim_base.detector.semiconductors[1].charge_density_model = ccdm
@@ -78,14 +78,14 @@ end
 
 function PlotSingleParticleDetectorResponse(sim::Simulation, fullPath::String,
     impactPosition::CartesianPoint=CartesianPoint{T}(0, 0, 0), prefix::String="",
-    suffix::String="", dir::String=defaultDir, stepLimiter::Integer=1000)::Vector{Event}
+    suffix::String="", dir::String=defaultDir, stepLimiter::Integer=1000, qe=x->1)::Vector{Event}
 
     fileName = split(fullPath, "/")[end]
     strippedName = split(fileName, ".")[1]
     suffix = "_" * strippedName * suffix
 
     gdf = GetHitInformation(fullPath)
-    events = DriftGeant4Events(gdf, sim, impactPosition, stepLimiter=stepLimiter)
+    events = DriftGeant4Events(gdf, sim, impactPosition, stepLimiter=stepLimiter, qe=qe)
     PlotEvents(events, dir, prefix, suffix)
     return events
 end
@@ -93,7 +93,7 @@ end
 function PlotParticleDetectorResponse(sims::AbstractDict{Real, Simulation}, dataDir::String;
     impactPosition::CartesianPoint=CartesianPoint{T}(0, 0, 0), minEnergy::Real=0., maxEnergy::Real=Inf,
     minAngle::Real=0., maxAngle::Real=Inf,
-    prefix::String="", dir::String=defaultDir, maxEvents::Integer=100)::Nothing
+    prefix::String="", dir::String=defaultDir, maxEvents::Integer=100, qe=x->1)::Nothing
 
     println(impactPosition)
 
@@ -105,7 +105,7 @@ function PlotParticleDetectorResponse(sims::AbstractDict{Real, Simulation}, data
         sim = sims[biasRange[i]]
         suffix = @sprintf "_%.1fV" biasRange[i]
         @showprogress for s in fileList
-            PlotSingleParticleDetectorResponse(sim, s, impactPosition, prefix, suffix, dir, maxEvents)
+            PlotSingleParticleDetectorResponse(sim, s, impactPosition, prefix, suffix, dir, maxEvents, qe)
         end
     end
 end
