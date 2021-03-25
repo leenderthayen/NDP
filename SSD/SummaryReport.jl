@@ -16,7 +16,7 @@ function BiasVariation(configFile::String, initVoltage::Real, finalVoltage::Real
     sim_dict = Dict{Real, Simulation}()
 
     if CCDName != ""
-        include(CCDName)
+        #include(CCDName  This line needs to instead be put into the main script you are running
         sim_base.detector.semiconductors[1].charge_density_model = ccdm
     end
 
