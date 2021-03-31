@@ -233,6 +233,44 @@ function Plot1DWeightingPotential(sim::Simulation, dir::String="", prefix::Strin
     end
 end
 
+function Plot1DWeightingPotentialRange(sim::Simulation, initPos::Real, finalPos::Real,length::Integer,contact::Integer=2, dir::String="", prefix::String="", suffix::String="")::Nothing
+
+    @info "Plotting weighting potentials vs z"
+
+    grid = sim.weighting_potentials[contact].grid
+    gridX = collect(grid.x)
+    gridY = collect(grid.y)
+
+    edge = 6e-3
+    tolerance = 5e-4
+
+    thresholdX = maximum(gridX[2:end]-gridX[1:end-1])/2
+    println(gridX[end])
+    thresholdY = maximum(gridY[2:end]-gridY[1:end-1])/2
+    y0 = findlast(x->x==0, collect(grid.y))
+    
+    wps = []
+    posRange = range(initPos, stop=finalPos, length=length)
+    for i in 1:size(posRange,1)
+    	xi = posRange[i]
+	println(xi)
+	x0 = findlast(x->(abs(x-xi)<thresholdX && x<gridX[end]), collect(grid.x))
+	
+    	println(grid[x0, y0, 1])
+        
+        push!(wps,sim.weighting_potentials[contact][x0, y0, :])
+
+    end
+    
+    posStr = map(x->string(x),posRange)
+    poslabels = reshape(posStr, (1,size(posStr)[1])) 
+
+    plot(collect(grid.z), wps, labels = poslabels, xlabel = "Z [m]", ylabel="Weighting potential", size=figSize)
+
+    savefig(dir * prefix * "weighting_potential_vs_z_range$contact" * suffix * extension)
+    
+end
+
 function PlotIDP(sim::Simulation, dir::String="", prefix::String="", suffix::String="")::Nothing
     @info "Plotting IDP along z and top of detector"
 
