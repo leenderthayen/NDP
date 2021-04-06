@@ -52,6 +52,7 @@ G4bool NDDSiPixelSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   if (fHitsCollection->entries() == 0) {
     initPos = pos;
   }
+  initPos = G4ThreeVector(0, 0, 10 * mm); //Hard coding the position of the detector surface to prevent run-time ambiguity.
 
   newHit->SetTrackID(aStep->GetTrack()->GetTrackID());
   newHit->SetEnDep(enDep);
