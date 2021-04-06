@@ -155,7 +155,8 @@ NDDRunAction::~NDDRunAction() {
 void NDDRunAction::BeginOfRunAction(const G4Run*) {
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
   if (analysisManager->IsActive()) {
-    analysisManager->OpenFile(filename);
+    const G4String& filenamec = analysisManager->GetFileName();  //Output name must be specified in the Macro
+    analysisManager->OpenFile(filenamec);
   }
 
   // save Rndm status
