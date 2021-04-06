@@ -303,3 +303,46 @@ function PlotIDP(sim::Simulation, dir::String="", prefix::String="", suffix::Str
     plot(plot(zs, charge_vecz), plot(xs, charge_vecx), plot(xs, charge_vecr), layout=(1, 3), size=figSize)
     savefig(dir * prefix * "IDP_z_and_top_and_r" * suffix * extension)
 end
+
+function Plot1DElectricRange(sim::Simulation, initPos::Real, finalPos::Real,length::Integer, dir::String="", prefix::String="", suffix::String="")::Nothing
+
+    @info "Plotting weighting potentials vs z"
+
+    grid = sim.electric_field.grid
+    gridX = collect(grid.x)
+    gridY = collect(grid.y)
+    gridZ = collect(grid.z)
+
+    edge = 6e-3
+    tolerance = 5e-4
+
+    thresholdX = maximum(gridX[2:end]-gridX[1:end-1])/2
+    println(gridX[end])
+    thresholdY = maximum(gridY[2:end]-gridY[1:end-1])/2
+    y0 = findlast(x->x==0, collect(grid.y))
+    
+    ezs = []
+    posRange = range(initPos, stop=finalPos, length=length)
+    for i in 1:size(posRange,1)
+    	xi = posRange[i]
+	println(xi)
+	x0 = findlast(x->(abs(x-xi)<thresholdX && x<gridX[end]), collect(grid.x))
+	
+    	println(grid[x0, y0, 1])
+        ez = []
+	for z in 1:size(gridZ,1)
+            push!(ez,sim.electric_field[x0, y0, z][3])
+	end
+	
+	push!(ezs, ez)
+
+    end
+    
+    posStr = map(x->string(x),posRange)
+    poslabels = reshape(posStr, (1,size(posStr)[1])) 
+
+    plot(collect(grid.z), ezs, labels = poslabels, xlabel = "Z [m]", ylabel="Ez", size=figSize)
+
+    savefig(dir * prefix * "electric_field_vs_z_range" * suffix * extension)
+    
+end
