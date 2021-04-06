@@ -18,7 +18,8 @@ NDDPixelReadOut::~NDDPixelReadOut() {}
 void NDDPixelReadOut::Construct() {
   G4double siThickness = 2 * mm;
   G4double siOuterRadius = 7.5 * cm;
-  G4double deadLayerThickness = 100. * nm;
+  //G4double deadLayerThickness = 100. * nm;
+  G4double deadLayerThickness = 0. * nm; //Removed the dead layer
 
   G4Material* dummyMat = nullptr;
 
