@@ -64,8 +64,8 @@ void NDDPixelReadOut::Construct() {
                            ((columns + 1) / 2 - row +
                             std::abs((columns + 1) / 2 - column) % 2 / 2. - 2) *
                                pixelSize,
-                           -siThickness / 2.0),
-          logicalPixel, "SiROPixel", logicalROSilicon, false, cn);
+                           -(siThickness + deadLayerThickness)/ 2.0),
+          logicalPixel, "SiROPixel", logicalROSilicon, false, cn); //Added missing variable deadLayerThickness to the Z-coordinate calculation
       cn++;
     }
   }
