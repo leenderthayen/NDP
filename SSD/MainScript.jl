@@ -1,10 +1,10 @@
 using Plots; pyplot(fmt = :png)
 
-include("ReadGeant4Hits.jl")
-include("SetupSSD.jl")
-include("EventSimulation.jl")
-include("WaveformAnalysis.jl")
-include("DigitalFilters.jl")
+include("src/ReadGeant4Hits.jl")
+include("src/SetupSSD.jl")
+include("src/EventSimulation.jl")
+include("src/WaveformAnalysis.jl")
+include("src/DigitalFilters.jl")
 
 @info "Start"
 
