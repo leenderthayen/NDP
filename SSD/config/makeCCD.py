@@ -261,7 +261,7 @@ def main():
         
         stC = input("pspray impurity concentration(mm^-3): ")
         if stC == "":
-            stC = -1.9e16
+            stC = -1.9e19
         else:
             stC = float(stC.strip()) * 1e9
     
@@ -276,7 +276,7 @@ def main():
         
     pC = input("p+ impurity concentration(mm^-3): ")
     if pC == "":
-        pC = -1.9e16
+        pC = -1.9e22
     else:
         pC = float(pC.strip()) * 1e9
     
@@ -288,13 +288,13 @@ def main():
     
     nC = input("n+ impurity concentration(mm^-3): ")
     if nC == "":
-        nC = 1.9e16
+        nC = 1.9e19
     else:
         nC = float(nC.strip()) * 1e9
         
     bulkC = input("Bulk impurity concentration(mm^-3): ")
     if bulkC == "":
-        bulkC = 5.0e10
+        bulkC = 5.0e16
     else:
         bulkC = float(bulkC.strip()) * 1e9
     
@@ -326,7 +326,7 @@ def main():
         if rad == "Linear":
             slope = input("Slope of gradient: ")
             if slope == "":
-                slope = 6e10
+                slope = 3e18
             else:
                 slope = float(slope.strip()) * 1e12
         if rad == "Erf":
@@ -345,6 +345,12 @@ def main():
                 shift = 70e-2
             else:
                 shift = float(height.strip()) * 1e-3
+    
+    removeEdge = input("Remove edges of pixels? (y/n)")
+    if removeEdge == "y: ":
+        removeEdge = True
+    else:
+        removeEdge = False
         
      ################# Build CCD ######################   
         
@@ -423,63 +429,71 @@ def main():
     
     file_content += "function SolidStateDetectors.get_charge_density(cdm::CustomChargeDensity{T}, pt::SolidStateDetectors.AbstractCoordinatePoint{T})::T where {T}\n"
     
+    file_content += "\tcd::T = 0\n"
+    
     if rad == "Erf":
-        file_content += ("\t(pt in cdm.G1) * SolidStateDetectors.get_charge_density(cdm.L1, pt)"
-                         " + " + str(height) + " * (1 + erf((sqrt(pt[1]^2+pt[2]^2)-(" + str(shift) + "))/(2*" + str(stdev) + ")))/2 +\n")
+        file_content += ("\tcd += (pt in cdm.G1) * SolidStateDetectors.get_charge_density(cdm.L1, pt)"
+                         " + " + str(height) + " * (1 + erf((sqrt(pt[1]^2+pt[2]^2)-(" + str(shift) + "))/(2*" + str(stdev) + ")))/2\n")
                      
-    else: file_content += "\t(pt in cdm.G1) * SolidStateDetectors.get_charge_density(cdm.L1, pt) +\n"
+    else: file_content += "\tcd += (pt in cdm.G1) * SolidStateDetectors.get_charge_density(cdm.L1, pt)\n"
                      
-    file_content += "\t(pt in cdm.G2) * SolidStateDetectors.get_charge_density(cdm.L2, pt) +\n"
+    file_content += "\tcd += (pt in cdm.G2) * SolidStateDetectors.get_charge_density(cdm.L2, pt)\n"
     
     for n in pixels:
-        file_content += "\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt) +\n"
+        file_content += "\tcd += (pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)\n"
+    
+    rings = find_rings(N)
+    if removeEdge:
+        file_content += "\tif (sqrt(pt[1]^2+pt[2]^2) <" + str(rings*R + np.floor((rings+1)/2)*(np.sqrt(3)*R/2)+ s) + ")\n"
     
     if (ptype == "pspray" or ptype == "both"):
         for n in psprays:
-            file_content += "\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt) +\n"
+            file_content += "\tcd += (pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)\n"
     
     if (ptype == "pstop" or ptype == "both"):
         if tw > 0 :
             for n in pstops:
-                file_content += "\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt) +\n"
+                file_content += "\tcd += (pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)\n"
     
     if grad == "Gauss":
-        file_content += ("\t(pt in cdm.G" +str(pgrad) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(pgrad) + ", pt)"
-                         " * exp(-(pt[3]-" + str(ph) + ")^2/(2*" + str(pstraggle) + "^2)) +\n")
+        file_content += ("\tcd += (pt in cdm.G" +str(pgrad) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(pgrad) + ", pt)"
+                         " * exp(-(pt[3]-" + str(ph) + ")^2/(2*" + str(pstraggle) + "^2))\n")
         for n in pixelgrads:
-            file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
-                         " * exp(-(pt[3]-" + str(H-nh) + ")^2/(2*" + str(nstraggle) + "^2)) +\n")
+            file_content += ("\tcd += (pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
+                         " * exp(-(pt[3]-" + str(H-nh) + ")^2/(2*" + str(nstraggle) + "^2))\n")
         
         if (ptype == "pspray" or ptype == "both"):
             for n in pspraygrads:
-                file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
-                                 " * exp(-(pt[3]-" + str(H-th) + ")^2/(2*" + str(psstraggle) + "^2)) +\n")
+                file_content += ("\tcd += (pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
+                                 " * exp(-(pt[3]-" + str(H-th) + ")^2/(2*" + str(psstraggle) + "^2))\n")
             
         if (ptype == "pstop" or ptype == "both"):
             if tw > 0 :
                 for n in pstopgrads:
-                    file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
-                                     " * exp(-(pt[3]-" + str(H-th) + ")^2/(2*" + str(psstraggle) + "^2)) +\n")
+                    file_content += ("\tcd += (pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
+                                     " * exp(-(pt[3]-" + str(H-th) + ")^2/(2*" + str(psstraggle) + "^2))\n")
     
     if grad == "Erf":
-        file_content += ("\t(pt in cdm.G" +str(pgrad) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(pgrad) + ", pt)"
-                         " * erfc(-(pt[3]-(" + str(ph+2*pstraggle) + "))/(2*" + str(pstraggle) + "))/2 +\n")
+        file_content += ("\tcd += (pt in cdm.G" +str(pgrad) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(pgrad) + ", pt)"
+                         " * erfc(-(pt[3]-(" + str(ph+2*pstraggle) + "))/(2*" + str(pstraggle) + "))/2\n")
         for n in pixelgrads:
-            file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
-                             " * (1 + erf(-(pt[3]-(" + str(H-nh-(2*nstraggle)) + "))/(2*" + str(nstraggle) + ")))/2 +\n")
+            file_content += ("\tcd += (pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
+                             " * (1 + erf(-(pt[3]-(" + str(H-nh-(2*nstraggle)) + "))/(2*" + str(nstraggle) + ")))/2\n")
         
         if (ptype == "pspray" or ptype == "both"):
             for n in pspraygrads:
-                file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
-                                 " * (1 + erf(-(pt[3]-(" + str(H-th-(2*pstraggle)) + "))/(2*" + str(psstraggle) + ")))/2 +\n")  
+                file_content += ("\tcd += (pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
+                                 " * (1 + erf(-(pt[3]-(" + str(H-th-(2*pstraggle)) + "))/(2*" + str(psstraggle) + ")))/2\n")  
         
         if (ptype == "pstop" or ptype == "both"):
             if tw > 0 :
                 for n in pstopgrads:
-                    file_content += ("\t(pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
-                                     " * (1 + erf(-(pt[3]-(" + str(H-th-(2*pstraggle)) + "))/(2*" + str(psstraggle) + ")))/2 +\n")  
-    
-    file_content = file_content[:-2]
+                    file_content += ("\tcd += (pt in cdm.G" +str(n) + ") * SolidStateDetectors.get_charge_density(cdm.L" +str(n) + ", pt)"
+                                     " * (1 + erf(-(pt[3]-(" + str(H-th-(2*pstraggle)) + "))/(2*" + str(psstraggle) + ")))/2\n")  
+    if removeEdge:
+        file_content += "\tend\n"
+    #file_content = file_content[:-2]
+    file_content += "\treturn cd"
     file_content += "\nend\n\n"
     
     ############## Build Geometries and Charge Distributions ################
