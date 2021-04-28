@@ -12,6 +12,10 @@
 #include "G4EmStandardPhysics_option3.hh"
 #include "G4EmLivermorePhysics.hh"
 #include "G4EmPenelopePhysics.hh"
+#include "G4EmExtraPhysics.hh"
+#include "G4EmParameters.hh"
+#include "G4IonPhysics.hh"
+#include "G4IonElasticPhysics.hh"
 
 #include "G4IonConstructor.hh"
 #include "G4NuclideTable.hh"
@@ -43,13 +47,43 @@ NDDPhysicsList::NDDPhysicsList() : G4VModularPhysicsList() {
 
   pMessenger = new NDDPhysicsListMessenger(this);
 
-  SetVerboseLevel(1);
+  G4int verb = 1;
+  SetVerboseLevel(verb);
 
   // EM physics
   RegisterPhysics(new G4EmLivermorePhysics(1));
+  G4EmParameters* param = G4EmParameters::Instance();
+  param->SetAugerCascade(true);
+  param->SetStepFunction(1., 1*CLHEP::mm);
+  param->SetStepFunctionMuHad(1., 1*CLHEP::mm);
 
+  // Ion Elastic scattering
+  RegisterPhysics( new G4IonElasticPhysics(verb));
+
+  // Ion Inelastic physics
+  RegisterPhysics( new G4IonPhysics(verb));
+  ////RegisterPhysics( new G4IonINCLXXPhysics(verb));
+
+  // Decay physics
   RegisterPhysics(new G4DecayPhysics());
   RegisterPhysics(new G4RadioactiveDecayPhysics());
+  // // Radioactive decay
+  // RegisterPhysics(new BiasedRDPhysics());
+
+  // Gamma-Nuclear Physics
+  G4EmExtraPhysics* gnuc = new G4EmExtraPhysics(verb);
+  gnuc->ElectroNuclear(false);
+  gnuc->MuonNuclear(false);
+  RegisterPhysics(gnuc);
+
+  //add new units for radioActive decays
+  //
+  new G4UnitDefinition( "millielectronVolt", "meV", "Energy", 1.e-3*eV);
+  // Mandatory for G4NuclideTable
+  // Half-life threshold must be set small or many short-lived isomers
+  // will not be assigned life times (default to 0)
+  G4NuclideTable::GetInstance()->SetThresholdOfHalfLife(0.1*picosecond);
+  G4NuclideTable::GetInstance()->SetLevelTolerance(1.0*eV);
 
   // add new units for radioActive decays
   //

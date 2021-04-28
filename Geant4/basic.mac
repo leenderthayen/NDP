@@ -55,11 +55,11 @@
 #                 EVENT GENERATION                 #
 ####################################################
 # Particles
-#/gps/particle ion
+/gps/particle ion
 
 #/gps/ion 56 133 0 0 #133Ba
 #/gps/ion 83 207 0 0 #207Bi
-#/gps/ion 50 113 0 0 #113Sn
+/gps/ion 50 113 0 0 #113Sn
 #/gps/ion 58 139 0 0 #139Ce
 #/gps/ion 80 203 0 0 #203Hg
 
@@ -101,10 +101,12 @@
 
 #/gps/source/clear
 #/gps/source/add 1.0
-/gps/particle proton
-/gps/energy 30 keV
-/gps/direction 0 0 1
+#/gps/particle proton
+#/gps/energy 30 keV
+#/gps/direction 0 0 1
 #/gps/ang/type iso
+/gps/energy 0 keV
+/gps/ang/type iso
 /gps/position 0 0 0 cm
 
 # Delete unwanted sources
@@ -115,7 +117,7 @@
 ####################################################
 #                       RUN                        #
 ####################################################
-
+/analysis/setFileName 113Sn_test.root
 /run/particle/dumpCutValues
 
 /run/printProgress 100
