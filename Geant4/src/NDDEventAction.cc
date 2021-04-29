@@ -50,7 +50,7 @@ void NDDEventAction::EndOfEventAction(const G4Event* evt) {
   std::vector<G4double> pixelEnDep;
   pixelEnDep.resize(128);
 
-  for (G4int iHit = 0; iHit < nrHits; iHit++) {
+  for (int iHit = 0; iHit < nrHits; iHit++) {
     NDDSiPixelHit* hit = (*SiPixelHC)[iHit];
     G4ThreeVector pos = hit->GetPos();
     G4ThreeVector mom = hit->GetMomentum();
@@ -90,7 +90,7 @@ void NDDEventAction::EndOfEventAction(const G4Event* evt) {
       enDepDead, enDepFoil, enDepCarrier, enDepSourceHolder,
       bremsstrahlungLoss);
 
-  for (G4int i = 0; i < pixelEnDep.size(); i++) {
+  for (int i = 0; i < pixelEnDep.size(); i++) {
     if (pixelEnDep[i] > 0) {
       FillH1Hist(8 + i, pixelEnDep[i]);
     }
@@ -99,13 +99,13 @@ void NDDEventAction::EndOfEventAction(const G4Event* evt) {
   FillPixelTuple(evt->GetEventID(), classification, enPrimary,
                            pixelEnDep);
 
-  for (G4int i = 0; i < visitedVolumes.size(); i++) {
+  for (int i = 0; i < visitedVolumes.size(); i++) {
     VolumeVisit v = visitedVolumes[i];
     FillVolumesTuple(evt->GetEventID(), classification, enPrimary,
                                v.currentEn, v.time, v.volume, v.particleName);
   }
 
-  for (G4int i = 0; i < primaryEvents.size(); i++) {
+  for (int i = 0; i < primaryEvents.size(); i++) {
     PrimaryEvent pe = primaryEvents[i];
     FillPrimaryTuple(evt->GetEventID(), pe.trackID, classification,
                      pe.energy, pe.creationTime, pe.creationPos.x(),
@@ -154,7 +154,7 @@ G4int NDDEventAction::ClassifyEvent() {
   G4int deadHits = 0;
   G4int foilHits = 0;
 
-  for (G4int i = 0; i < visitedVolumes.size(); i++) {
+  for (int i = 0; i < visitedVolumes.size(); i++) {
     VolumeVisit v = visitedVolumes[i];
     if (v.volume.find("Foil") != std::string::npos) {
       foilHits++;

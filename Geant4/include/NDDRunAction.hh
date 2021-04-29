@@ -24,7 +24,7 @@ class NDDRunAction : public G4UserRunAction {
   void SetRndmFreq(G4int val) { fSaveRndm = val; }
   G4int GetRndmFreq() const { return fSaveRndm; }
 
-  inline void SetFilename(const G4String& s) { filename = s;}
+  inline void SetFilename(const G4String& f) { filename = f;}
   inline const G4String& GetFilename() const { return filename; }
 
  private:

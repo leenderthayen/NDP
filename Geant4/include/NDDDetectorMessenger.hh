@@ -27,6 +27,7 @@ class NDDDetectorMessenger : public G4UImessenger {
   G4UIcmdWith3VectorAndUnit* detPosCmd;
   G4UIcmdWithAnInteger* sourceIDCmd;
   G4UIcmdWithADoubleAndUnit* siThicknessCmd;
+  G4UIcmdWithAnInteger* buildBackCmd;
 };
 
 #endif

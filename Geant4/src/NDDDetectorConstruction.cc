@@ -11,6 +11,10 @@
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
+#include "G4Polyhedra.hh"
+#include "G4Tubs.hh"
+#include "G4LogicalVolume.hh"
+#include "G4VPhysicalVolume.hh"
 
 #include "G4UserLimits.hh"
 #include "G4SystemOfUnits.hh"
@@ -20,12 +24,12 @@ NDDDetectorConstruction::NDDDetectorConstruction()
       logicalWorld(0),
       physicalWorld(0),
       siThickness(2. * mm),
-      siBackingThickness(3. * mm),
-      siOuterRadius(7.5 * cm),
+      siBackingThickness(1. * mm),
+      siOuterRadius(6.157 * cm),
       stepLimitMyl(0),
       stepLimitCar(0) {
   detMess = new NDDDetectorMessenger(this);
-  detectorPosition = G4ThreeVector(0, 0, 10 * mm); //Note: SiPixelSD.cc has a separate hard-coded detector position variable.
+  detectorPosition = G4ThreeVector(0, 0, 10 * mm);
 }
 
 NDDDetectorConstruction::~NDDDetectorConstruction() {
@@ -112,6 +116,9 @@ void NDDDetectorConstruction::BuildMaterials() {
   bismuthMaterial = new G4Material("Bismuth", z = 83, a = 208.980 * g / mole,
                                    density = 9.78 * g / cm3);
 
+  cadmiumMaterial = new G4Material("Cadmium", z = 48, a = 112.414 * g / mole,
+                                  density = 8.65 * g / cm3);
+
   G4Element* H = new G4Element("Hydrogen", "H", z = 1., a = 1.0008 * g / mole);
   mylarMaterial = new G4Material("Mylar", 1.370 * g / cm3, 3);
   mylarMaterial->AddElement(C, fractionmass = 0.62500);
@@ -148,6 +155,12 @@ void NDDDetectorConstruction::BuildMaterials() {
   G4Element* Cl = new G4Element("Chlorine", "Cl", z = 17, a = 35.5 * g / mole);
   CaCl2Material->AddElement(Ca, fractionmass = 0.387);
   CaCl2Material->AddElement(Cl, fractionmass = 0.613);
+
+  //96% Alumina Ceramic. 96% Al2O3 + 4% CaO
+  alumCeramicMaterial = new G4Material("AlCeramic", 3.72 * g / cm3, 3);
+  alumCeramicMaterial->AddElement(Al, fractionmass = 0.508);
+  alumCeramicMaterial->AddElement(O, fractionmass = 0.463);
+  alumCeramicMaterial->AddElement(Ca, fractionmass = 0.029);
 
   berylliumMaterial = new G4Material("Beryllium", z = 4, a = 9.0121 * g / mole,
                                      density = 1.85 * g / cm3);
@@ -193,17 +206,111 @@ void NDDDetectorConstruction::BuildSiDetector() {
       G4ThreeVector(xSilicon, ySilicon, zSilicon),
       logicalSilicon, "physicalSilicon", logicalWorld, false, 0);
 
-  // Alumina backing (?)
-  G4double zBack =
-      zSilicon + siThickness / 2. + siBackingThickness / 2.;
+  //Varaibles for the Backing ------------------------------------------------
+  //Ceramic Dimensions
+  G4double ceramicDiameter = 14.7 * cm;
+  G4double czPlanes[2] = {0., siBackingThickness};
+  G4double crInner[2] = {0., 0.};
+  G4double crOuter[2] = {ceramicDiameter / 2.0, ceramicDiameter / 2.0};
+  G4double zBack = zSilicon + siThickness / 2.;
 
-  solidBacking = new G4Tubs("Backing", 0., siOuterRadius,
-                            siBackingThickness / 2., 0., 360. * deg);
-  logicalBacking =
-      new G4LogicalVolume(solidBacking, aluminaMaterial, "Backing");
-  physicalBacking = new G4PVPlacement(
-      0, G4ThreeVector(xSilicon, ySilicon, zBack),
-      logicalBacking, "Backing", logicalWorld, false, 0);
+  //Bottom of the Armor
+  G4double bArmorDiameter = 17.78 * cm;
+  G4double bArmorThickness = 0.5512 * cm;
+  G4double zbArmor = zSilicon + siThickness / 2. + siBackingThickness + bArmorThickness / 2.;
+
+  //Rogers Material Transition board
+  G4double RO4350Diameter = 17.78 * cm;
+  G4double RO4350Thickness = 0.4572 * cm;
+  G4double zRoger =
+      zSilicon + siThickness / 2. + siBackingThickness + bArmorThickness + RO4350Thickness / 2.0;
+
+  //First Copper Mount
+  G4double CuMount1Dia = 19.05 * cm;
+  G4double CuMount1Thick = 0.57404 * cm;
+  G4double zCuMount1 =
+      zSilicon + siThickness / 2. + siBackingThickness + bArmorThickness + RO4350Thickness + CuMount1Thick/2.0;
+
+  //Second Copper Mount
+  G4double CuMount2InnerDia = 13.8176 * cm;
+  G4double CuMount2Dia = 19.05 * cm;
+  G4double CuMount2Thick = 0.7874 * cm;
+  G4double zCuMount2 =
+      zSilicon + siThickness / 2. + siBackingThickness + bArmorThickness + RO4350Thickness + CuMount1Thick + CuMount2Thick/2.0;
+
+  //Detector Armor Dimensions
+  G4double ArmorThickness = 0.9525 * cm;
+  G4double ArmorRad = 8.89 * cm;
+  G4double ArmorInRad = 14.7066 * cm;
+  G4double azPlanes[2] = {-(ArmorThickness/1.5), (ArmorThickness/1.5)};
+  G4double arInner[2] = {0., 0.};
+  G4double arOuter[2] = {ArmorInRad / 2.0, ArmorInRad / 2.0};
+  G4double zCuArmor = zSilicon + siThickness / 2. + siBackingThickness - ArmorThickness/2.0;
+  //--------------------------------------------------------------------------
+
+  if(backingConfig>0) {
+    // Alumina backing (?)
+    solidBacking = new G4Polyhedra("Backing", 0, 360. * deg, 16, 2, czPlanes, crInner, crOuter);
+    logicalBacking =
+        new G4LogicalVolume(solidBacking, alumCeramicMaterial, "Backing");
+    physicalBacking = new G4PVPlacement(
+        0, G4ThreeVector(xSilicon, ySilicon, zBack),
+        logicalBacking, "Backing", logicalWorld, false, 0);
+
+
+    // Bottom of the Armor and copper board
+    solidbArmor = new G4Tubs("Backing", 0., bArmorDiameter/2.0,
+                              bArmorThickness / 2., 0., 360. * deg);
+    logicalbArmor =
+        new G4LogicalVolume(solidbArmor, copperMaterial, "Backing");
+    physicalbArmor = new G4PVPlacement(
+        0, G4ThreeVector(xSilicon, ySilicon, zbArmor),
+        logicalbArmor, "Backing", logicalWorld, false, 0);
+
+
+    // Rogers Material Transition board
+    solidRoger = new G4Tubs("Backing", 0., RO4350Diameter/2.0,
+                              RO4350Thickness / 2., 0., 360. * deg);
+    logicalRoger =
+        new G4LogicalVolume(solidRoger, alumCeramicMaterial, "Backing");
+    physicalRoger = new G4PVPlacement(
+        0, G4ThreeVector(xSilicon, ySilicon, zRoger),
+        logicalRoger, "Backing", logicalWorld, false, 0);
+
+
+    // First Copper Mount
+    solidCM1 = new G4Tubs("Backing", 0., CuMount1Dia/2.0,
+                              CuMount1Thick / 2., 0., 360. * deg);
+    logicalCM1 =
+        new G4LogicalVolume(solidCM1, copperMaterial, "Backing");
+    physicalCM1 = new G4PVPlacement(
+        0, G4ThreeVector(xSilicon, ySilicon, zCuMount1),
+        logicalCM1, "Backing", logicalWorld, false, 0);
+
+
+    // Second Copper Mount
+    solidCM2 = new G4Tubs("Backing", CuMount2InnerDia/2.0, CuMount2Dia/2.0,
+                              CuMount2Thick / 2., 0., 360. * deg);
+    logicalCM2 =
+        new G4LogicalVolume(solidCM2, copperMaterial, "Backing");
+    physicalCM2 = new G4PVPlacement(
+        0, G4ThreeVector(xSilicon, ySilicon, zCuMount2),
+        logicalCM2, "Backing", logicalWorld, false, 0);
+
+    // Detector Armor
+    ArmorTube = new G4Tubs("Backing", 0., ArmorRad,
+                                  ArmorThickness / 2., 0., 360. * deg);
+
+    // Void inside of the Armor
+    ArmorInVoid = new G4Polyhedra("Backing", 0, 360. * deg, 16, 2, azPlanes, arInner, arOuter);
+    CopperArmor = new G4SubtractionSolid("Backing", ArmorTube, ArmorInVoid, 0, G4ThreeVector());
+    logicalCArmor =
+        new G4LogicalVolume(CopperArmor, copperMaterial, "Backing");
+    physicalCArmor = new G4PVPlacement(
+        0, G4ThreeVector(xSilicon, ySilicon, zCuArmor),
+        logicalCArmor, "Backing", logicalWorld, false, 0);
+  }
+
 }
 
 void NDDDetectorConstruction::BuildSources() {
@@ -222,6 +329,7 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
   G4double ringOuterRadius, ringInnerRadius;
   G4double eastFoilThickness, westFoilThickness;
   G4double ringThickness;
+  G4double AlBSide,AlBThickness;
 
   G4LogicalVolume* motherVolume = logicalWorld;
 
@@ -310,13 +418,21 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
         logicalSourceHolder, "SourceHolder", motherVolume, false, 0);
   } else if (id == 2) {
     // 133Ba 500nm, quasi sealed
-  } else if (id == 3 || id == 4) {
+  } else if (id == 3 || id == 4 || id == 5) {
     if (id == 3) {
       // 207Bi 5 um
       carrierThickness = 7. * um;
-    } else {
+      carrierMaterial = bismuthMaterial;
+
+    } else if (id == 4) {
       // 113Sn, 139Ce 5 um
       carrierThickness = 1. * nm;
+      carrierMaterial = tinMaterial;
+    }
+    else {
+      // 109Cd
+      carrierThickness = 1. * nm;
+      carrierMaterial = cadmiumMaterial;
     }
     foilRadius = 0.87 * 2.54 / 2.0 * cm;
     eastFoilThickness = 5.0 * um;
@@ -325,6 +441,7 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
     ringOuterRadius = 2.54 / 2.0 * cm;
     ringThickness = 0.13 * 2.54 * cm;
 
+    //Front Foil
     solidFoil = new G4Tubs("Foil", 0., foilRadius,
                                eastFoilThickness / 2.0, 0, 360. * deg);
     logicalFoil =
@@ -334,6 +451,17 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
         G4ThreeVector(pos.x(), pos.y(),
                       pos.z() + (carrierThickness + eastFoilThickness) / 2.0),
         logicalFoil, "Foil", motherVolume, false, 0);
+
+    //Back Foil
+    solidbackFoil = new G4Tubs("Foil", 0., foilRadius,
+                               eastFoilThickness / 2.0, 0, 360. * deg);
+    logicalbackFoil =
+        new G4LogicalVolume(solidbackFoil, mylarMaterial, "Foil");
+    physicalbackFoil = new G4PVPlacement(
+        0,
+        G4ThreeVector(pos.x(), pos.y(),
+                      pos.z() - (carrierThickness + eastFoilThickness) / 2.0),
+        logicalbackFoil, "Foil", motherVolume, false, 0);
 
     // solidWestFoil = new G4Tubs("WestFoil", 0., foilRadius,
     //                            westFoilThickness / 2.0, 0, 360. * deg);
@@ -347,7 +475,7 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
     solidCarrier = new G4Tubs("Carrier", 0.0, carrierRadius,
                               carrierThickness / 2.0, 0, 360. * deg);
     logicalCarrier =
-        new G4LogicalVolume(solidCarrier, bismuthMaterial, "Carrier");
+        new G4LogicalVolume(solidCarrier, carrierMaterial, "Carrier");
     physicalCarrier =
         new G4PVPlacement(0, G4ThreeVector(pos.x(), pos.y(), pos.z()),
                           logicalCarrier, "Carrier", motherVolume, false, 0);
@@ -360,6 +488,21 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
     physicalSourceHolder = new G4PVPlacement(
         0, G4ThreeVector(pos.x(), pos.y(), pos.z()), logicalSourceHolder,
         "SourceHolder", motherVolume, false, 0);
+  }
+  else if (id == 6) {
+
+    //Manitoba Source Holder
+    AlBSide = 2.2606 * cm;
+    AlBThickness = 1.2446 * cm;
+
+    //Al Block of the Source holder
+    AlBlock = new G4Box("SourceHolder", AlBSide/2.0, AlBSide/2.0, AlBThickness/2.0);
+    logicalAlBlock =
+        new G4LogicalVolume(AlBlock, aluminiumMaterial, "SourceHolder");
+
+    physicalAlBlock = new G4PVPlacement(
+        0, G4ThreeVector(pos.x(), pos.y(), pos.z()),
+        logicalAlBlock, "SourceHolder", motherVolume, false, 0);
   }
 }
 
