@@ -29,10 +29,12 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
 
   inline void AddSourceID(G4int i) { sourceIDs.push_back(i); };
   inline void AddSourcePosition(G4ThreeVector v) { sourcePos.push_back(v); };
-  inline void SetPixelRings(G4int r) { pixelRings = r; };
   inline void SetDetectorPosition(G4ThreeVector v) { detectorPosition = v;}
+  inline void SetSiDetectorThickness(G4double d) {siThickness = d;}
 
  private:
+  friend class NDDPixelReadOut;
+
   void BuildWorld();
   void BuildMaterials();
   void BuildSiDetector();
@@ -53,15 +55,12 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   G4double siOuterRadius;
   G4double carrierThickness;
   G4double mylarThickness;
-  G4double deadLayerThickness;
   G4double carrierRadius;
   G4double sourceRadius;
   G4double stepSize;
 
   std::vector<G4int> sourceIDs;
   std::vector<G4ThreeVector> sourcePos;
-
-  G4int pixelRings;
 
   G4Material* airMaterial;
   G4Material* vacuumMaterial;
@@ -97,10 +96,6 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   G4LogicalVolume* logicalBacking;
   G4VPhysicalVolume* physicalBacking;
 
-  G4Tubs* solidDead;
-  G4LogicalVolume* logicalDead;
-  G4VPhysicalVolume* physicalDead;
-
   G4Tubs* solidSourceHolder;
   G4LogicalVolume* logicalSourceHolder;
   G4VPhysicalVolume* physicalSourceHolder;
@@ -114,7 +109,6 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   G4VPhysicalVolume* physicalCarrier;
 
   G4UserLimits* stepLimitMyl;
-  G4UserLimits* stepLimitDead;
   G4UserLimits* stepLimitCar;
 };
 

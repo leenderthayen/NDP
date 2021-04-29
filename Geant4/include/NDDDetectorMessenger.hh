@@ -8,6 +8,8 @@ class NDDDetectorConstruction;
 class G4UIdirectory;
 class G4UIcmdWith3VectorAndUnit;
 class G4UIcmdWithAnInteger;
+class G4UIcmdWithABool;
+class G4UIcmdWithADoubleAndUnit;
 
 class NDDDetectorMessenger : public G4UImessenger {
  public:
@@ -24,7 +26,7 @@ class NDDDetectorMessenger : public G4UImessenger {
   G4UIcmdWith3VectorAndUnit* sourcePosCmd;
   G4UIcmdWith3VectorAndUnit* detPosCmd;
   G4UIcmdWithAnInteger* sourceIDCmd;
-  G4UIcmdWithAnInteger* pixelRingsCmd;
+  G4UIcmdWithADoubleAndUnit* siThicknessCmd;
 };
 
 #endif

@@ -24,10 +24,10 @@ void NDDSteppingAction::UserSteppingAction(const G4Step *aStep) {
   G4VPhysicalVolume *pVolPost =
       aStep->GetPostStepPoint()->GetTouchableHandle()->GetVolume();
 
-  if (pVol && (particleName == "e-" || particleName == "gamma")) {
+  if (pVol && (particleName == "e-" || particleName == "gamma" || particleName == "e+")) {
     eventAction->AddVisitedVolume(aStep->GetPreStepPoint()->GetTotalEnergy(),
                                   aStep->GetPreStepPoint()->GetGlobalTime(),
-                                  pVol->GetName());
+                                  pVol->GetName(), particleName);
   }
 
   // if (pVol->GetName() == "Dead") {

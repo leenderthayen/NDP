@@ -76,7 +76,7 @@ NDDRunAction::NDDRunAction()
   }
 
   analysisManager->CreateNtuple("energy", "Energy variables");
-  analysisManager->CreateNtupleIColumn("iD");
+  analysisManager->CreateNtupleIColumn("eventID");
   analysisManager->CreateNtupleIColumn("classification");
   analysisManager->CreateNtupleDColumn("enPrimary");
   analysisManager->CreateNtupleDColumn("enSi");
@@ -88,7 +88,7 @@ NDDRunAction::NDDRunAction()
   analysisManager->FinishNtuple();
 
   analysisManager->CreateNtuple("spaceTime", "Position and timing variables");
-  analysisManager->CreateNtupleIColumn("iD");
+  analysisManager->CreateNtupleIColumn("eventID");
   analysisManager->CreateNtupleIColumn("classification");
   analysisManager->CreateNtupleDColumn("angleSourceOut");
   analysisManager->CreateNtupleDColumn("angleOut");
@@ -98,7 +98,8 @@ NDDRunAction::NDDRunAction()
   analysisManager->FinishNtuple();
 
   analysisManager->CreateNtuple("hits", "Detector hits");
-  analysisManager->CreateNtupleIColumn("iD");
+  analysisManager->CreateNtupleIColumn("eventID");
+  analysisManager->CreateNtupleIColumn("trackID");
   analysisManager->CreateNtupleIColumn("classification");
   analysisManager->CreateNtupleDColumn("enPrimary");
   analysisManager->CreateNtupleDColumn("eDep");
@@ -109,12 +110,12 @@ NDDRunAction::NDDRunAction()
   analysisManager->CreateNtupleDColumn("py");
   analysisManager->CreateNtupleDColumn("pz");
   analysisManager->CreateNtupleDColumn("time");
-  analysisManager->CreateNtupleIColumn("particle");
   analysisManager->CreateNtupleIColumn("pixelNumber");
+  analysisManager->CreateNtupleSColumn("particle");
   analysisManager->FinishNtuple();
 
   analysisManager->CreateNtuple("pixelEnergies", "Pixel hits");
-  analysisManager->CreateNtupleIColumn("iD");
+  analysisManager->CreateNtupleIColumn("eventID");
   analysisManager->CreateNtupleIColumn("classification");
   analysisManager->CreateNtupleDColumn("enPrimary");
   for (G4int i = 1; i <= 128; i++) {
@@ -130,13 +131,28 @@ NDDRunAction::NDDRunAction()
 
   analysisManager->CreateNtuple("VisitedVolumes",
                                 "Visited volumes and corresponding energies");
-  analysisManager->CreateNtupleIColumn("iD");
+  analysisManager->CreateNtupleIColumn("eventID");
   analysisManager->CreateNtupleIColumn("classification");
   analysisManager->CreateNtupleDColumn("primary");
   analysisManager->CreateNtupleDColumn("currentEn");
   analysisManager->CreateNtupleDColumn("time");
   analysisManager->CreateNtupleSColumn("volume");
+  analysisManager->CreateNtupleSColumn("particle");
   analysisManager->FinishNtuple();
+
+  analysisManager->CreateNtuple("PrimaryEnergies", "Particles created and their initial properties");
+  analysisManager->CreateNtupleIColumn("eventID");
+  analysisManager->CreateNtupleIColumn("trackID");
+  analysisManager->CreateNtupleIColumn("classification");
+  analysisManager->CreateNtupleDColumn("energy");
+  analysisManager->CreateNtupleDColumn("time");
+  analysisManager->CreateNtupleDColumn("x");
+  analysisManager->CreateNtupleDColumn("y");
+  analysisManager->CreateNtupleDColumn("z");
+  analysisManager->CreateNtupleSColumn("process");
+  analysisManager->CreateNtupleSColumn("name");
+  analysisManager->FinishNtuple();
+
 
   for (G4int i = 0; i < 5; i++) {
     analysisManager->SetNtupleActivation(i, true);

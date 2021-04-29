@@ -49,35 +49,22 @@ G4bool NDDSiPixelSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
 
   G4ThreeVector pos = aStep->GetPreStepPoint()->GetPosition();
 
-  if (fHitsCollection->entries() == 0) {
-    initPos = pos;
-  }
-  initPos = G4ThreeVector(0, 0, 10 * mm); //Hard coding the position of the detector surface to prevent run-time ambiguity.
+  G4ThreeVector pixelPos = pVol->GetObjectTranslation();
 
   newHit->SetTrackID(aStep->GetTrack()->GetTrackID());
   newHit->SetEnDep(enDep);
-  newHit->SetPos(G4ThreeVector(pos.x(), pos.y(), pos.z() - initPos.z()));
+  newHit->SetPos(G4ThreeVector(pos.x(), pos.y(), pos.z() - pixelPos.z())); // Probably offset by half the pixel width
   newHit->SetTime(aStep->GetPreStepPoint()->GetGlobalTime());
   newHit->SetMomentum(aStep->GetPreStepPoint()->GetMomentum());
   newHit->SetParticleCode(aStep->GetTrack()->GetDefinition()->GetPDGEncoding());
+  newHit->SetParticleName(aStep->GetTrack()->GetDefinition()->GetParticleName());
 
   G4TouchableHistory* theTouchable =
       (G4TouchableHistory*)(aStep->GetPreStepPoint()->GetTouchable());
   newHit->SetPixelNumber(theTouchable->GetVolume()->GetCopyNo());
   newHit->SetPixelName(theTouchable->GetVolume()->GetName());
 
-  // G4double* field = new G4double[4];
-  // const G4double point[4] = {pos.x() / mm, pos.y() / mm, pos.z() / mm, 0.};
-  // const G4FieldManager* fman = pVol->GetLogicalVolume()->GetFieldManager();
-
-  // if (fman) {
-  //   fman->GetDetectorField()->GetFieldValue(point, field);
-  // }
-  // newHit->SetField(G4ThreeVector(field[0], field[1], field[2]));
-
   fHitsCollection->insert(newHit);
-
-  //delete[] field;
 
   return true;
 }

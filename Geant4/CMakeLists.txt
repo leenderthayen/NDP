@@ -22,14 +22,14 @@ include(${Geant4_USE_FILE})
 
 find_package(ROOT REQUIRED)
 if(NOT ROOT_FOUND)
-  message(STATUS "CLASS: ROOT package not found. --> CLASS disabled")
+  message(STATUS "NDD: ROOT package not found. --> NDD disabled")
   return()
 endif()
 
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
 #
-include_directories(${PROJECT_SOURCE_DIR}/include 
+include_directories(${PROJECT_SOURCE_DIR}/include
 	${Geant4_INCLUDE_DIRS}
 	${ROOT_INCLUDE_DIRS})
 
@@ -47,7 +47,7 @@ target_link_libraries(NDD ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 # relies on these scripts being in the current working directory.
 #
 set(NDD_SCRIPTS
-    vis.mac gui.mac run.mac 45Ca.txt
+    vis.mac gui.mac run.mac 45Ca.txt basic.mac
   )
 
 foreach(_script ${CLASS_SCRIPTS})
@@ -62,4 +62,3 @@ endforeach()
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
 install(TARGETS NDD DESTINATION bin)
-

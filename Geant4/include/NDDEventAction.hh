@@ -17,6 +17,16 @@ struct VolumeVisit {
   G4double currentEn;
   G4double time;
   G4String volume;
+  G4String particleName;
+};
+
+struct PrimaryEvent {
+  G4int trackID;
+  G4double energy;
+  G4double creationTime;
+  G4ThreeVector creationPos;
+  G4String creationProcess;
+  G4String particleName;
 };
 
 class NDDRunAction;
@@ -32,10 +42,6 @@ class NDDEventAction : public G4UserEventAction {
   virtual void BeginOfEventAction(const G4Event*);
   virtual void EndOfEventAction(const G4Event*);
 
-  inline void SetPrimaryEnergy(const G4double& pe) { enPrimary = pe; };
-  inline void AddDepositedEnSi(const G4double& e) {
-    enDepSi += e;
-  };
   inline void AddDepositedEnDead(const G4double& e) {
     enDepDead += e;
   };
@@ -56,16 +62,15 @@ class NDDEventAction : public G4UserEventAction {
   inline void AddDepositedEnCarrier(const G4double& e) {
     enDepCarrier += e;
   };
-  inline G4double GetPrimaryEnergy() { return enPrimary; };
 
-  void AddVisitedVolume(G4double, G4double, G4String);
+  void AddVisitedVolume(G4double, G4double, G4String, G4String);
+  void AddPrimaryEvent(G4int, G4double, G4double, G4ThreeVector, G4String, G4String);
 
   void ParseStepInfo(const std::string&, const G4double&, const G4ThreeVector&);
 
  private:
   G4int ClassifyEvent();
 
-  G4double enPrimary;
   G4double enDepSi;
   G4double enDepDead;
   G4double enDepFoil;
@@ -83,15 +88,17 @@ class NDDEventAction : public G4UserEventAction {
   G4int classification;
 
   std::vector<VolumeVisit> visitedVolumes;
+  std::vector<PrimaryEvent> primaryEvents;
 
   void Clear();
+  void FillPrimaryTuple(G4int, G4int, G4int, G4double, G4double, G4double, G4double, G4double, G4String, G4String);
   void FillEnergyTuple(G4int, G4int, G4double, G4double, G4double,
       G4double, G4double, G4double, G4double);
   void FillSpacetimeTuple(G4int, G4int, G4double, G4double, G4double, G4double, G4double);
-  void FillHitsTuple(G4int, G4int, G4double, G4double, G4double, G4double, G4double,
-      G4double, G4double, G4double, G4double, G4int, G4int);
+  void FillHitsTuple(G4int, G4int, G4int, G4double, G4double, G4double, G4double, G4double,
+      G4double, G4double, G4double, G4double, G4int, G4String);
   void FillPixelTuple(G4int, G4int, G4double, std::vector<G4double>&);
-  void FillVolumesTuple(G4int, G4int, G4double, G4double, G4double, G4String);
+  void FillVolumesTuple(G4int, G4int, G4double, G4double, G4double, G4String, G4String);
   void FillH1Hist(G4int ih, G4double xbin, G4double weight = 1.);
   void FillH2Hist(G4int ih, G4double xbin, G4double ybin, G4double weight = 1.);
 };
