@@ -34,7 +34,7 @@ class NDDSiPixelHit : public G4VHit {
   void SetTime(G4double t) { time = t; };
   void SetMomentum(G4ThreeVector mom) { momentum = mom; };
   void SetField(G4ThreeVector f) { field = f; };
-  void SetParticleCode(G4int pc) { particleCode = pc; };
+  void SetParticleCode(G4String pc) { particleCode = pc; };
   void SetPixelNumber(G4int pn) { pixelNumber= pn; };
   void SetPixelName(G4String pn) { pixelName = pn; };
 
@@ -45,7 +45,7 @@ class NDDSiPixelHit : public G4VHit {
   G4double GetTime() const { return time; };
   G4ThreeVector GetMomentum() const { return momentum; };
   G4ThreeVector GetField() const { return field; };
-  G4int GetParticleCode() const { return particleCode; };
+  G4String GetParticleCode() const { return particleCode; };
   G4int GetPixelNumber() const { return pixelNumber; };
   G4String GetPixelName() const { return pixelName; };
 
@@ -56,7 +56,7 @@ class NDDSiPixelHit : public G4VHit {
   G4ThreeVector momentum;
   G4ThreeVector field;
   G4double time;
-  G4int particleCode;
+  G4String particleCode;
   G4int pixelNumber;
   G4String pixelName;
 };
