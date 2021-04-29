@@ -209,7 +209,7 @@ void NDDEventAction::FillHitsTuple(G4int iD, G4int classification,
                                    G4double enPrimary, G4double eDep,
                                    G4double x, G4double y, G4double z,
                                    G4double px, G4double py, G4double pz,
-                                   G4double time, G4int volume, G4int particle) {
+                                   G4double time, G4String particle, G4int volume) {
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
   if (analysisManager->GetNtupleActivation(2)) {
     analysisManager->FillNtupleIColumn(2, 0, iD);
