@@ -64,7 +64,7 @@ void NDDEventAction::EndOfEventAction(const G4Event* evt) {
     G4String particleType = hit->GetParticleCode();
     FillHitsTuple(evt->GetEventID(), classification, enPrimary,
                             hit->GetEnDep(), pos.x(), pos.y(), pos.z(), mom.x(),
-                            mom.y(), mom.z(), hit->GetTime(), 1, 0);
+                            mom.y(), mom.z(), hit->GetTime(), particleType, 1);
 
     enDepSi += hit->GetEnDep();
     if (iHit == 0) {
@@ -223,8 +223,8 @@ void NDDEventAction::FillHitsTuple(G4int iD, G4int classification,
     analysisManager->FillNtupleDColumn(2, 8, py);
     analysisManager->FillNtupleDColumn(2, 9, pz);
     analysisManager->FillNtupleDColumn(2, 10, time / ns);
-    analysisManager->FillNtupleIColumn(2, 11, volume);
-    analysisManager->FillNtupleIColumn(2, 12, particle);
+    analysisManager->FillNtupleSColumn(2, 11, particle);
+    analysisManager->FillNtupleIColumn(2, 12, volume);
     analysisManager->AddNtupleRow(2);
   }
 }
