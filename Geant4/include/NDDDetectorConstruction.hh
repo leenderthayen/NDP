@@ -29,10 +29,14 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
 
   inline void AddSourceID(G4int i) { sourceIDs.push_back(i); };
   inline void AddSourcePosition(G4ThreeVector v) { sourcePos.push_back(v); };
-  inline void SetPixelRings(G4int r) { pixelRings = r; };
   inline void SetDetectorPosition(G4ThreeVector v) { detectorPosition = v;}
+  inline void SetDeadLayerThickness(G4double d) { deadLayerThickness = d;}
+  inline void SetBuildDeadLayer(G4bool b) { buildPhysicalDeadLayer = b;}
+  inline void SetSiDetectorThickness(G4double d) {siThickness = d;}
 
  private:
+  friend class NDDPixelReadOut;
+
   void BuildWorld();
   void BuildMaterials();
   void BuildSiDetector();
@@ -48,6 +52,8 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
 
   NDDDetectorMessenger* detMess;
 
+  G4bool buildPhysicalDeadLayer;
+
   G4double siThickness;
   G4double siBackingThickness;
   G4double siOuterRadius;
@@ -60,8 +66,6 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
 
   std::vector<G4int> sourceIDs;
   std::vector<G4ThreeVector> sourcePos;
-
-  G4int pixelRings;
 
   G4Material* airMaterial;
   G4Material* vacuumMaterial;

@@ -47,6 +47,11 @@ void NDDEventAction::EndOfEventAction(const G4Event* evt) {
 
   classification = ClassifyEvent();
 
+  enPrimary = 0;
+  for (auto & en : enPrimaries) {
+    enPrimary += en;
+  }
+
   G4HCofThisEvent* hce = evt->GetHCofThisEvent();
   NDDSiPixelHitsCollection* SiPixelHC = 0;
 

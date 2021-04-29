@@ -32,6 +32,7 @@ class NDDEventAction : public G4UserEventAction {
   virtual void BeginOfEventAction(const G4Event*);
   virtual void EndOfEventAction(const G4Event*);
 
+  inline void AddPrimaryEnergy(const G4double& pe) { enPrimaries.push_back(pe); }
   inline void SetPrimaryEnergy(const G4double& pe) { enPrimary = pe; };
   inline void AddDepositedEnSi(const G4double& e) {
     enDepSi += e;
@@ -57,6 +58,8 @@ class NDDEventAction : public G4UserEventAction {
     enDepCarrier += e;
   };
   inline G4double GetPrimaryEnergy() { return enPrimary; };
+  inline std::vector<G4double>& GetPrimaryEnergies() { return enPrimaries; }
+  inline G4double GetPrimaryEnergy(G4int index) { return index < enPrimaries.size() ? enPrimaries[index] : -1; }
 
   void AddVisitedVolume(G4double, G4double, G4String);
 
@@ -65,6 +68,7 @@ class NDDEventAction : public G4UserEventAction {
  private:
   G4int ClassifyEvent();
 
+  std::vector<G4double> enPrimaries;
   G4double enPrimary;
   G4double enDepSi;
   G4double enDepDead;

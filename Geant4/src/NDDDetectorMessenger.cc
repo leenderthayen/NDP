@@ -5,6 +5,7 @@
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
 #include "G4UIcmdWithAnInteger.hh"
+#include "G4UIcmdWithADoubleAndUnit.hh"
 #include "globals.hh"
 
 NDDDetectorMessenger::NDDDetectorMessenger(NDDDetectorConstruction* myDet)
@@ -31,17 +32,26 @@ NDDDetectorMessenger::NDDDetectorMessenger(NDDDetectorConstruction* myDet)
       "Set the detector position of the last given ID.");
   detPosCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  pixelRingsCmd = new G4UIcmdWithAnInteger("/NDD/geometry/pixelRings", this);
-  pixelRingsCmd->SetGuidance(
-      "Set the number of pixel rings surrounding the central pixel");
-  pixelRingsCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+  deadLayerThicknessCmd = new G4UIcmdWithADoubleAndUnit("NDD/geometry/deadLayerThickness", this);
+  deadLayerThicknessCmd->SetGuidance("Set the dead layer thickness in front the Silicon detectors.");
+  deadLayerThicknessCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+  physicalDeadLayerCmd = new G4UIcmdWithABool("NDD/geometry/physicalDeadLayer", this);
+  physicalDeadLayerCmd->SetGuidance("Enable/disable physical dead layer in front the Silicon detector.");
+  physicalDeadLayerCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+  siThicknessCmd = new G4UIcmdWithADoubleAndUnit("NDD/geometry/siThickness", this);
+  siThicknessCmd->SetGuidance("Set the Silicon detector thickness.");
+  siThicknessCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 }
 
 NDDDetectorMessenger::~NDDDetectorMessenger() {
   delete geomDir;
   delete sourceIDCmd;
   delete sourcePosCmd;
-  delete pixelRingsCmd;
+  delete deadLayerThicknessCmd;
+  delete physicalDeadLayerCmd;
+  delete siThicknessCmd;
 }
 
 void NDDDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue) {
@@ -49,9 +59,13 @@ void NDDDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue) 
         detector->AddSourceID(sourceIDCmd->GetNewIntValue(newValue));
     } else if (command == sourcePosCmd) {
         detector->AddSourcePosition(sourcePosCmd->GetNew3VectorValue(newValue));
-    } else if (command == pixelRingsCmd) {
-        detector->SetPixelRings(pixelRingsCmd->GetNewIntValue(newValue));
+    } else if (command == siThicknessCmd) {
+        detector->SetSiDetectorThickness(siThicknessCmd->GetNewDoubleValue(newValue));
     } else if (command == detPosCmd) {
         detector->SetDetectorPosition(detPosCmd->GetNew3VectorValue(newValue));
+    } else if (command == deadLayerThicknessCmd) {
+        detector->SetDeadLayerThickness(deadLayerThicknessCmd->GetNewDoubleValue(newValue));
+    } else if (command == physicalDeadLayerCmd) {
+        detector->SetBuildDeadLayer(physicalDeadLayerCmd->GetNewBoolValue(newValue));
     }
 }
