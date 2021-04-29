@@ -267,12 +267,6 @@ void NDDDetectorConstruction::BuildSiDetector() {
   G4double arInner[2] = {0., 0.};
   G4double arOuter[2] = {ArmorInRad / 2.0, ArmorInRad / 2.0};
   G4double zCuArmor = zSilicon + siThickness / 2. + siBackingThickness - ArmorThickness/2.0;
-
-  //Manitoba Source Holder
-  G4double AlBSide = 2.2606 * cm;
-  G4double AlBThickness = 1.2446 * cm;
-  G4double zOffset = 5.1681 * cm;
-  G4double zAlB = zSilicon - zOffset - siThickness/2.0 - AlBThickness/2.0;
   //--------------------------------------------------------------------------
 
   if(backingConfig>0) {
@@ -338,17 +332,6 @@ void NDDDetectorConstruction::BuildSiDetector() {
         logicalCArmor, "Backing", logicalWorld, false, 0);
   }
 
-  if(backingConfig>1) {
-    //Al Block of the Source holder
-    AlBlock = new G4Box("SourceHolder", AlBSide/2.0, AlBSide/2.0, AlBThickness/2.0);
-    logicalAlBlock =
-        new G4LogicalVolume(AlBlock, aluminiumMaterial, "SourceHolder");
-
-    physicalAlBlock = new G4PVPlacement(
-        0, G4ThreeVector(xSilicon, ySilicon, zAlB),
-        logicalAlBlock, "SourceHolder", logicalWorld, false, 0);
-  }
-
 }
 
 void NDDDetectorConstruction::BuildSources() {
@@ -367,6 +350,7 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
   G4double ringOuterRadius, ringInnerRadius;
   G4double eastFoilThickness, westFoilThickness;
   G4double ringThickness;
+  G4double AlBSide,AlBThickness;
 
   G4LogicalVolume* motherVolume = logicalWorld;
 
@@ -528,20 +512,18 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
   }
   else if (id == 6) {
 
-    G4cout << "Building 241Am Source" << pos << G4endl;
-    G4cout << "Building 241Am Source" << detectorPosition << G4endl;
+    //Manitoba Source Holder
+    AlBSide = 2.2606 * cm;
+    AlBThickness = 1.2446 * cm;
 
-    G4double carrierX = 11.0/2.0 * mm;
-    G4double carrierY = 23.5/2.0 * mm;
-    G4double carrierZ = 2.0/2.0 * mm;
+    //Al Block of the Source holder
+    AlBlock = new G4Box("SourceHolder", AlBSide/2.0, AlBSide/2.0, AlBThickness/2.0);
+    logicalAlBlock =
+        new G4LogicalVolume(AlBlock, aluminiumMaterial, "SourceHolder");
 
-    solidRectCarrier = new G4Box("Carrier", carrierX, carrierY, carrierZ);
-    logicalCarrier =
-        new G4LogicalVolume(solidRectCarrier, pmmaMaterial, "Carrier");
-    physicalCarrier =
-        new G4PVPlacement(0, G4ThreeVector(pos.x(), pos.y(), pos.z()),
-                          logicalCarrier, "Carrier", motherVolume, false, 0);
-
+    physicalAlBlock = new G4PVPlacement(
+        0, G4ThreeVector(pos.x(), pos.y(), pos.z()),
+        logicalAlBlock, "SourceHolder", motherVolume, false, 0);
   }
 }
 
