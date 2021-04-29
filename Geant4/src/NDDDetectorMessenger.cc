@@ -38,7 +38,7 @@ NDDDetectorMessenger::NDDDetectorMessenger(NDDDetectorConstruction* myDet)
 
   buildBackCmd = new G4UIcmdWithAnInteger("/NDD/geometry/buildBacking", this);
   buildBackCmd->SetGuidance(
-      "Choose the backing geometry:\n  0: bare Silicon\n  1: Nab Front Mount Assembly\n  2: Nab Mount + Manitoba Source Holder");
+      "Choose the backing geometry:\n  0: bare Silicon\n  1: Nab Front Mount Assembly");
   buildBackCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 }
 
