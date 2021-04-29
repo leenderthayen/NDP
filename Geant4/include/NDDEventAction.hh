@@ -17,6 +17,7 @@ struct VolumeVisit {
   G4double currentEn;
   G4double time;
   G4String volume;
+  G4String particleName;
 };
 
 struct PrimaryEvent {
@@ -62,7 +63,7 @@ class NDDEventAction : public G4UserEventAction {
     enDepCarrier += e;
   };
 
-  void AddVisitedVolume(G4double, G4double, G4String);
+  void AddVisitedVolume(G4double, G4double, G4String, G4String);
   void AddPrimaryEvent(G4int, G4double, G4double, G4ThreeVector, G4String, G4String);
 
   void ParseStepInfo(const std::string&, const G4double&, const G4ThreeVector&);
@@ -97,7 +98,7 @@ class NDDEventAction : public G4UserEventAction {
   void FillHitsTuple(G4int, G4int, G4int, G4double, G4double, G4double, G4double, G4double,
       G4double, G4double, G4double, G4double, G4int, G4int);
   void FillPixelTuple(G4int, G4int, G4double, std::vector<G4double>&);
-  void FillVolumesTuple(G4int, G4int, G4double, G4double, G4double, G4String);
+  void FillVolumesTuple(G4int, G4int, G4double, G4double, G4double, G4String, G4String);
   void FillH1Hist(G4int ih, G4double xbin, G4double weight = 1.);
   void FillH2Hist(G4int ih, G4double xbin, G4double ybin, G4double weight = 1.);
 };

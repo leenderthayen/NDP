@@ -137,6 +137,7 @@ NDDRunAction::NDDRunAction()
   analysisManager->CreateNtupleDColumn("currentEn");
   analysisManager->CreateNtupleDColumn("time");
   analysisManager->CreateNtupleSColumn("volume");
+  analysisManager->CreateNtupleSColumn("particle");
   analysisManager->FinishNtuple();
 
   analysisManager->CreateNtuple("PrimaryEnergies", "Particles created and their initial properties");

@@ -101,7 +101,7 @@ void NDDEventAction::EndOfEventAction(const G4Event* evt) {
   for (G4int i = 0; i < visitedVolumes.size(); i++) {
     VolumeVisit v = visitedVolumes[i];
     FillVolumesTuple(evt->GetEventID(), classification, enPrimary,
-                               v.currentEn, v.time, v.volume);
+                               v.currentEn, v.time, v.volume, v.particleName);
   }
 
   for (G4int i = 0; i < primaryEvents.size(); i++) {
@@ -114,10 +114,10 @@ void NDDEventAction::EndOfEventAction(const G4Event* evt) {
 }
 
 void NDDEventAction::AddVisitedVolume(G4double currentEn, G4double time,
-                                   G4String volume) {
+                                   G4String volume, G4String particleName) {
   if (visitedVolumes.size() == 0 ||
       visitedVolumes[visitedVolumes.size() - 1].volume != volume) {
-    VolumeVisit vv = {currentEn, time, volume};
+    VolumeVisit vv = {currentEn, time, volume, particleName};
     visitedVolumes.push_back(vv);
   }
 }
@@ -249,7 +249,7 @@ void NDDEventAction::FillPixelTuple(G4int iD, G4int classification,
 
 void NDDEventAction::FillVolumesTuple(G4int iD, G4int classification,
                                       G4double primaryEn, G4double currentEn,
-                                      G4double time, G4String volume) {
+                                      G4double time, G4String volume, G4String particle) {
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
   if (analysisManager->GetNtupleActivation(4)) {
     analysisManager->FillNtupleIColumn(4, 0, iD);
@@ -258,6 +258,7 @@ void NDDEventAction::FillVolumesTuple(G4int iD, G4int classification,
     analysisManager->FillNtupleDColumn(4, 3, currentEn / keV);
     analysisManager->FillNtupleDColumn(4, 4, time / ns);
     analysisManager->FillNtupleSColumn(4, 5, volume);
+    analysisManager->FillNtupleSColumn(4, 6, particle);
     analysisManager->AddNtupleRow(4);
   }
 }
