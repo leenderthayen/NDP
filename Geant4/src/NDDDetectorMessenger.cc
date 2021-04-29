@@ -15,7 +15,7 @@ NDDDetectorMessenger::NDDDetectorMessenger(NDDDetectorConstruction* myDet)
   sourceIDCmd = new G4UIcmdWithAnInteger("/NDD/geometry/addSourceID", this);
   sourceIDCmd->SetGuidance(
       "Choose the source ID:\n  0: 45Ca 500nm\n  1: 133Ba 12.5um\n  2: 133Ba "
-      "500nm quasi-sealed\n  3: 207Bi 5um\n  4: 113Sn, 139Ce 5um");
+      "500nm quasi-sealed\n  3: 207Bi 5um\n  4: 113Sn, 139Ce 5um\n 5: 241Am VZ-1240-001");
   sourceIDCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
   sourcePosCmd =
@@ -35,6 +35,11 @@ NDDDetectorMessenger::NDDDetectorMessenger(NDDDetectorConstruction* myDet)
   pixelRingsCmd->SetGuidance(
       "Set the number of pixel rings surrounding the central pixel");
   pixelRingsCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+  buildBackCmd = new G4UIcmdWithAnInteger("/NDD/geometry/buildBacking", this);
+  buildBackCmd->SetGuidance(
+      "Choose the backing geometry:\n  0: bare Silicon\n  1: Nab Front Mount Assembly\n  2: Nab Mount + Manitoba Source Holder");
+  buildBackCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 }
 
 NDDDetectorMessenger::~NDDDetectorMessenger() {
@@ -42,6 +47,7 @@ NDDDetectorMessenger::~NDDDetectorMessenger() {
   delete sourceIDCmd;
   delete sourcePosCmd;
   delete pixelRingsCmd;
+  delete buildBackCmd;
 }
 
 void NDDDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue) {
@@ -53,5 +59,7 @@ void NDDDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue) 
         detector->SetPixelRings(pixelRingsCmd->GetNewIntValue(newValue));
     } else if (command == detPosCmd) {
         detector->SetDetectorPosition(detPosCmd->GetNew3VectorValue(newValue));
+    } else if (command == buildBackCmd) {
+        detector->SetBackingConfig(buildBackCmd->GetNewIntValue(newValue));
     }
 }
