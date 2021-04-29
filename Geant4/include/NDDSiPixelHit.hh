@@ -28,15 +28,16 @@ class NDDSiPixelHit : public G4VHit {
   virtual void Print();
 
   // Set methods
-  void SetTrackID(G4int track) { trackID = track; };
-  void SetEnDep(G4double de) { enDep = de; };
-  void SetPos(G4ThreeVector xyz) { pos = xyz; };
-  void SetTime(G4double t) { time = t; };
-  void SetMomentum(G4ThreeVector mom) { momentum = mom; };
-  void SetField(G4ThreeVector f) { field = f; };
-  void SetParticleCode(G4int pc) { particleCode = pc; };
-  void SetPixelNumber(G4int pn) { pixelNumber= pn; };
-  void SetPixelName(G4String pn) { pixelName = pn; };
+  inline void SetTrackID(G4int track) { trackID = track; };
+  inline void SetEnDep(G4double de) { enDep = de; };
+  inline void SetPos(G4ThreeVector xyz) { pos = xyz; };
+  inline void SetTime(G4double t) { time = t; };
+  inline void SetMomentum(G4ThreeVector mom) { momentum = mom; };
+  inline void SetField(G4ThreeVector f) { field = f; };
+  inline void SetParticleCode(G4int pc) { particleCode = pc; };
+  inline void SetPixelNumber(G4int pn) { pixelNumber= pn; };
+  inline void SetPixelName(G4String pn) { pixelName = pn; };
+  inline void SetParticleName(G4String pn) { particleName = pn;}
 
   // Get methods
   G4int GetTrackID() const { return trackID; };
@@ -48,6 +49,7 @@ class NDDSiPixelHit : public G4VHit {
   G4int GetParticleCode() const { return particleCode; };
   G4int GetPixelNumber() const { return pixelNumber; };
   G4String GetPixelName() const { return pixelName; };
+  G4String GetParticleName() const { return particleName;}
 
  private:
   G4int trackID;
@@ -59,6 +61,7 @@ class NDDSiPixelHit : public G4VHit {
   G4int particleCode;
   G4int pixelNumber;
   G4String pixelName;
+  G4String particleName;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

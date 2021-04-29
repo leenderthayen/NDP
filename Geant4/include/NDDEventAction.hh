@@ -21,7 +21,7 @@ struct VolumeVisit {
 };
 
 struct PrimaryEvent {
-    G4int trackID;
+  G4int trackID;
   G4double energy;
   G4double creationTime;
   G4ThreeVector creationPos;
@@ -96,7 +96,7 @@ class NDDEventAction : public G4UserEventAction {
       G4double, G4double, G4double, G4double);
   void FillSpacetimeTuple(G4int, G4int, G4double, G4double, G4double, G4double, G4double);
   void FillHitsTuple(G4int, G4int, G4int, G4double, G4double, G4double, G4double, G4double,
-      G4double, G4double, G4double, G4double, G4int, G4int);
+      G4double, G4double, G4double, G4double, G4int, G4String);
   void FillPixelTuple(G4int, G4int, G4double, std::vector<G4double>&);
   void FillVolumesTuple(G4int, G4int, G4double, G4double, G4double, G4String, G4String);
   void FillH1Hist(G4int ih, G4double xbin, G4double weight = 1.);

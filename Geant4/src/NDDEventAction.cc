@@ -54,11 +54,12 @@ void NDDEventAction::EndOfEventAction(const G4Event* evt) {
     NDDSiPixelHit* hit = (*SiPixelHC)[iHit];
     G4ThreeVector pos = hit->GetPos();
     G4ThreeVector mom = hit->GetMomentum();
-    G4String particleType = hit->GetParticleCode();
+    G4String particleName = hit->GetParticleName();
     G4int trackID = hit->GetTrackID();
+    G4int pixelNumber = hit->GetPixelNumber();
     FillHitsTuple(evt->GetEventID(), trackID, classification, enPrimary,
                             hit->GetEnDep(), pos.x(), pos.y(), pos.z(), mom.x(),
-                            mom.y(), mom.z(), hit->GetTime(), 1, 0);
+                            mom.y(), mom.z(), hit->GetTime(), pixelNumber, particleName);
 
     enDepSi += hit->GetEnDep();
     if (iHit == 0) {
@@ -211,7 +212,7 @@ void NDDEventAction::FillHitsTuple(G4int eventID, G4int trackID, G4int classific
                                    G4double enPrimary, G4double eDep,
                                    G4double x, G4double y, G4double z,
                                    G4double px, G4double py, G4double pz,
-                                   G4double time, G4int volume, G4int particle) {
+                                   G4double time, G4int pixelNumber, G4String particle) {
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
   if (analysisManager->GetNtupleActivation(2)) {
     analysisManager->FillNtupleIColumn(2, 0, eventID);
@@ -226,8 +227,8 @@ void NDDEventAction::FillHitsTuple(G4int eventID, G4int trackID, G4int classific
     analysisManager->FillNtupleDColumn(2, 9, py);
     analysisManager->FillNtupleDColumn(2, 10, pz);
     analysisManager->FillNtupleDColumn(2, 11, time / ns);
-    analysisManager->FillNtupleIColumn(2, 12, volume);
-    analysisManager->FillNtupleIColumn(2, 13, particle);
+    analysisManager->FillNtupleIColumn(2, 12, pixelNumber);
+    analysisManager->FillNtupleSColumn(2, 13, particle);
     analysisManager->AddNtupleRow(2);
   }
 }
