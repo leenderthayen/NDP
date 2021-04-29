@@ -22,7 +22,7 @@ NDDSiPixelHit::NDDSiPixelHit()
       pos(G4ThreeVector()),
       momentum(G4ThreeVector()),
       field(G4ThreeVector()),
-      particleCode(1),
+      particleCode(""),
       time(-1),
       pixelNumber(-1),
       pixelName("") {}

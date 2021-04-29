@@ -109,7 +109,7 @@ NDDRunAction::NDDRunAction()
   analysisManager->CreateNtupleDColumn("py");
   analysisManager->CreateNtupleDColumn("pz");
   analysisManager->CreateNtupleDColumn("time");
-  analysisManager->CreateNtupleIColumn("particle");
+  analysisManager->CreateNtupleSColumn("particle");
   analysisManager->CreateNtupleIColumn("pixelNumber");
   analysisManager->FinishNtuple();
 
