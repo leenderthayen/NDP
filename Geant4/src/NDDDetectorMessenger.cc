@@ -32,9 +32,13 @@ NDDDetectorMessenger::NDDDetectorMessenger(NDDDetectorConstruction* myDet)
       "Set the detector position of the last given ID.");
   detPosCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  siThicknessCmd = new G4UIcmdWithADoubleAndUnit("NDD/geometry/siThickness", this);
+  siThicknessCmd = new G4UIcmdWithADoubleAndUnit("/NDD/geometry/siThickness", this);
   siThicknessCmd->SetGuidance("Set the Silicon detector thickness.");
   siThicknessCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+  mylarThickCmd = new G4UIcmdWithADoubleAndUnit("/NDD/geometry/MylarThickness", this);
+  mylarThickCmd->SetGuidance("Set the Mylar Foil thickness.");
+  mylarThickCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
   buildBackCmd = new G4UIcmdWithAnInteger("/NDD/geometry/buildBacking", this);
   buildBackCmd->SetGuidance(
@@ -47,6 +51,7 @@ NDDDetectorMessenger::~NDDDetectorMessenger() {
   delete sourceIDCmd;
   delete sourcePosCmd;
   delete siThicknessCmd;
+  delete mylarThickCmd;
   delete buildBackCmd;
 }
 
@@ -57,6 +62,8 @@ void NDDDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue) 
         detector->AddSourcePosition(sourcePosCmd->GetNew3VectorValue(newValue));
     } else if (command == siThicknessCmd) {
         detector->SetSiDetectorThickness(siThicknessCmd->GetNewDoubleValue(newValue));
+    } else if (command == mylarThickCmd) {
+        detector->SetMylarThickness(mylarThickCmd->GetNewDoubleValue(newValue));
     } else if (command == detPosCmd) {
         detector->SetDetectorPosition(detPosCmd->GetNew3VectorValue(newValue));
     } else if (command == buildBackCmd) {
