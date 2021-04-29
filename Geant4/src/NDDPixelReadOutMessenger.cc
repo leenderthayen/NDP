@@ -26,7 +26,7 @@ NDDPixelReadOutMessenger::NDDPixelReadOutMessenger(NDDPixelReadOut* myRO)
   enableDeadLayerCmd->SetGuidance("Enable/Disable the dead layer in the readout");
   enableDeadLayerCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  deadLayerThicknessCmd = new G4UIcmdWithADoubleAndUnit("NDD/readout/deadLayerThickness", this);
+  deadLayerThicknessCmd = new G4UIcmdWithADoubleAndUnit("/NDD/readout/deadLayerThickness", this);
   deadLayerThicknessCmd->SetGuidance("Set the dead layer thickness in front the Silicon detectors.");
   deadLayerThicknessCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 }
