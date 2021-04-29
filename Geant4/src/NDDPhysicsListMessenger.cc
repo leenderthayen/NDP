@@ -5,38 +5,38 @@
 
 NDDPhysicsListMessenger::NDDPhysicsListMessenger(NDDPhysicsList* pPhys)
     : pPhysicsList(pPhys) {
-  physDir = new G4UIdirectory("/CLASS/phys/");
-  physDir->SetGuidance("CLASS physics list commands");
+  physDir = new G4UIdirectory("/NDD/phys/");
+  physDir->SetGuidance("NDD physics list commands");
 
-  gammaCutCmd = new G4UIcmdWithADoubleAndUnit("/CLASS/phys/setGCut", this);
+  gammaCutCmd = new G4UIcmdWithADoubleAndUnit("/NDD/phys/setGCut", this);
   gammaCutCmd->SetGuidance("Set gamma cut.");
   gammaCutCmd->SetParameterName("Gcut", false);
   gammaCutCmd->SetUnitCategory("Length");
   gammaCutCmd->SetRange("Gcut>0.0");
   gammaCutCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  electCutCmd = new G4UIcmdWithADoubleAndUnit("/CLASS/phys/setECut", this);
+  electCutCmd = new G4UIcmdWithADoubleAndUnit("/NDD/phys/setECut", this);
   electCutCmd->SetGuidance("Set electron cut.");
   electCutCmd->SetParameterName("Ecut", false);
   electCutCmd->SetUnitCategory("Length");
   electCutCmd->SetRange("Ecut>0.0");
   electCutCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  protoCutCmd = new G4UIcmdWithADoubleAndUnit("/CLASS/phys/setPCut", this);
+  protoCutCmd = new G4UIcmdWithADoubleAndUnit("/NDD/phys/setPCut", this);
   protoCutCmd->SetGuidance("Set positron cut.");
   protoCutCmd->SetParameterName("Pcut", false);
   protoCutCmd->SetUnitCategory("Length");
   protoCutCmd->SetRange("Pcut>0.0");
   protoCutCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  allCutCmd = new G4UIcmdWithADoubleAndUnit("/CLASS/phys/setCuts", this);
+  allCutCmd = new G4UIcmdWithADoubleAndUnit("/NDD/phys/setCuts", this);
   allCutCmd->SetGuidance("Set cut for all.");
   allCutCmd->SetParameterName("cut", false);
   allCutCmd->SetUnitCategory("Length");
   allCutCmd->SetRange("cut>0.0");
   allCutCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  pListCmd = new G4UIcmdWithAString("/CLASS/phys/addPhysics", this);
+  pListCmd = new G4UIcmdWithAString("/NDD/phys/addPhysics", this);
   pListCmd->SetGuidance("Add modula physics list.");
   pListCmd->SetParameterName("PList", false);
   pListCmd->AvailableForStates(G4State_PreInit);
