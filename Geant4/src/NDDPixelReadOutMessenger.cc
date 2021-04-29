@@ -25,12 +25,17 @@ NDDPixelReadOutMessenger::NDDPixelReadOutMessenger(NDDPixelReadOut* myRO)
   enableDeadLayerCmd = new G4UIcmdWithABool("/NDD/readout/enableDeadLayer", this);
   enableDeadLayerCmd->SetGuidance("Enable/Disable the dead layer in the readout");
   enableDeadLayerCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+  deadLayerThicknessCmd = new G4UIcmdWithADoubleAndUnit("NDD/readout/deadLayerThickness", this);
+  deadLayerThicknessCmd->SetGuidance("Set the dead layer thickness in front the Silicon detectors.");
+  deadLayerThicknessCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 }
 
 NDDPixelReadOutMessenger::~NDDPixelReadOutMessenger() {
   delete readoutDir;
   delete pixelRingsCmd;
   delete enableDeadLayerCmd;
+  delete deadLayerThicknessCmd;
 }
 
 void NDDPixelReadOutMessenger::SetNewValue(G4UIcommand* command, G4String newValue) {
@@ -38,5 +43,9 @@ void NDDPixelReadOutMessenger::SetNewValue(G4UIcommand* command, G4String newVal
         pro->SetPixelRings(pixelRingsCmd->GetNewIntValue(newValue));
     } else if (command == pixelSizeCmd) {
         pro->SetPixelSize(pixelSizeCmd->GetNewDoubleValue(newValue));
+    } else if (command == enableDeadLayerCmd) {
+        pro->EnableDeadLayer(enableDeadLayerCmd->GetNewBoolValue(newValue));
+    } else if (command == deadLayerThicknessCmd) {
+        pro->SetDeadLayerThickness(deadLayerThicknessCmd->GetNewDoubleValue(newValue));
     }
 }

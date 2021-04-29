@@ -24,6 +24,7 @@ class NDDPixelReadOutMessenger : public G4UImessenger {
   G4UIdirectory* readoutDir;
   G4UIcmdWithAnInteger* pixelRingsCmd;
   G4UIcmdWithABool* enableDeadLayerCmd;
+  G4UIcmdWithADoubleAndUnit* deadLayerThicknessCmd;
   G4UIcmdWithADoubleAndUnit* pixelSizeCmd;
 };
 

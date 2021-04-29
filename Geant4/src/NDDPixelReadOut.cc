@@ -29,16 +29,9 @@ void NDDPixelReadOut::Construct() {
   // Adding const modifier to make sure the actual geometry is never changed here
   const G4double siThickness = userDC->siThickness;
   const G4double siOuterRadius = userDC->siOuterRadius;
-  const G4bool buildPhysicalDeadLayer = userDC->buildPhysicalDeadLayer;
   const G4ThreeVector detectorPosition = userDC->detectorPosition;
-  G4double deadLayerThickness = userDC->deadLayerThickness;
-
-  if (!buildPhysicalDeadLayer) {
-    deadLayerThickness = 0;
-  }
 
   G4Material* dummyMat = nullptr;
-
 
   G4VPhysicalVolume* physicalROWorld = GetWorld();
   G4LogicalVolume* logicalROWorld = physicalROWorld->GetLogicalVolume();

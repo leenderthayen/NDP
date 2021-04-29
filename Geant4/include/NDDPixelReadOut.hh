@@ -13,6 +13,8 @@ public:
 
   inline void SetPixelRings(G4int i) {pixelRings = i;}
   inline void SetPixelSize(G4double d) {pixelSize = d;}
+  inline void SetDeadLayerThickness(G4double d) {deadLayerThickness = d;}
+  inline void EnableDeadLayer(G4bool b) {enableDeadLayer = b;}
 
 protected:
   virtual void Construct();
@@ -23,6 +25,8 @@ private:
   G4VUserDetectorConstruction* dc;
   G4int pixelRings;
   G4double pixelSize;
+  G4double deadLayerThickness;
+  G4bool enableDeadLayer;
 };
 
 #endif

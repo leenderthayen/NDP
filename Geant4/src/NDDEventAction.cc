@@ -155,15 +155,8 @@ G4int NDDEventAction::ClassifyEvent() {
       foilHits++;
     } else if (v.volume == "Dead") {
       deadHits++;
-    } else if (v.volume == "SiPixel") {
+    } else if (v.volume == "physicalSilicon") {
       SiHits++;
-      // if (lastDetector == 0) {
-      //   if (i > 3 && visitedVolumes[i - 1].volume == "Dead" &&
-      //       visitedVolumes[i - 2].volume == "EastDrift" &&
-      //       visitedVolumes[i - 3].volume != "DecayTrapInt") {
-      //     reflectionsEast++;
-      //   }
-      // }
     }
   }
   G4int classification = 1e3 * SiHits +

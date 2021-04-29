@@ -30,8 +30,6 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   inline void AddSourceID(G4int i) { sourceIDs.push_back(i); };
   inline void AddSourcePosition(G4ThreeVector v) { sourcePos.push_back(v); };
   inline void SetDetectorPosition(G4ThreeVector v) { detectorPosition = v;}
-  inline void SetDeadLayerThickness(G4double d) { deadLayerThickness = d;}
-  inline void SetBuildDeadLayer(G4bool b) { buildPhysicalDeadLayer = b;}
   inline void SetSiDetectorThickness(G4double d) {siThickness = d;}
 
  private:
@@ -52,14 +50,11 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
 
   NDDDetectorMessenger* detMess;
 
-  G4bool buildPhysicalDeadLayer;
-
   G4double siThickness;
   G4double siBackingThickness;
   G4double siOuterRadius;
   G4double carrierThickness;
   G4double mylarThickness;
-  G4double deadLayerThickness;
   G4double carrierRadius;
   G4double sourceRadius;
   G4double stepSize;
@@ -101,10 +96,6 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   G4LogicalVolume* logicalBacking;
   G4VPhysicalVolume* physicalBacking;
 
-  G4Tubs* solidDead;
-  G4LogicalVolume* logicalDead;
-  G4VPhysicalVolume* physicalDead;
-
   G4Tubs* solidSourceHolder;
   G4LogicalVolume* logicalSourceHolder;
   G4VPhysicalVolume* physicalSourceHolder;
@@ -118,7 +109,6 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   G4VPhysicalVolume* physicalCarrier;
 
   G4UserLimits* stepLimitMyl;
-  G4UserLimits* stepLimitDead;
   G4UserLimits* stepLimitCar;
 };
 

@@ -22,10 +22,7 @@ NDDDetectorConstruction::NDDDetectorConstruction()
       siThickness(2. * mm),
       siBackingThickness(3. * mm),
       siOuterRadius(7.5 * cm),
-      deadLayerThickness(0. * nm), //Removing the dead layer. Note: PixelReadOut.cc has a separate hard-coded dead layer thickness variable
-      buildPhysicalDeadLayer(true),
       stepLimitMyl(0),
-      stepLimitDead(0),
       stepLimitCar(0) {
   detMess = new NDDDetectorMessenger(this);
   detectorPosition = G4ThreeVector(0, 0, 10 * mm); //Note: SiPixelSD.cc has a separate hard-coded detector position variable.
@@ -33,7 +30,6 @@ NDDDetectorConstruction::NDDDetectorConstruction()
 
 NDDDetectorConstruction::~NDDDetectorConstruction() {
   delete stepLimitMyl;
-  delete stepLimitDead;
   delete stepLimitCar;
   delete detMess;
 }
@@ -184,29 +180,9 @@ void NDDDetectorConstruction::BuildSiDetector() {
   G4double ySilicon = detectorPosition.y();
   G4double zSilicon = detectorPosition.z() + siThickness / 2.0;
 
-  if (buildPhysicalDeadLayer) {
-    G4double xDead = detectorPosition.x();
-    G4double yDead = detectorPosition.y();
-    G4double zDead = detectorPosition.z() + deadLayerThickness / 2.0;
-
-    solidDead = new G4Tubs("solidDead", 0., siOuterRadius,
-                           deadLayerThickness / 2., 0., 360. * deg);
-    logicalDead = new G4LogicalVolume(solidDead, siliconMaterial, "Dead");
-    physicalDead = new G4PVPlacement(
-        0, G4ThreeVector(xDead, yDead, zDead), logicalDead,
-        "Dead", logicalWorld, false, 0);
-
-    // Adjust z position of active detector to offset dead layer thickness
-    zSilicon = detectorPosition.z() +
-                            deadLayerThickness + siThickness / 2.0;
-  }
-
   G4double rotationAngle = -257.5 * deg;
 
   G4RotationMatrix* rot = new G4RotationMatrix(rotationAngle, 0., 0.);
-
-
-  // G4cout << "!!!!!!!!!!!!!!!!!!!!!" << " " << zSilicon << G4endl;
 
   solidSilicon = new G4Tubs("solidSilicon", 0., siOuterRadius,
                                 siThickness / 2., 0., 360. * deg);
@@ -403,8 +379,6 @@ void NDDDetectorConstruction::BuildVisualisation() {
       new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));
   simpleBoxVisAttRed->SetVisibility(true);
   simpleBoxVisAttRed->SetForceSolid(false);
-
-  //logicalDead->SetVisAttributes(simpleBoxVisAttRed);
 }
 
 void NDDDetectorConstruction::ConstructSDandField() {}
@@ -412,9 +386,6 @@ void NDDDetectorConstruction::ConstructSDandField() {}
 void NDDDetectorConstruction::SetStepLimits() {
   //G4double maxStepDL = stepSize * deadLayerThickness;  //Dead layer is gone
   G4double maxStepDL = 5. * nm;
-  stepLimitDead = new G4UserLimits(maxStepDL);
-  logicalDead->SetUserLimits(stepLimitDead); //Since the dead layer is gone, allow the user limit to be applied to logicalSilicon.
-  logicalSilicon->SetUserLimits(stepLimitDead); //Note: In order for this to take effect, StepLimiter needs to be instantiated in NDD.cc
   /*G4double maxStepWL = stepSize * waterThickness;
   G4UserLimits* stepLimitWater = new G4UserLimits(maxStepWL);
   logicalWater->SetUserLimits(stepLimitWater);
