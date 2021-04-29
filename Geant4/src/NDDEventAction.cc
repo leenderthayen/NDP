@@ -47,7 +47,7 @@ void NDDEventAction::EndOfEventAction(const G4Event* evt) {
 
   classification = ClassifyEvent();
 
-  enPrimary = 0;
+  G4double enPrimary = 0;
   for (auto & en : enPrimaries) {
     enPrimary += en;
   }
@@ -126,11 +126,12 @@ void NDDEventAction::AddVisitedVolume(G4double currentEn, G4double time,
 }
 
 void NDDEventAction::Clear() {
-  enPrimary = enDepSi = enDepDead = enDepFoil = enDepCarrier =
+  enDepSi = enDepDead = enDepFoil = enDepCarrier =
           enDepSourceHolder = bremsstrahlungLoss = 0;
   poeXSi = poeYSi = timeSi = 0;
   angleSourceOut = angleSiOut= 0;
   visitedVolumes.clear();
+  enPrimaries.clear();
 }
 
 G4int NDDEventAction::ClassifyEvent() {

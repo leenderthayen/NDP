@@ -138,6 +138,19 @@ NDDRunAction::NDDRunAction()
   analysisManager->CreateNtupleSColumn("volume");
   analysisManager->FinishNtuple();
 
+  analysisManager->CreateNtuple("PrimaryEnergies", "Particles created and their initial properties");
+  analysisManager->CreateNtupleIColumn("iD");
+  analysisManager->CreateNtupleIColumn("classification");
+  analysisManager->CreateNtupleDColumn("energy");
+  analysisManager->CreateNtupleDColumn("time");
+  analysisManager->CreateNtupleDColumn("x");
+  analysisManager->CreateNtupleDColumn("y");
+  analysisManager->CreateNtupleDColumn("z");
+  analysisManager->CreateNtupleSColumn("process");
+  analysisManager->CreateNtupleSColumn("name");
+  analysisManager->FinishNtuple();
+
+
   for (G4int i = 0; i < 5; i++) {
     analysisManager->SetNtupleActivation(i, true);
   }
