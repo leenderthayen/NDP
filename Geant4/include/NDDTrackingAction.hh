@@ -19,8 +19,6 @@ class NDDTrackingAction : public G4UserTrackingAction {
 
   private:
     NDDEventAction* eventAction;
-
-    G4double timeBirth, timeEnd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
