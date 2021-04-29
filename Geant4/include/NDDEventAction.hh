@@ -88,8 +88,8 @@ class NDDEventAction : public G4UserEventAction {
   void FillEnergyTuple(G4int, G4int, G4double, G4double, G4double,
       G4double, G4double, G4double, G4double);
   void FillSpacetimeTuple(G4int, G4int, G4double, G4double, G4double, G4double, G4double);
-  void FillHitsTuple(G4int, G4int, G4double, G4double, G4double, G4String, G4double,
-      G4double, G4double, G4double, G4double, G4int, G4int);
+  void FillHitsTuple(G4int, G4int, G4double, G4double, G4double, G4double, G4double,
+      G4double, G4double, G4double, G4double, G4String, G4int);
   void FillPixelTuple(G4int, G4int, G4double, std::vector<G4double>&);
   void FillVolumesTuple(G4int, G4int, G4double, G4double, G4double, G4String);
   void FillH1Hist(G4int ih, G4double xbin, G4double weight = 1.);
