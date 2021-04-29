@@ -25,6 +25,7 @@ NDDDetectorConstruction::NDDDetectorConstruction()
       physicalWorld(0),
       siThickness(2. * mm),
       siBackingThickness(1. * mm),
+      mylarThickness(5. * um),
       siOuterRadius(6.157 * cm),
       stepLimitMyl(0),
       stepLimitCar(0) {
@@ -443,24 +444,24 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
 
     //Front Foil
     solidFoil = new G4Tubs("Foil", 0., foilRadius,
-                               eastFoilThickness / 2.0, 0, 360. * deg);
+                               mylarThickness / 2.0, 0, 360. * deg);
     logicalFoil =
         new G4LogicalVolume(solidFoil, mylarMaterial, "Foil");
     physicalFoil = new G4PVPlacement(
         0,
         G4ThreeVector(pos.x(), pos.y(),
-                      pos.z() + (carrierThickness + eastFoilThickness) / 2.0),
+                      pos.z() + (carrierThickness + mylarThickness) / 2.0),
         logicalFoil, "Foil", motherVolume, false, 0);
 
     //Back Foil
     solidbackFoil = new G4Tubs("Foil", 0., foilRadius,
-                               eastFoilThickness / 2.0, 0, 360. * deg);
+                               mylarThickness / 2.0, 0, 360. * deg);
     logicalbackFoil =
         new G4LogicalVolume(solidbackFoil, mylarMaterial, "Foil");
     physicalbackFoil = new G4PVPlacement(
         0,
         G4ThreeVector(pos.x(), pos.y(),
-                      pos.z() - (carrierThickness + eastFoilThickness) / 2.0),
+                      pos.z() - (carrierThickness + mylarThickness) / 2.0),
         logicalbackFoil, "Foil", motherVolume, false, 0);
 
     // solidWestFoil = new G4Tubs("WestFoil", 0., foilRadius,
