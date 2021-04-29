@@ -32,6 +32,7 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   inline void AddSourcePosition(G4ThreeVector v) { sourcePos.push_back(v); };
   inline void SetDetectorPosition(G4ThreeVector v) { detectorPosition = v;}
   inline void SetSiDetectorThickness(G4double d) {siThickness = d;}
+  inline void SetMylarThickness(G4double d) {mylarThickness = d;}
   inline void SetBackingConfig(G4int r) { backingConfig = r;}
 
  private:
