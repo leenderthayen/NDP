@@ -32,7 +32,7 @@ NDDDetectorMessenger::NDDDetectorMessenger(NDDDetectorConstruction* myDet)
       "Set the detector position of the last given ID.");
   detPosCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  siThicknessCmd = new G4UIcmdWithADoubleAndUnit("NDD/geometry/siThickness", this);
+  siThicknessCmd = new G4UIcmdWithADoubleAndUnit("/NDD/geometry/siThickness", this);
   siThicknessCmd->SetGuidance("Set the Silicon detector thickness.");
   siThicknessCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
