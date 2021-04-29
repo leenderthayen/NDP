@@ -5,6 +5,7 @@
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Cons.hh"
+#include "G4Polyhedra.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4LogicalVolume.hh"
@@ -31,6 +32,7 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   inline void AddSourcePosition(G4ThreeVector v) { sourcePos.push_back(v); };
   inline void SetPixelRings(G4int r) { pixelRings = r; };
   inline void SetDetectorPosition(G4ThreeVector v) { detectorPosition = v;}
+  inline void SetBackingConfig(G4int r) { backingConfig = r;}
 
  private:
   void BuildWorld();
@@ -62,6 +64,7 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   std::vector<G4ThreeVector> sourcePos;
 
   G4int pixelRings;
+  G4int backingConfig;
 
   G4Material* airMaterial;
   G4Material* vacuumMaterial;
@@ -77,10 +80,13 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   G4Material* CaCl2Material;
   G4Material* bariumMaterial;
   G4Material* bismuthMaterial;
+  G4Material* cadmiumMaterial;
   G4Material* pmmaMaterial;
+  G4Material* alumCeramicMaterial;
   G4Material* berylliumMaterial;
   G4Material* germaniumMaterial;
   G4Material* waterMaterial;
+  G4Material* carrierMaterial;
 
   G4Box* solidWorld;
   G4LogicalVolume* logicalWorld;
@@ -88,15 +94,44 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
 
   G4Tubs* solidSilicon;
   G4Tubs* solidFoil;
+  G4Tubs* solidbackFoil;
   G4LogicalVolume* logicalSilicon;
   G4LogicalVolume* logicalFoil;
+  G4LogicalVolume* logicalbackFoil;
   G4VPhysicalVolume* physicalSilicon;
   G4VPhysicalVolume* physicalFoil;
+  G4VPhysicalVolume* physicalbackFoil;
 
-  G4Tubs* solidBacking;
+  G4Polyhedra* solidBacking;
   G4LogicalVolume* logicalBacking;
   G4VPhysicalVolume* physicalBacking;
-
+  
+  G4Tubs* solidbArmor;
+  G4LogicalVolume* logicalbArmor;
+  G4VPhysicalVolume* physicalbArmor;
+  
+  G4Tubs* solidRoger;
+  G4LogicalVolume* logicalRoger;
+  G4VPhysicalVolume* physicalRoger;
+  
+  G4Tubs* solidCM1;
+  G4LogicalVolume* logicalCM1;
+  G4VPhysicalVolume* physicalCM1;
+  
+  G4Tubs* solidCM2;
+  G4LogicalVolume* logicalCM2;
+  G4VPhysicalVolume* physicalCM2;
+  
+  G4Tubs* ArmorTube;
+  G4Polyhedra* ArmorInVoid;
+  G4SubtractionSolid* CopperArmor;
+  G4LogicalVolume* logicalCArmor;
+  G4VPhysicalVolume* physicalCArmor;
+  
+  G4Box* AlBlock;
+  G4LogicalVolume* logicalAlBlock;
+  G4VPhysicalVolume* physicalAlBlock;  
+  
   G4Tubs* solidDead;
   G4LogicalVolume* logicalDead;
   G4VPhysicalVolume* physicalDead;
@@ -109,6 +144,7 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   G4LogicalVolume* logicalSourceRegion;
   G4VPhysicalVolume* physicalSourceRegion;
 
+  G4Box* solidRectCarrier;
   G4Tubs* solidCarrier;
   G4LogicalVolume* logicalCarrier;
   G4VPhysicalVolume* physicalCarrier;
