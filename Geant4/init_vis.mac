@@ -6,6 +6,29 @@
 /control/verbose 2
 /control/saveHistory
 /run/verbose 2
+
+####################################################
+#                    GEOMETRY                      #
+####################################################
+
+/NDD/geometry/detectorPosition 0 0 10 mm
+# Source ID:
+# 0 : 45Ca 500 nm foil facing east
+# 1 : 133Ba 12.5 um mylar
+# 2 : 133Ba quasi-sealed
+# 3 : 207Bi 5 um mylar
+# 4 : 113Sn, 139Ce 5 um mylar
+# 5 : 109Cd
+# 6 : UoM source holder (Al block)
+
+/NDD/geometry/addSourceID 4
+/NDD/geometry/addSourcePosition 0. 0. -4.0 cm
+/NDD/geometry/addSourceID 5
+/NDD/geometry/addSourcePosition 0. 0. -5.5808 cm
+/NDD/geometry/addSourceID 6
+/NDD/geometry/addSourcePosition 0. 0. -4.7904 cm
+/NDD/geometry/buildBacking 1
+
 #
 # Change the default number of threads (in multi-threaded mode)
 #/run/numberOfThreads 4

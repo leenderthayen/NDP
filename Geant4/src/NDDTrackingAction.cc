@@ -32,9 +32,13 @@ void NDDTrackingAction::PreUserTrackingAction(const G4Track* track)
   G4double timeBirth = track->GetGlobalTime();
   G4int trackID = track->GetTrackID();
   G4ThreeVector creationPos = track->GetPosition();
-  G4String process = track->GetCreatorProcess()->GetProcessName();
+  const G4VProcess* process = track->GetCreatorProcess();
+  G4String processName = "start";
+  if (process) {
+    processName = process->GetProcessName();
+  }
 
-  eventAction->AddPrimaryEvent(trackID, ekin, timeBirth, creationPos, process, name);
+  eventAction->AddPrimaryEvent(trackID, ekin, timeBirth, creationPos, processName, name);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
