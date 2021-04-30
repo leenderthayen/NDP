@@ -1,0 +1,131 @@
+# L. Hayen
+# email: leendert.hayen@kuleuven.be
+#
+# July 13, 2017
+
+####################################################
+#                   VERBOSITY                      #
+####################################################
+/control/verbose 2
+/tracking/verbose 0
+/event/verbose 0
+/run/verbose 2
+
+####################################################
+#                    GEOMETRY                      #
+####################################################
+
+/NDD/geometry/detectorPosition 0 0 10 mm
+# Source ID:
+# 0 : 45Ca 500 nm foil facing east
+# 1 : 133Ba 12.5 um mylar
+# 2 : 133Ba quasi-sealed
+# 3 : 207Bi 5 um mylar
+# 4 : 113Sn, 139Ce 5 um mylar
+# 5 : 109Cd
+# 6 : UoM source holder (Al block)
+
+/NDD/geometry/addSourceID 4
+/NDD/geometry/addSourcePosition 0. 0. -4.0 cm
+/NDD/geometry/addSourceID 5
+/NDD/geometry/addSourcePosition 0. 0. -5.5808 cm
+/NDD/geometry/addSourceID 6
+/NDD/geometry/addSourcePosition 0. 0. -4.7904 cm
+/NDD/geometry/buildBacking 1
+/NDD/geometry/MylarThickness 3.6 um
+
+####################################################
+#                     READOUT                      #
+####################################################
+
+/NDD/readout/pixelRings 6
+/NDD/readout/pixelSize 10.3 mm # Change?
+
+####################################################
+#                     PHYSICS                      #
+####################################################
+
+#/NDD/phys/setGCut 100 nm
+#/NDD/phys/setECut 100 nm
+#/NDD/phys/setPCut 100 um
+/NDD/phys/addPhysics empenelope
+
+
+/run/initialize
+
+#/geometry/test/run
+
+
+####################################################
+#                 EVENT GENERATION                 #
+####################################################
+# Particles
+/gps/particle ion
+
+#/gps/ion 56 133 0 0 #133Ba
+#/gps/ion 83 207 0 0 #207Bi
+#/gps/ion 50 113 0 0 #113Sn
+#/gps/ion 58 139 0 0 #139Ce
+#/gps/ion 80 203 0 0 #203Hg
+/gps/ion 48 109 0 0 #109Cd
+
+# Positioning and Angles
+
+#/gps/pos/confine Carrier
+/gps/ang/type iso
+/gps/pos/type Volume
+/gps/pos/shape Cylinder
+/gps/pos/centre 0 0 -5.5808 cm
+/gps/pos/radius 1.5 mm
+/gps/pos/halfz 30 nm
+
+# Mono energetic
+#/gps/ene/type Mono
+#/gps/ene/mono 0 keV
+
+# Custom 45Ca source
+#/gps/source/add 2.5
+#/gps/particle e-
+
+#/gps/ang/type iso
+#/gps/pos/type Volume
+#/gps/pos/shape Cylinder
+#/gps/pos/centre 0 0 -710 mm
+#/gps/pos/radius 1 mm
+#/gps/pos/halfz 30 nm
+
+# User defined spectrum
+#/gps/ene/type Arb
+#/gps/ene/emspec true
+#/gps/ene/diffspec true
+
+#/gps/hist/type energy
+#/gps/hist/file 45Ca.txt
+#/gps/hist/inter Spline
+
+#/gps/source/list
+
+#/gps/source/clear
+#/gps/source/add 1.0
+#/gps/particle proton
+#/gps/energy 30 keV
+#/gps/direction 0 0 1
+#/gps/ang/type iso
+#/gps/energy 0 keV
+#/gps/ang/type iso
+#/gps/position 0 0 0 cm
+
+# Delete unwanted sources
+#/gps/source/delete 0
+
+/gps/source/list
+
+####################################################
+#                       RUN                        #
+####################################################
+/analysis/setFileName 109Cd_back_UoM_3600nm.root
+/run/particle/dumpCutValues
+
+/run/printProgress 10000
+
+/run/beamOn 1000000

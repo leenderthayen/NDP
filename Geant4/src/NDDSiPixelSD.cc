@@ -45,16 +45,18 @@ G4bool NDDSiPixelSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
 
   NDDSiPixelHit* newHit = new NDDSiPixelHit();
 
-  G4VPhysicalVolume* pVolPost =
-      aStep->GetPostStepPoint()->GetTouchableHandle()->GetVolume();
+  G4VPhysicalVolume* pVolPre =
+      aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
 
   G4ThreeVector pos = aStep->GetPreStepPoint()->GetPosition();
 
 
-  G4ThreeVector siPos = pVolPost->GetObjectTranslation();
-  if (pVolPost->GetName() != "physicalSilicon") {
-      siPos =
-          aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetObjectTranslation();
+  G4ThreeVector siPos = pVolPre->GetObjectTranslation();
+  if (pVolPre->GetName() != "physicalSilicon") {
+      G4VPhysicalVolume* pVolPost = aStep->GetPostStepPoint()->GetTouchableHandle()->GetVolume();
+      if (pVolPost) {
+        siPos = pVolPost->GetObjectTranslation();
+      }
   }
 
   newHit->SetTrackID(aStep->GetTrack()->GetTrackID());
