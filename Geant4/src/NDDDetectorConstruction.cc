@@ -196,14 +196,12 @@ void NDDDetectorConstruction::BuildSiDetector() {
 
   G4double rotationAngle = -257.5 * deg;
 
-  G4RotationMatrix* rot = new G4RotationMatrix(rotationAngle, 0., 0.);
-
   solidSilicon = new G4Tubs("solidSilicon", 0., siOuterRadius,
                                 siThickness / 2., 0., 360. * deg);
   logicalSilicon = new G4LogicalVolume(solidSilicon, siliconMaterial,
                                            "logicalSilicon");
   physicalSilicon = new G4PVPlacement(
-      rot,
+      0,
       G4ThreeVector(xSilicon, ySilicon, zSilicon),
       logicalSilicon, "physicalSilicon", logicalWorld, false, 0);
 
