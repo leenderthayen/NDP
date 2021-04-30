@@ -25,6 +25,7 @@ NDDSiPixelHit::NDDSiPixelHit()
       particleCode(""),
       time(-1),
       pixelNumber(-1),
+      particleName(""),
       pixelName("") {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -43,6 +44,7 @@ NDDSiPixelHit::NDDSiPixelHit(const NDDSiPixelHit& right) : G4VHit() {
   pixelNumber = right.pixelNumber;
   pixelName = right.pixelName;
   time = right.time;
+  particleName = right.particleName;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -57,13 +59,14 @@ const NDDSiPixelHit& NDDSiPixelHit::operator=(const NDDSiPixelHit& right) {
   pixelNumber = right.pixelNumber;
   pixelName = right.pixelName;
   time = right.time;
+  particleName = right.particleName;
   return *this;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4int NDDSiPixelHit::operator==(const NDDSiPixelHit& right) const {
-  return ((trackID == right.trackID) && (enDep == right.enDep) && (pos == right.pos) && (momentum == right.momentum) && (field == right.field) && (particleCode == right.particleCode) && (pixelNumber == right.pixelNumber) && (pixelName == right.pixelName) && (time == right.time));
+  return ((trackID == right.trackID) && (enDep == right.enDep) && (pos == right.pos) && (momentum == right.momentum) && (field == right.field) && (particleCode == right.particleCode) && (particleName == right.particleName) && (pixelNumber == right.pixelNumber) && (pixelName == right.pixelName) && (time == right.time));
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
