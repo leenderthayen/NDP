@@ -28,31 +28,31 @@ void NDDPixelReadOut::Construct() {
 
   // Adding const modifier to make sure the actual geometry is never changed here
   const G4double siThickness = userDC->siThickness;
-  const G4double siOuterRadius = userDC->siOuterRadius;
   const G4ThreeVector detectorPosition = userDC->detectorPosition;
 
+  // Not actual geometry, no physics interaction so no material
   G4Material* dummyMat = nullptr;
 
   G4VPhysicalVolume* physicalROWorld = GetWorld();
   G4LogicalVolume* logicalROWorld = physicalROWorld->GetLogicalVolume();
 
   // Can we simply use the userDC G4VSolid?
-  G4VSolid* solidROSilicon = new G4Tubs("solidROSilicon", 0., siOuterRadius,
-                                (siThickness + deadLayerThickness) / 2., 0., 360. * deg);
-  G4LogicalVolume* logicalROSilicon = new G4LogicalVolume(solidROSilicon, dummyMat,
-                                           "logicalROSilicon");
-  new G4PVPlacement(
-      0,
-      detectorPosition,
-      logicalROSilicon, "physicalROSilicon", logicalROWorld, false, 0);
-
-  G4double zPlanes[2] = {0., siThickness + deadLayerThickness};
+  // G4VSolid* solidROSilicon = new G4Tubs("solidROSilicon", 0., siOuterRadius,
+  //                               (siThickness + deadLayerThickness) / 2., 0., 360. * deg);
+  // G4LogicalVolume* logicalROSilicon = new G4LogicalVolume(solidROSilicon, dummyMat,
+  //                                          "logicalROSilicon");
+  // new G4PVPlacement(
+  //     0,
+  //     detectorPosition,
+  //     logicalROSilicon, "physicalROSilicon", logicalROWorld, false, 0);
+  //
+  G4double zPlanes[2] = {0., siThickness};
   G4double rInner[2] = {0., 0.};
   G4double rOuter[2] = {pixelSize / 2.0, pixelSize / 2.0};
 
-  G4VSolid* solidPixel = new G4Polyhedra("solidROPixel", 0, 360. * deg, 6, 2,
+  solidPixel = new G4Polyhedra("solidROPixel", 0, 360. * deg, 6, 2,
                                    zPlanes, rInner, rOuter);
-  G4LogicalVolume* logicalPixel =
+  logicalPixel =
       new G4LogicalVolume(solidPixel, dummyMat, "logicalROPixel");
 
   G4int columns = 2 * pixelRings + 1;
@@ -68,8 +68,8 @@ void NDDPixelReadOut::Construct() {
                            ((columns + 1) / 2 - row +
                             std::abs((columns + 1) / 2 - column) % 2 / 2. - 2) *
                                pixelSize,
-                           -(siThickness + deadLayerThickness)/ 2.0),
-          logicalPixel, "SiROPixel", logicalROSilicon, false, cn); //Added missing variable deadLayerThickness to the Z-coordinate calculation
+                           0) + detectorPosition,
+          logicalPixel, "SiROPixel", logicalROWorld, false, cn); //Added missing variable deadLayerThickness to the Z-coordinate calculation
       cn++;
     }
   }

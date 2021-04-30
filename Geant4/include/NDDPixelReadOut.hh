@@ -3,6 +3,9 @@
 
 #include "G4VUserParallelWorld.hh"
 
+#include "G4VSolid.hh"
+#include "G4LogicalVolume.hh"
+
 class G4VUserDetectorConstruction;
 class NDDPixelReadOutMessenger;
 
@@ -27,6 +30,10 @@ private:
   G4double pixelSize;
   G4double deadLayerThickness;
   G4bool enableDeadLayer;
+
+  G4VSolid* solidPixel;
+  G4LogicalVolume* logicalPixel;
+
 };
 
 #endif

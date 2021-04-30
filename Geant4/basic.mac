@@ -38,7 +38,7 @@
 ####################################################
 
 /NDD/readout/pixelRings 6
-/NDD/readout/pixelSize 5.15 mm # Change?
+/NDD/readout/pixelSize 10.3 mm
 
 ####################################################
 #                     PHYSICS                      #

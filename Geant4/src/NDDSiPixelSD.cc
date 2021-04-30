@@ -40,21 +40,26 @@ void NDDSiPixelSD::Initialize(G4HCofThisEvent* hce) {
 G4bool NDDSiPixelSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
   // energy deposit
   G4double enDep = aStep->GetTotalEnergyDeposit();
-  G4VPhysicalVolume* pVol =
-      aStep->GetPostStepPoint()->GetTouchableHandle()->GetVolume();
 
   if (enDep == 0.) return false;
 
   NDDSiPixelHit* newHit = new NDDSiPixelHit();
 
+  G4VPhysicalVolume* pVolPost =
+      aStep->GetPostStepPoint()->GetTouchableHandle()->GetVolume();
+
   G4ThreeVector pos = aStep->GetPreStepPoint()->GetPosition();
 
-  // G4ThreeVector pixelPos = pVol->GetObjectTranslation();
-  G4ThreeVector detectorPos = G4ThreeVector(0, 0, 10 * mm);
+
+  G4ThreeVector siPos = pVolPost->GetObjectTranslation();
+  if (pVolPost->GetName() != "physicalSilicon") {
+      siPos =
+          aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetObjectTranslation();
+  }
 
   newHit->SetTrackID(aStep->GetTrack()->GetTrackID());
   newHit->SetEnDep(enDep);
-  newHit->SetPos(G4ThreeVector(pos.x(), pos.y(), pos.z() - detectorPos.z())); // Probably offset by half the pixel width
+  newHit->SetPos(G4ThreeVector(pos.x(), pos.y(), pos.z() - siPos.z())); // Probably offset by half the pixel width
   newHit->SetTime(aStep->GetPreStepPoint()->GetGlobalTime());
   newHit->SetMomentum(aStep->GetPreStepPoint()->GetMomentum());
   newHit->SetParticleCode(aStep->GetTrack()->GetDefinition()->GetPDGEncoding());
