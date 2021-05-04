@@ -503,6 +503,26 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
         0, G4ThreeVector(pos.x(), pos.y(), pos.z()),
         logicalAlBlock, "SourceHolder", motherVolume, false, 0);
   }
+  else if (id == 7) {
+    // 241Am source tests at LANL 2019
+    // General dimensions are estimated, unfortunately
+    G4double AlBridgeThickness = 2*mm;
+    G4double AlBridgeWidth = 23.5*mm;
+    G4double AlBridgeDepth = 11*mm;
+
+    G4double AlBackingThickness = 2*mm;
+    G4double AlBackingWidth = 40*mm;
+    G4double AlBackingDepth = 150*mm;
+    G4double AlBackingDistance = 5*mm;
+
+    G4Box* AlBridge = new G4Box("SourceHolder", AlBridgeWidth/2.0, AlBridgeDepth/2.0, AlBridgeThickness/2.0);
+    G4LogicalVolume* logicalAlBridge = new G4LogicalVolume(AlBridge, aluminiumMaterial, "logicalSourceHolder");
+    G4PVPlacement* physicalAlBridge = new G4PVPlacement(0, G4ThreeVector(pos.x(), pos.y(), pos.z()), logicalAlBridge, "physicalSourceHolder", motherVolume, false, 0);
+
+    G4Box* AlBacking = new G4Box("SourceBacking", AlBackingWidth/2.0, AlBackingDepth/2.0, AlBackingThickness/2.0);
+    G4LogicalVolume* logicalAlBacking = new G4LogicalVolume(AlBacking, aluminiumMaterial, "logicalSourceBacking");
+    G4PVPlacement* physicalAlBacking = new G4PVPlacement(0, G4ThreeVector(pos.x(), pos.y(), pos.z()-AlBackingDistance), logicalAlBacking, "physicalSourceBacking", motherVolume, false, 0);
+  }
 }
 
 void NDDDetectorConstruction::BuildVisualisation() {
