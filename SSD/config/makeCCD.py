@@ -14,18 +14,20 @@ def find_centers(N,R,s):
     
     r = (np.sqrt(3)*R+s)
     theta = np.radians(np.arange(0,360,60))
-    dx = r*np.cos(theta)
-    dy = r*np.sin(theta)
+    dx = np.round(r*np.cos(theta), 11)
+    dy = np.round(r*np.sin(theta),11)
     
     while len(centers) < N:
         new_centers = []
         for center in o_centers:
             oldx, oldy = center
             for i in range(len(theta)):
-                new_center = (oldx+dx[i], oldy+dy[i])
+                new_center = (np.round(oldx+dx[i], 9), np.round(oldy+dy[i], 9))
+                print("new_center: ", new_center)
+                print("centers: ", centers)
                 if new_center not in centers:
                     new_centers.append(new_center)
-        centers = centers + new_centers
+                    centers.append(new_center)
         o_centers = new_centers
     return centers[:N]
 
