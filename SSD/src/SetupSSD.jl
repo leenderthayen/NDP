@@ -74,7 +74,7 @@ function SetupDefaultSimulation(geomConfigFile::String, CCDName::String="")::Sim
     simulation = Simulation{T}(geomConfigFile)
 
     if CCDName != ""
-        ccdm = include(CCDName) #put this line in the main script you are running
+        # include(CCDName) #put this line in the main script you are running
         simulation.detector.semiconductors[1].charge_density_model = ccdm
     end
 
