@@ -23,8 +23,6 @@ def find_centers(N,R,s):
             oldx, oldy = center
             for i in range(len(theta)):
                 new_center = (np.round(oldx+dx[i], 9), np.round(oldy+dy[i], 9))
-                print("new_center: ", new_center)
-                print("centers: ", centers)
                 if new_center not in centers:
                     new_centers.append(new_center)
                     centers.append(new_center)
