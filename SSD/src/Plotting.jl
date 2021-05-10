@@ -195,36 +195,35 @@ function Plot1DWeightingPotential(sim::Simulation, dir::String="", prefix::Strin
     # Edge and corner plots only work for hexagons
     @info "Plotting weighting potentials vs z"
 
-    for i in 1:length(sim.weighting_potentials)
+    for i in 2:length(sim.weighting_potentials)
         grid = sim.weighting_potentials[i].grid
         gridX = collect(grid.x)
         gridY = collect(grid.y)
-        # R = sim.detector.contacts[i].geometry.rOuter
-        # r = sqrt(3)*R/2
-        # edge = 0.9.*(r, 0.0) # only works for center pixel now, expand
-        # corner = 0.9.*(r, R/2)
-
-        edge = (0, 6e-3)
-        corner = (6e-3, 0)
+	center = sim.detector.contacts[i].geometry.translate
+        R = sim.detector.contacts[i].geometry.rOuter
+        r = sqrt(3)*R/2
+        edge = (0.9.*r + center[1], 0.0 + center[2])
+        corner = (0.9.*r + center[1], R/2 + center[2])
 
         thresholdX = maximum(gridX[2:end]-gridX[1:end-1])/2
         thresholdY = maximum(gridY[2:end]-gridY[1:end-1])/2
 
-        println(thresholdX, " ", thresholdY)
-        x0 = findlast(x->x==0, collect(grid.x))
-        y0 = findlast(x->x==0, collect(grid.y))
+        #println(thresholdX, " ", thresholdY)
+        x0 = findlast(x->abs(x-center[1]) < thresholdX, collect(grid.x))
+        y0 = findlast(x->abs(x-center[2]) < thresholdY, collect(grid.y))
         xc = findlast(x->abs(x-corner[1]) < thresholdX, collect(gridX))
         yc = findlast(x->abs(x-corner[2]) < thresholdY, collect(gridY))
         xe = findlast(x->abs(x-edge[1]) < thresholdX, collect(gridX))
         ye = findlast(x->abs(x-edge[2]) < thresholdY, collect(gridY))
-
+	
+	println(center)
         println(grid[x0, y0, 1])
         println(grid[xe, ye, 1])
         println(grid[xc, yc, 1])
 
         wp0 = sim.weighting_potentials[i][x0, y0, :]
-        wpe = sim.weighting_potentials[i][x0, ye, :]
-        wpc = sim.weighting_potentials[i][xc, y0, :]
+        wpe = sim.weighting_potentials[i][xe, ye, :]
+        wpc = sim.weighting_potentials[i][xc, yc, :]
 
         plot(collect(grid.z), [wp0, wpe, wpc], labels = ["Center" "Edge" "Corner"],
         xlabel = "Z [m]", ylabel="Weighting potential", size=figSize)
