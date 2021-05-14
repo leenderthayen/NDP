@@ -1,17 +1,21 @@
 #include "NDDPhysicsList.hh"
 #include "NDDPhysicsListMessenger.hh"
 
-#include "PhysListEmStandard.hh"
-#include "PhysListEmStandardSS.hh"   //single scattering model
-#include "PhysListEmStandardGS.hh"   //Goudsmit-Saunderson
-#include "PhysListEmStandardWVI.hh"  //Wentzel-VI MSC model
-
 #include "G4EmStandardPhysics.hh"
 #include "G4EmStandardPhysics_option1.hh"
 #include "G4EmStandardPhysics_option2.hh"
 #include "G4EmStandardPhysics_option3.hh"
+#include "G4EmStandardPhysics_option4.hh"
+#include "G4EmStandardPhysicsSS.hh"
+#include "G4EmStandardPhysicsGS.hh"
 #include "G4EmLivermorePhysics.hh"
 #include "G4EmPenelopePhysics.hh"
+#include "G4EmLowEPPhysics.hh"
+#include "G4EmStandardPhysicsWVI.hh"
+#include "G4EmDNAPhysics.hh"
+#include "G4EmDNAPhysics_option2.hh"
+#include "G4EmDNAPhysics_option4.hh"
+#include "G4EmDNAPhysics_option6.hh"
 #include "G4EmExtraPhysics.hh"
 #include "G4EmParameters.hh"
 #include "G4IonPhysics.hh"
@@ -135,9 +139,7 @@ void NDDPhysicsList::ReplaceEMPhysicsList(const G4String& name) {
     G4cout << "NDDPhysicsList::AddPhysicsList: <" << name << ">" << G4endl;
   }
 
-  if (name == "local") {
-    ReplacePhysics(new PhysListEmStandard(name));
-  } else if (name == "emstandard_opt0") {
+  if (name == "emstandard_opt0") {
     ReplacePhysics(new G4EmStandardPhysics(1));
   } else if (name == "emstandard_opt1") {
     ReplacePhysics(new G4EmStandardPhysics_option1());
@@ -145,16 +147,26 @@ void NDDPhysicsList::ReplaceEMPhysicsList(const G4String& name) {
     ReplacePhysics(new G4EmStandardPhysics_option2());
   } else if (name == "emstandard_opt3") {
     ReplacePhysics(new G4EmStandardPhysics_option3());
+  } else if (name == "emstandard_opt4") {
+    ReplacePhysics(new G4EmStandardPhysics_option4());
   } else if (name == "standardSS") {
-    ReplacePhysics(new PhysListEmStandardSS(name));
+    ReplacePhysics(new G4EmStandardPhysicsSS());
   } else if (name == "standardWVI") {
-    ReplacePhysics(new PhysListEmStandardWVI(name));
+    ReplacePhysics(new G4EmStandardPhysicsWVI);
   } else if (name == "standardGS") {
-    ReplacePhysics(new PhysListEmStandardGS(name));
+    ReplacePhysics(new G4EmStandardPhysicsGS());
   } else if (name == "emlivermore") {
     ReplacePhysics(new G4EmLivermorePhysics());
   } else if (name == "empenelope") {
     ReplacePhysics(new G4EmPenelopePhysics());
+  } else if (name == "DNA") {
+    ReplacePhysics(new G4EmDNAPhysics());
+  } else if (name == "DNA_opt2") {
+    ReplacePhysics(new G4EmDNAPhysics_option2());
+  } else if (name == "DNA_opt4") {
+    ReplacePhysics(new G4EmDNAPhysics_option4());
+  } else if (name == "DNA_opt6") {
+    ReplacePhysics(new G4EmDNAPhysics_option6());
   } else {
     G4cout << "NDDPhysicsList::AddPhysicsList: <" << name << ">"
            << " is not defined" << G4endl;
