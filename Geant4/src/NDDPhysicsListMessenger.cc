@@ -41,8 +41,9 @@ NDDPhysicsListMessenger::NDDPhysicsListMessenger(NDDPhysicsList* pPhys)
   pListCmd->SetParameterName("PList", false);
   pListCmd->AvailableForStates(G4State_PreInit);
   pListCmd->SetCandidates(
-      "emstandard_opt0 emstandard_opt1 emstandard_opt2 emstandard_opt3 "
-      "standardSS standardGS standardWVI emlivermore empenelope");
+      "emstandard_opt0 emstandard_opt1 emstandard_opt2 emstandard_opt3 emstandard_opt4 "
+      "standardSS standardGS standardWVI emlivermore empenelope"
+      "DNA DNA_opt2 DNA_opt4 DNA_opt6");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
