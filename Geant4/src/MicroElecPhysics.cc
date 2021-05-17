@@ -229,9 +229,9 @@ void MicroElecPhysics::ConstructProcess()
 
 	// ---> STANDARD EM processes are inactivated below 100 MeV
 
-	G4UrbanMscModel* msc =  new G4UrbanMscModel();
-	msc->SetActivationLowEnergyLimit(100*MeV);
-	em_config->SetExtraEmModel("e-","msc",msc,"SiliconCrystal");
+	G4UrbanMscModel* urban =  new G4UrbanMscModel();
+	urban->SetActivationLowEnergyLimit(100*MeV);
+	em_config->SetExtraEmModel("e-","msc",urban,"SiliconCrystal");
 
 	mod = new G4MollerBhabhaModel();
 	mod->SetActivationLowEnergyLimit(100*MeV);

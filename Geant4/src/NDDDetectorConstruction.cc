@@ -18,6 +18,7 @@
 
 #include "G4UserLimits.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4ProductionCuts.hh"
 
 NDDDetectorConstruction::NDDDetectorConstruction()
     : solidWorld(0),
@@ -207,7 +208,7 @@ void NDDDetectorConstruction::BuildSiDetector() {
 
   // Define region for specific physics
   detectorRegion = new G4Region("SiliconCrystal");
-  detectorRegion->SetRootLogicalVolume(logicalSilicon);
+  detectorRegion->AddRootLogicalVolume(logicalSilicon);
 
   //Varaibles for the Backing ------------------------------------------------
   //Ceramic Dimensions
@@ -560,6 +561,6 @@ void NDDDetectorConstruction::SetStepLimits() {
   detectorRegion->SetProductionCuts(productionCuts);
 
   G4double maxStep = 5*nm;
-  G4UserLimits* maxStep = new G4UserLimits(maxStep);
-  detectorRegion->SetUserLimits(maxStep);
+  G4UserLimits* maxStepLim = new G4UserLimits(maxStep);
+  detectorRegion->SetUserLimits(maxStepLim);
 }
