@@ -21,6 +21,8 @@
 #include "G4IonPhysics.hh"
 #include "G4IonElasticPhysics.hh"
 
+#include "MicroElecPhysics.hh"
+
 #include "G4IonConstructor.hh"
 #include "G4NuclideTable.hh"
 #include "G4LeptonConstructor.hh"
@@ -167,6 +169,8 @@ void NDDPhysicsList::ReplaceEMPhysicsList(const G4String& name) {
     ReplacePhysics(new G4EmDNAPhysics_option4());
   } else if (name == "DNA_opt6") {
     ReplacePhysics(new G4EmDNAPhysics_option6());
+  } else if (name == "MicroElec") {
+    ReplacePhysics(new MicroElecPhysics());
   } else {
     G4cout << "NDDPhysicsList::AddPhysicsList: <" << name << ">"
            << " is not defined" << G4endl;

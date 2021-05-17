@@ -12,6 +12,7 @@
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
 #include "G4UserLimits.hh"
+#include "G4Region.hh"
 
 #include "G4PVParameterised.hh"
 
@@ -48,6 +49,8 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   void SetStepLimits();
 
   void BuildSource(G4int, G4ThreeVector);
+
+  G4Region* detectorRegion;
 
   G4ThreeVector detectorPosition;
 

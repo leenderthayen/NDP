@@ -205,6 +205,10 @@ void NDDDetectorConstruction::BuildSiDetector() {
       G4ThreeVector(xSilicon, ySilicon, zSilicon),
       logicalSilicon, "physicalSilicon", logicalWorld, false, 0);
 
+  // Define region for specific physics
+  detectorRegion = new G4Region("SiliconCrystal");
+  detectorRegion->SetRootLogicalVolume(logicalSilicon);
+
   //Varaibles for the Backing ------------------------------------------------
   //Ceramic Dimensions
   G4double ceramicDiameter = 14.7 * cm;
@@ -546,22 +550,16 @@ void NDDDetectorConstruction::BuildVisualisation() {
 void NDDDetectorConstruction::ConstructSDandField() {}
 
 void NDDDetectorConstruction::SetStepLimits() {
-  //G4double maxStepDL = stepSize * deadLayerThickness;  //Dead layer is gone
-  G4double maxStepDL = 5. * nm;
-  /*G4double maxStepWL = stepSize * waterThickness;
-  G4UserLimits* stepLimitWater = new G4UserLimits(maxStepWL);
-  logicalWater->SetUserLimits(stepLimitWater);
 
-  G4double maxStepCar = stepSize * carrierThickness;
-  stepLimitCar = new G4UserLimits(maxStepCar);
-  logicalCarrier->SetUserLimits(stepLimitCar);
+  G4ProductionCuts* productionCuts = new G4ProductionCuts();
+  G4double prodCut = 1*nm;
+  productionCuts->SetProductionCut(prodCut, "gamma");
+  productionCuts->SetProductionCut(prodCut, "e-");
+  productionCuts->SetProductionCut(prodCut, "e+");
+  productionCuts->SetProductionCut(prodCut, "proton");
+  detectorRegion->SetProductionCuts(productionCuts);
 
-  G4double maxStepMyl = stepSize * mylarThickness;
-
-  stepLimitMyl = new G4UserLimits(maxStepMyl);
-  logicalFoil->SetUserLimits(stepLimitMyl);
-  logicalWestFoil->SetUserLimits(stepLimitMyl);*/
-
-  /*logicalWorld->SetUserLimits(
-      new G4UserLimits(1e-3 * m, 1e2 * m, 1e3 * s, 1e-3 * keV));*/
+  G4double maxStep = 5*nm;
+  G4UserLimits* maxStep = new G4UserLimits(maxStep);
+  detectorRegion->SetUserLimits(maxStep);
 }
