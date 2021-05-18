@@ -4,6 +4,7 @@
 #include "NDDEventAction.hh"
 #include "NDDSteppingAction.hh"
 #include "NDDTrackingAction.hh"
+#include "NDDAnalysisManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -16,7 +17,8 @@ NDDActionInitialization::~NDDActionInitialization() {}
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void NDDActionInitialization::BuildForMaster() const {
-  SetUserAction(new NDDRunAction);
+  NDDAnalysisManager* analysisManager = new NDDAnalysisManager();
+  SetUserAction(new NDDRunAction(analysisManager));
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -24,9 +26,11 @@ void NDDActionInitialization::BuildForMaster() const {
 void NDDActionInitialization::Build() const {
   SetUserAction(new NDDPrimaryGeneratorAction);
 
-  SetUserAction(new NDDRunAction);
+  NDDAnalysisManager* analysisManager = new NDDAnalysisManager();
 
-  NDDEventAction* eventAction = new NDDEventAction;
+  SetUserAction(new NDDRunAction(analysisManager));
+
+  NDDEventAction* eventAction = new NDDEventAction(analysisManager);
   SetUserAction(eventAction);
 
   SetUserAction(new NDDSteppingAction(eventAction));
