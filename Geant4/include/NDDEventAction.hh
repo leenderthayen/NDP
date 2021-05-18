@@ -30,12 +30,13 @@ struct PrimaryEvent {
 };
 
 class NDDRunAction;
+class NDDAnalysisManager;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class NDDEventAction : public G4UserEventAction {
  public:
-  NDDEventAction();
+  NDDEventAction(NDDAnalysisManager*);
   virtual ~NDDEventAction();
 
  public:
@@ -69,6 +70,8 @@ class NDDEventAction : public G4UserEventAction {
   void ParseStepInfo(const std::string&, const G4double&, const G4ThreeVector&);
 
  private:
+  NDDAnalysisManager* analysisManager;
+
   G4int ClassifyEvent();
 
   G4double enDepSi;
@@ -91,16 +94,6 @@ class NDDEventAction : public G4UserEventAction {
   std::vector<PrimaryEvent> primaryEvents;
 
   void Clear();
-  void FillPrimaryTuple(G4int, G4int, G4int, G4double, G4double, G4double, G4double, G4double, G4String, G4String);
-  void FillEnergyTuple(G4int, G4int, G4double, G4double, G4double,
-      G4double, G4double, G4double, G4double);
-  void FillSpacetimeTuple(G4int, G4int, G4double, G4double, G4double, G4double, G4double);
-  void FillHitsTuple(G4int, G4int, G4int, G4double, G4double, G4double, G4double, G4double,
-      G4double, G4double, G4double, G4double, G4int, G4String);
-  void FillPixelTuple(G4int, G4int, G4double, std::vector<G4double>&);
-  void FillVolumesTuple(G4int, G4int, G4double, G4double, G4double, G4String, G4String);
-  void FillH1Hist(G4int ih, G4double xbin, G4double weight = 1.);
-  void FillH2Hist(G4int ih, G4double xbin, G4double ybin, G4double weight = 1.);
 };
 
 #endif

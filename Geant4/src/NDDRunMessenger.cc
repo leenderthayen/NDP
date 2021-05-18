@@ -48,8 +48,8 @@ NDDRunMessenger::~NDDRunMessenger() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void NDDRunMessenger::SetNewValue(G4UIcommand* command, G4String newValues) {
-  if (command == randomSaveCmd)
-    fRunAction->SetRndmFreq(randomSaveCmd->GetNewIntValue(newValues));
+  // if (command == randomSaveCmd)
+  //   fRunAction->SetRndmFreq(randomSaveCmd->GetNewIntValue(newValues));
 
   if (command == randomReadCmd) {
     G4cout << "\n---> rndm status restored from file: " << newValues << G4endl;
