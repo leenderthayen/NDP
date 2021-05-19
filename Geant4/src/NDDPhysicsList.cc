@@ -16,6 +16,7 @@
 #include "G4EmDNAPhysics_option2.hh"
 #include "G4EmDNAPhysics_option4.hh"
 #include "G4EmDNAPhysics_option6.hh"
+#include "G4DNAGenericIonsManager.hh"
 #include "G4EmExtraPhysics.hh"
 #include "G4EmParameters.hh"
 #include "G4IonPhysics.hh"
@@ -130,6 +131,14 @@ void NDDPhysicsList::ConstructParticle() {
 
   G4ShortLivedConstructor pShortLivedConstructor;
   pShortLivedConstructor.ConstructParticle();
+
+  // Geant4 DNA new particles
+  G4DNAGenericIonsManager * genericIonsManager;
+  genericIonsManager=G4DNAGenericIonsManager::Instance();
+  genericIonsManager->GetIon("alpha++");
+  genericIonsManager->GetIon("alpha+");
+  genericIonsManager->GetIon("helium");
+  genericIonsManager->GetIon("hydrogen");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
