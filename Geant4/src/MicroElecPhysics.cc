@@ -48,7 +48,9 @@
 
 // Geant4-MicroElec MODELS
 
+#include "G4MicroElecElastic_new.hh"
 #include "G4MicroElecElasticModel_new.hh"
+#include "G4MicroElecInelastic_new.hh"
 #include "G4MicroElecInelasticModel_new.hh"
 //
 
@@ -177,6 +179,16 @@ void MicroElecPhysics::ConstructProcess()
   brem->SetEmModel(br2);
   br2->SetLowEnergyLimit(CLHEP::GeV);
 
+	// MicroElec elastic is not active in the world
+	G4MicroElecElastic_new* theMicroElecElasticProcess = new G4MicroElecElastic_new("e-_G4MicroElecElastic");
+	theMicroElecElasticProcess->SetEmModel(new G4DummyModel(),1);
+	ph->RegisterProcess(theMicroElecElasticProcess, particle);
+
+	// MicroElec ionisation is not active in the world
+	G4MicroElecInelastic_new* microelecioni = new G4MicroElecInelastic_new("e-_G4MicroElecInelastic");
+	microelecioni->SetEmModel(new G4DummyModel(),1);
+	ph->RegisterProcess(microelecioni, particle);
+
   ph->RegisterProcess(msc, particle);
   ph->RegisterProcess(eIoni, particle);
   ph->RegisterProcess(brem, particle);
@@ -254,11 +266,11 @@ void MicroElecPhysics::ConstructProcess()
 
 	mod = new G4BraggModel();
 	mod->SetActivationHighEnergyLimit(1*keV);
-	em_config->SetExtraEmModel("proton","hIoni",mod,"Target",0.0,2*MeV, new G4IonFluctuations());
+	em_config->SetExtraEmModel("proton","hIoni",mod,"SiliconCrystal",0.0,2*MeV, new G4IonFluctuations());
 
 	mod = new G4BetheBlochModel();
 	mod->SetActivationLowEnergyLimit(10*GeV);
-	em_config->SetExtraEmModel("proton","hIoni",mod,"Target",2*MeV,10*TeV, new G4IonFluctuations());
+	em_config->SetExtraEmModel("proton","hIoni",mod,"SiliconCrystal",2*MeV,10*TeV, new G4IonFluctuations());
 
 	// ---> MicroElec processes activated
 	mod = new G4MicroElecInelasticModel_new();

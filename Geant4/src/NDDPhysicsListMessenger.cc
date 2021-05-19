@@ -43,7 +43,7 @@ NDDPhysicsListMessenger::NDDPhysicsListMessenger(NDDPhysicsList* pPhys)
   pListCmd->SetCandidates(
       "emstandard_opt0 emstandard_opt1 emstandard_opt2 emstandard_opt3 emstandard_opt4 "
       "standardSS standardGS standardWVI emlivermore empenelope "
-      "DNA DNA_opt2 DNA_opt4 DNA_opt6");
+      "DNA DNA_opt2 DNA_opt4 DNA_opt6 MicroElec");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
