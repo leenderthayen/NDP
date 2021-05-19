@@ -139,6 +139,7 @@ void NDDPhysicsList::ConstructParticle() {
   genericIonsManager->GetIon("alpha+");
   genericIonsManager->GetIon("helium");
   genericIonsManager->GetIon("hydrogen");
+  genericIonsManager->GetIon("silicon");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
