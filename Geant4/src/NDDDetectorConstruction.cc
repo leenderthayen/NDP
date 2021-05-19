@@ -7,6 +7,7 @@
 #include "G4MaterialTable.hh"
 #include "G4Element.hh"
 #include "G4ElementTable.hh"
+#include "G4NistManager.hh"
 
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
@@ -57,6 +58,10 @@ void NDDDetectorConstruction::BuildMaterials() {
   G4double a, z;
   G4double density, pressure;
   G4int nel, natoms;
+
+  G4NistManager* man = G4NistManager::Instance();
+
+  waterMaterial = man->FindOrBuildMaterial("G4_WATER");
 
   // airMaterial at STP
   density = 1.293 * mg / cm3;
@@ -169,9 +174,9 @@ void NDDDetectorConstruction::BuildMaterials() {
   germaniumMaterial = new G4Material(
       "Germanium", z = 32., a = 72.630 * g / mole, density = 5.323 * g / cm3);
 
-  waterMaterial = new G4Material("Water", 1.000 * g / cm3, 2);
-  waterMaterial->AddElement(H, natoms = 2);
-  waterMaterial->AddElement(O, natoms = 1);
+  // waterMaterial = new G4Material("Water", 1.000 * g / cm3, 2);
+  // waterMaterial->AddElement(H, natoms = 2);
+  // waterMaterial->AddElement(O, natoms = 1);
   // Print all the material definitions
   G4cout << G4endl << "Material Definitions : " << G4endl << G4endl;
   G4cout << *(G4Material::GetMaterialTable()) << G4endl;
