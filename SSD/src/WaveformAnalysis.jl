@@ -39,3 +39,11 @@ function CollectRiseTimesFiltered(events, low = 0.1, high = 0.9; dt = 1e-9, cont
     end
     return riseTimes
 end
+
+function CollectRiseTimesNoisyFiltered(events, noises, low = 0.1, high = 0.9; dt = 1e-9, contact = 1)
+    riseTimes = Vector{Unitful.Time}()
+    for i in 1:length(events)
+        push!(riseTimes, CalculateRiseTime(events[i].waveforms[contact].time, CustomNoisyFilter(events[i].waveforms[contact].value, noises[contact,1] ,noises[contact,2] , dt), low, high))
+    end
+    return riseTimes
+end

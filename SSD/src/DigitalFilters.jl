@@ -1,3 +1,5 @@
+using Random
+
 function ExtendWaveform(x::AbstractArray, dt::Real, endTime::Real)::AbstractArray
     return vcat(x, [x[end] for i in 1:(endTime/dt-length(x))])
 end
@@ -24,6 +26,18 @@ function HighPassFilter(x::AbstractArray, RC::Real, dt::Real)::AbstractArray
     return y
 end
 
+function SampleNoise(x::AbstractArray, Freq::AbstractArray, Amp::AbstractArray)::AbstractArray
+    delt::Float64
+    for i = 1:length(Freq)
+        rphase = rand()*2.0*pi
+        for j = 1:length(x)
+            delt = j
+            y[j] += Amp[i]*cos(2.0*pi*Freq[i]*(delt-rphase))
+        end
+    end
+    return y
+end
+
 function CustomFilter(x::AbstractArray, dt::Real)::AbstractArray
     y1 = HighPassFilter(x, 5e-6, dt)
     y2 = LowPassFilter(y1, 7e-9, dt)
@@ -32,6 +46,15 @@ function CustomFilter(x::AbstractArray, dt::Real)::AbstractArray
     #y4 = LowPassFilter(y3, 10e-9, dt)
 
     return y3
+end
+
+function CustomNoisyFilter(x::AbstractArray, Freq::AbstractArray, Amp::AbstractArray, dt::Real)::AbstractArray
+    y1 = HighPassFilter(x, 5e-6, dt)
+    y2 = LowPassFilter(y1, 7e-9, dt)
+    y3 = LowPassFilter(y2, 7e-9, dt)
+    y4 = LowPassFilter(y3, Freq, Amp)
+
+    return y4
 end
 
 function Integrate(x::AbstractArray, dt::Real)::AbstractArray
