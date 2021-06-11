@@ -27,6 +27,7 @@ NDDDetectorConstruction::NDDDetectorConstruction()
       siThickness(2. * mm),
       siBackingThickness(1. * mm),
       mylarThickness(5. * um),
+      AlumThickness(1. * um),
       siOuterRadius(6.157 * cm),
       stepLimitMyl(0),
       stepLimitCar(0) {
@@ -212,7 +213,7 @@ void NDDDetectorConstruction::BuildSiDetector() {
 
   //Varaibles for the Backing ------------------------------------------------
   //Ceramic Dimensions
-  G4double ceramicDiameter = 14.7 * cm;
+  G4double ceramicDiameter = 15.2 * cm;
   G4double czPlanes[2] = {0., siBackingThickness};
   G4double crInner[2] = {0., 0.};
   G4double crOuter[2] = {ceramicDiameter / 2.0, ceramicDiameter / 2.0};
@@ -445,6 +446,17 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
     ringOuterRadius = 2.54 / 2.0 * cm;
     ringThickness = 0.13 * 2.54 * cm;
 
+    //Al Layer on top of the Front Foil
+    solidAlumF = new G4Tubs("Foil", 0., foilRadius,
+                               AlumThickness / 2.0, 0, 360. * deg);
+    logicalAlumF =
+        new G4LogicalVolume(solidAlumF, aluminiumMaterial, "Foil");
+    physicalAlumF = new G4PVPlacement(
+        0,
+        G4ThreeVector(pos.x(), pos.y(),
+                      pos.z() + mylarThickness + (carrierThickness + AlumThickness) / 2.0),
+        logicalAlumF, "Foil", motherVolume, false, 0);
+
     //Front Foil
     solidFoil = new G4Tubs("Foil", 0., foilRadius,
                                mylarThickness / 2.0, 0, 360. * deg);
@@ -455,6 +467,17 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
         G4ThreeVector(pos.x(), pos.y(),
                       pos.z() + (carrierThickness + mylarThickness) / 2.0),
         logicalFoil, "Foil", motherVolume, false, 0);
+
+    //Al Layer on top of the Back Foil
+    solidAlumB = new G4Tubs("Foil", 0., foilRadius,
+                               AlumThickness / 2.0, 0, 360. * deg);
+    logicalAlumB =
+        new G4LogicalVolume(solidAlumB, aluminiumMaterial, "Foil");
+    physicalAlumB = new G4PVPlacement(
+        0,
+        G4ThreeVector(pos.x(), pos.y(),
+                      pos.z() - mylarThickness - (carrierThickness + AlumThickness) / 2.0),
+        logicalAlumB, "Foil", motherVolume, false, 0);
 
     //Back Foil
     solidbackFoil = new G4Tubs("Foil", 0., foilRadius,
