@@ -33,6 +33,7 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   inline void SetDetectorPosition(G4ThreeVector v) { detectorPosition = v;}
   inline void SetSiDetectorThickness(G4double d) {siThickness = d;}
   inline void SetMylarThickness(G4double d) {mylarThickness = d;}
+  inline void SetAlumThickness(G4double d) {AlumThickness = d;}
   inline void SetBackingConfig(G4int r) { backingConfig = r;}
 
  private:
@@ -58,6 +59,7 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   G4double siOuterRadius;
   G4double carrierThickness;
   G4double mylarThickness;
+  G4double AlumThickness;
   G4double carrierRadius;
   G4double sourceRadius;
   G4double stepSize;
@@ -94,11 +96,17 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   G4VPhysicalVolume* physicalWorld;
 
   G4Tubs* solidSilicon;
+  G4Tubs* solidAlumF;
+  G4Tubs* solidAlumB;
   G4Tubs* solidFoil;
   G4Tubs* solidbackFoil;
+  G4LogicalVolume* logicalAlumF;
+  G4LogicalVolume* logicalAlumB;
   G4LogicalVolume* logicalSilicon;
   G4LogicalVolume* logicalFoil;
   G4LogicalVolume* logicalbackFoil;
+  G4VPhysicalVolume* physicalAlumF;
+  G4VPhysicalVolume* physicalAlumB;
   G4VPhysicalVolume* physicalSilicon;
   G4VPhysicalVolume* physicalFoil;
   G4VPhysicalVolume* physicalbackFoil;
