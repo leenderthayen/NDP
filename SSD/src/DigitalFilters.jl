@@ -32,10 +32,10 @@ function SampleNoise(x::AbstractArray, Freq::AbstractArray, Amp::AbstractArray):
         rphase = rand()*2.0*pi
         for j = 1:length(x)
             delt = j
-            y[j] += Amp[i]*cos(2.0*pi*Freq[i]*(delt-rphase))
+            x[j] += Amp[i]*cos(2.0*pi*Freq[i]*(delt-rphase))
         end
     end
-    return y
+    return x
 end
 
 function CustomFilter(x::AbstractArray, dt::Real)::AbstractArray
