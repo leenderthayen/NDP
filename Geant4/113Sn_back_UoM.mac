@@ -25,6 +25,8 @@
 # 5 : 109Cd
 # 6 : UoM source holder (Al block)
 
+/NDD/geometry/MylarThickness 3.6 um
+/NDD/geometry/AlumThickness 1.0 um
 /NDD/geometry/addSourceID 4
 /NDD/geometry/addSourcePosition 0. 0. -4.0 cm
 /NDD/geometry/addSourceID 5
@@ -32,7 +34,6 @@
 /NDD/geometry/addSourceID 6
 /NDD/geometry/addSourcePosition 0. 0. -4.7904 cm
 /NDD/geometry/buildBacking 1
-/NDD/geometry/MylarThickness 3.6 um
 
 ####################################################
 #                     READOUT                      #
