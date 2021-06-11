@@ -52,7 +52,7 @@ function CustomNoisyFilter(x::AbstractArray, Freq::AbstractArray, Amp::AbstractA
     y1 = HighPassFilter(x, 5e-6, dt)
     y2 = LowPassFilter(y1, 7e-9, dt)
     y3 = LowPassFilter(y2, 7e-9, dt)
-    y4 = LowPassFilter(y3, Freq, Amp)
+    y4 = SampleNoise(y3, Freq, Amp)
 
     return y4
 end
