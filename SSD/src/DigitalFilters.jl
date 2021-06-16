@@ -27,7 +27,6 @@ function HighPassFilter(x::AbstractArray, RC::Real, dt::Real)::AbstractArray
 end
 
 function SampleNoise(x::AbstractArray, Freq::AbstractArray, Amp::AbstractArray)::AbstractArray
-    delt::Float64
     for i = 1:length(Freq)
         rphase = rand()*2.0*pi
         for j = 1:length(x)
