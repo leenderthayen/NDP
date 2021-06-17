@@ -12,8 +12,8 @@ from matplotlib.ticker import MaxNLocator
 
 from datetime import datetime
 
-import loglikelihood as llh
-import utilities as utils
+import utils.loglikelihood as llh
+import utils.utilities as utils
 
 import matplotlib.pyplot as plt
 
@@ -82,20 +82,20 @@ def fitToData(model, x, y, yerr, doSampling=True, plotResults=True, **kwargs):
     mini = lmfit.Minimizer(residuals, params, fcn_args=(model, x, y, yerr))
     try:
         mini.minimize(method='differential_evolution', **kwargs)
-        result = model.fit(y, params, x=x, weights=[1/l for l in yerr], method='leastsq')
+        result = model.fit(y, params, x=x, weights=1./yerr, method='leastsq')
         if np.isnan(result.chisqr):
             print('**** WARNING ****')
             print('Differential evolution failed, likelihood returned NaN')
             print('Trying again with LM')
             params = model.make_params()
-            result = model.fit(y, params, x=x, weights=[1/l for l in yerr], method='leastsq')
+            result = model.fit(y, params, x=x, weights=1./yerr, method='leastsq')
         params = result.params
     except (TypeError, ValueError) as e:
         print('**** WARNING ****')
         print(e.message)
         print('Failed to fit using Differential Evolution, using Levenberg-Marquadt instead')
         mini.minimize(**kwargs)
-        result = model.fit(y, params, x=x, weights=np.array([1/l for l in yerr]))
+        result = model.fit(y, params, x=x, weights=1./yerr)
 
     lmfit.report_errors(params)
     print(result.fit_report())
@@ -132,7 +132,7 @@ def fitToData(model, x, y, yerr, doSampling=True, plotResults=True, **kwargs):
 
         return result, (sampler, ndim, params), figs
     else:
-        plt.close('all')
+        #plt.close('all')
         return result, None, figs
 
 def interpretSamplingResults(x, y, yerr, sampler, ndim, params, model):
@@ -204,7 +204,7 @@ def plotFitResults(model, params, result, x, y):
     for key in comps:
         axes[0].plot(x, comps[key])
 
-    plt.close()
+    #plt.close()
 
     return fig
 

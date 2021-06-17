@@ -5,6 +5,8 @@ import uproot
 import awkward
 from tqdm import tqdm
 
+import utils.analysis as anal
+
 def makeHist(tree, var, cut=None, step_size="50 MB", bins=1000, plot=True):
     hist = np.zeros(bins)
     for batch in tqdm(tree.iterate(var, cut, step_size=step_size, library="np")):
@@ -16,6 +18,19 @@ def makeHist(tree, var, cut=None, step_size="50 MB", bins=1000, plot=True):
         plt.bar(bin_edges[:-1]+binWidth/2, hist, width=binWidth)
         plt.yscale("log")
     return bin_edges, hist
+
+def convolveHist(hist, bins, sigma, plot=True):
+    dx = bins[1]-bins[0]
+    gx = np.arange(-3*sigma, 3*sigma, dx)
+    gauss = np.exp(-(gx/sigma)**2/2)/sigma/np.sqrt(2*np.pi)
+    res = np.convolve(hist, gauss, mode="same")
+    res *= np.sum(hist)/np.sum(res)
+
+    if plot:
+        plt.figure()
+        plt.bar(bins[:-1]+dx/2, res, width=dx, alpha=0.5)
+        plt.bar(bins[:-1]+dx/2, hist, width=dx)
+        plt.yscale("log")
 
 def plotPrimaries(tree):
     radAll = tree.arrays(["energy"], "process == \"RadioactiveDecayBase\"")["energy"]
@@ -66,13 +81,13 @@ def buildPixelSpectrum(hitsTree, pixel, cce = lambda z: 1, bins=100, plot=True):
         binWidth = bin_edges[1]-bin_edges[0]
         plt.bar(bin_edges[:-1]+binWidth/2, eDepHist, width=binWidth)
 
-    return eDepHist, bins
+    return eDepHist, bin_edges
 
 
 if __name__ == "__main__":
     print("Starting")
 
-    fileName = "109Cd_front_UoM_0.5+1.67.root"
+    fileName = "../data/G4/109Cd_front_UoM_0.5+1.67.root"
 
     file = uproot.open(fileName)
 
@@ -82,7 +97,13 @@ if __name__ == "__main__":
 
     cce = lambda z: np.where(z < dl, 0, 1)
 
-    buildPixelSpectrum(file["ntuple/hits"], 64, cce=cce)
+    bins = np.arange(0, 150, 0.1)
+
+    hist, _ = buildPixelSpectrum(file["ntuple/hits"], 64, cce=cce, bins=bins)
+
+    convolveHist(hist, bins, 3)
+
+    anal.fitFunction(bins[:-1], hist, 'Longoria', (55, 67))
 
     plt.show(block=True)
 
