@@ -27,6 +27,8 @@ Run 'MainScript.jl' or make your own.
 
 We are working on a separate fork of the SSD.jl package at times. Use the package manager to choose which one to use if you are missing functionality.
 
+## Running Simulations
+
 ### Make detector and CCD
 
 make_detector_simple.py and makeCCD.py take user defined parameters to create detectors similar in design to the detectors used in the Nab experiment. make_detector_simple.py defines the geometries of the bulk silicon and contacts. makeCCD.py defines the impurity density profile of the bulk silicon. The IDP includes any depostions in the bulk (p+, n+, pstop or pspray). To run a simulation using these scripts first run them using python3: 
@@ -97,3 +99,14 @@ You can also use these files in your own scripts. The detector file is added in 
 ```
 
 If you find any bugs or have any suggestions for improvements to makeCCD.py or make_simple_detector.py reach out to rjtayl.
+
+### Reading root files with ReadGeant4Hits.jl
+
+Older Geant4 root files have a different branch structure than the current version of ReadGeant4Hits.jl expects. If you encounter this error it can be fixed my replacing line 39
+```
+df = DataFrame(eID = t.eventID, tID = t.trackID, X = t.x, Y = t.y, Z = t.z, E = t.eDep, p = t.particle)
+```
+with 
+```
+df = DataFrame(ID = t.iD, X = t.x, Y = t.y, Z = t.z, E = t.eDep)
+```
