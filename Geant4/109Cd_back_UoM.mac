@@ -78,7 +78,7 @@
 /gps/ang/type iso
 /gps/pos/type Volume
 /gps/pos/shape Cylinder
-/gps/pos/centre 0 0 -5.5808 cm
+/gps/pos/centre 0 0 -8.5808 cm
 /gps/pos/radius 1.5 mm
 /gps/pos/halfz 1 nm
 
