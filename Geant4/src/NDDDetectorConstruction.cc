@@ -335,6 +335,7 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
   G4double ringOuterRadius, ringInnerRadius;
   G4double eastFoilThickness, westFoilThickness;
   G4double ringThickness;
+  G4double SpacerThickness;
   G4double AlBSide,AlBThickness,BoreRadius,AlSlitLength,AlSlitHeight,AlSlitDepth,AlSourceOD;
 
   G4LogicalVolume* motherVolume = logicalWorld;
@@ -343,6 +344,11 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
   G4RotationMatrix* zRot90 = new G4RotationMatrix;  // Rotates X and Z axes only
   G4RotationMatrix* zRot180 = new G4RotationMatrix;  // Rotates X and Z axes only
   G4RotationMatrix* zRot270 = new G4RotationMatrix;  // Rotates X and Z axes only
+
+  G4double HNHeight = 0.2778*2.0*cm;
+  G4double HNZplane[2] = {-HNHeight/2.0,HNHeight/2.0};
+  G4double HNrInner[2] = {0., 0.};
+  G4double HNrOuter[2] = {0.6416*cm, 0.6416*cm};
 
   if (id == 0) {
     // 45Ca 500nm
@@ -616,6 +622,32 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
     physicalAlEarB4 = new G4PVPlacement(
         zRot270, G4ThreeVector(pos.x() - AlBSide/4.0, pos.y() + AlBSide/4.0, pos.z() - ((AlBThickness+AlSlitHeight)/2.0 ) ),
         logicalAlEar, "SourceHolder", motherVolume, false, 0);
+
+    //Spacer between the hex nut and the Al block
+    SpacerThickness = 2.0*mm;
+    Spacer = new G4Tubs("SourceHolder",0.0, AlBThickness/2.0, SpacerThickness/2.0, 0., 360. * deg);
+    logicalSpacer =
+        new G4LogicalVolume(Spacer, stainlessSteelMaterial, "SourceHolder");
+    physicalSpacer = new G4PVPlacement(
+        yRot, G4ThreeVector(pos.x() + (AlBSide + SpacerThickness)/2.0, pos.y(), pos.z()),
+        logicalSpacer, "SourceHolder", motherVolume, false, 0);
+
+    // Hex Nut
+    HexNut = new G4Polyhedra("SourceHolder", 15.0*deg, 360. * deg, 6, 2, HNZplane, HNrInner, HNrOuter);
+    logicalHexNut =
+        new G4LogicalVolume(HexNut, stainlessSteelMaterial, "SourceHolder");
+    physicalBacking = new G4PVPlacement(
+        yRot, G4ThreeVector(pos.x() + AlBSide/2.0 + SpacerThickness + HNHeight/2.0, pos.y(), pos.z()),
+        logicalHexNut, "SourceHolder", motherVolume, false, 0);
+
+    // Holder Arm
+    HolderArm = new G4Tubs("SourceHolder",0.0, 5.0/16.0*2.54/2.0*cm, 5.0*cm, 0., 360. * deg);
+    logicalHolderArm =
+        new G4LogicalVolume(HolderArm, stainlessSteelMaterial, "SourceHolder");
+    physicalHolderArm = new G4PVPlacement(
+        yRot, G4ThreeVector(pos.x() +  AlBSide/2.0 + SpacerThickness + HNHeight + 5.0*cm, pos.y(), pos.z()),
+        logicalHolderArm, "SourceHolder", motherVolume, false, 0);
+
   }
   else if (id == 7) {
     // 241Am source tests at LANL 2019
