@@ -137,9 +137,38 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   G4LogicalVolume* logicalCArmor;
   G4VPhysicalVolume* physicalCArmor;
 
-  G4Box* AlBlock;
+  G4Box* AlBox;
+  G4Tubs* AlBore;
+  G4SubtractionSolid* AlBlock;
   G4LogicalVolume* logicalAlBlock;
   G4VPhysicalVolume* physicalAlBlock;
+
+  G4Box* AlPad;
+  G4LogicalVolume* logicalAlPad;
+  G4VPhysicalVolume* physicalAlPadUF;
+  G4VPhysicalVolume* physicalAlPadLF;
+  G4VPhysicalVolume* physicalAlPadUB;
+  G4VPhysicalVolume* physicalAlPadLB;
+
+  G4Box* AlTopLayer;
+  G4Tubs* DiskSlit;
+  G4SubtractionSolid* AlSlit;
+  G4LogicalVolume* logicalAlSlit;
+  G4VPhysicalVolume* physicalAlSlitF;
+  G4VPhysicalVolume* physicalAlSlitB;
+
+  G4Box* AlEarBox;
+  G4Tubs* DiskCut;
+  G4SubtractionSolid* AlEar;
+  G4LogicalVolume* logicalAlEar;
+  G4VPhysicalVolume* physicalAlEarF1;
+  G4VPhysicalVolume* physicalAlEarF2;
+  G4VPhysicalVolume* physicalAlEarF3;
+  G4VPhysicalVolume* physicalAlEarF4;
+  G4VPhysicalVolume* physicalAlEarB1;
+  G4VPhysicalVolume* physicalAlEarB2;
+  G4VPhysicalVolume* physicalAlEarB3;
+  G4VPhysicalVolume* physicalAlEarB4;
 
   G4Tubs* solidSourceHolder;
   G4LogicalVolume* logicalSourceHolder;
