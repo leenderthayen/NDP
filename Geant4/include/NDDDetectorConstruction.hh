@@ -170,6 +170,18 @@ class NDDDetectorConstruction : public G4VUserDetectorConstruction {
   G4VPhysicalVolume* physicalAlEarB3;
   G4VPhysicalVolume* physicalAlEarB4;
 
+  G4Tubs* Spacer;
+  G4LogicalVolume* logicalSpacer;
+  G4VPhysicalVolume* physicalSpacer;
+
+  G4Polyhedra* HexNut;
+  G4LogicalVolume* logicalHexNut;
+  G4VPhysicalVolume* physicalHexNut;
+
+  G4Tubs* HolderArm;
+  G4LogicalVolume* logicalHolderArm;
+  G4VPhysicalVolume* physicalHolderArm;
+
   G4Tubs* solidSourceHolder;
   G4LogicalVolume* logicalSourceHolder;
   G4VPhysicalVolume* physicalSourceHolder;
