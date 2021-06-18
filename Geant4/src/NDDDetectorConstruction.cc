@@ -213,7 +213,8 @@ void NDDDetectorConstruction::BuildSiDetector() {
 
   //Varaibles for the Backing ------------------------------------------------
   //Ceramic Dimensions
-  G4double ceramicDiameter = 15.2 * cm;
+  //G4double ceramicDiameter = 15.2 * cm;
+  G4double ceramicDiameter = 14.7066 * cm;
   G4double czPlanes[2] = {0., siBackingThickness};
   G4double crInner[2] = {0., 0.};
   G4double crOuter[2] = {ceramicDiameter / 2.0, ceramicDiameter / 2.0};
@@ -255,7 +256,7 @@ void NDDDetectorConstruction::BuildSiDetector() {
 
   if(backingConfig>0) {
     // Alumina backing (?)
-    solidBacking = new G4Polyhedra("Backing", 0, 360. * deg, 16, 2, czPlanes, crInner, crOuter);
+    solidBacking = new G4Polyhedra("Backing", -11.25 * deg, 360. * deg, 16, 2, czPlanes, crInner, crOuter);
     logicalBacking =
         new G4LogicalVolume(solidBacking, alumCeramicMaterial, "Backing");
     physicalBacking = new G4PVPlacement(
@@ -307,7 +308,7 @@ void NDDDetectorConstruction::BuildSiDetector() {
                                   ArmorThickness / 2., 0., 360. * deg);
 
     // Void inside of the Armor
-    ArmorInVoid = new G4Polyhedra("Backing", 0, 360. * deg, 16, 2, azPlanes, arInner, arOuter);
+    ArmorInVoid = new G4Polyhedra("Backing", -11.25 * deg, 360. * deg, 16, 2, azPlanes, arInner, arOuter);
     CopperArmor = new G4SubtractionSolid("Backing", ArmorTube, ArmorInVoid, 0, G4ThreeVector());
     logicalCArmor =
         new G4LogicalVolume(CopperArmor, copperMaterial, "Backing");
@@ -329,14 +330,19 @@ void NDDDetectorConstruction::BuildSources() {
 }
 
 void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
-  carrierRadius = 1.0 * mm;
+  carrierRadius = 1.5 * mm;
   G4double foilRadius;
   G4double ringOuterRadius, ringInnerRadius;
   G4double eastFoilThickness, westFoilThickness;
   G4double ringThickness;
-  G4double AlBSide,AlBThickness;
+  G4double AlBSide,AlBThickness,BoreRadius,AlSlitLength,AlSlitHeight,AlSlitDepth,AlSourceOD;
 
   G4LogicalVolume* motherVolume = logicalWorld;
+
+  G4RotationMatrix* yRot = new G4RotationMatrix;  // Rotates X and Z axes only
+  G4RotationMatrix* zRot90 = new G4RotationMatrix;  // Rotates X and Z axes only
+  G4RotationMatrix* zRot180 = new G4RotationMatrix;  // Rotates X and Z axes only
+  G4RotationMatrix* zRot270 = new G4RotationMatrix;  // Rotates X and Z axes only
 
   if (id == 0) {
     // 45Ca 500nm
@@ -442,7 +448,8 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
     foilRadius = 0.87 * 2.54 / 2.0 * cm;
     eastFoilThickness = 5.0 * um;
     westFoilThickness = 5.0 * um;
-    ringInnerRadius = 0.87 * 2.54 / 2.0 * cm;
+    //ringInnerRadius = 0.87 * 2.54 / 2.0 * cm;
+    ringInnerRadius = 17.52/2.0 * mm;
     ringOuterRadius = 2.54 / 2.0 * cm;
     ringThickness = 0.13 * 2.54 * cm;
 
@@ -521,15 +528,94 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
     //Manitoba Source Holder
     AlBSide = 2.2606 * cm;
     AlBThickness = 1.2446 * cm;
+    BoreRadius = 0.25*2.54/2.0 * cm;
+
+    //Dimensions of the Slit in the Al Box
+    AlSlitLength = AlBSide/2.0; //Slit length will get a bit longer to avoid invisible wall
+    AlSlitHeight = 0.13*2.54 * cm;
+    AlSlitDepth = 0.06*2.54 * cm; //Slit depth will get a bit longer to avoid invisible wall
+
+    //CAL2702 Diameter
+    AlSourceOD = 2.54 * cm;
 
     //Al Block of the Source holder
-    AlBlock = new G4Box("SourceHolder", AlBSide/2.0, AlBSide/2.0, AlBThickness/2.0);
-    logicalAlBlock =
-        new G4LogicalVolume(AlBlock, aluminiumMaterial, "SourceHolder");
-
+    AlBox = new G4Box("SourceHolder", AlBSide/2.0, AlBSide/2.0, AlBThickness/2.0 - AlSlitDepth); //There is a layer of "Slit" on either side of the Al Box
+    // Cylindrical Bore
+    AlBore = new G4Tubs("SourceHolder",0.0, BoreRadius,AlBSide / 2., 0., 360. * deg); //Even though Box & Bore have same length, due to the offset, there shouldn't be any invisible wall
+    //Rotation Matrix
+    yRot->rotateY(90.*deg);
+    zRot90->rotateZ(90.*deg);
+    zRot180->rotateZ(180.*deg);
+    zRot270->rotateZ(270.*deg);
+    //subtraction solid
+    AlBlock = new G4SubtractionSolid("SourceHolder", AlBox, AlBore, yRot, G4ThreeVector( -1.0/4.0*AlBSide,0.0,0.0));
+    logicalAlBlock = new G4LogicalVolume(AlBlock, aluminiumMaterial, "SourceHolder");
     physicalAlBlock = new G4PVPlacement(
         0, G4ThreeVector(pos.x(), pos.y(), pos.z()),
         logicalAlBlock, "SourceHolder", motherVolume, false, 0);
+
+    //Al Block of the Source holder
+    AlPad = new G4Box("SourceHolder", AlBSide/4.0, (AlBSide-AlSlitHeight)/4.0, AlSlitDepth/2.0);
+    logicalAlPad = new G4LogicalVolume(AlPad, aluminiumMaterial, "SourceHolder");
+    physicalAlPadUF = new G4PVPlacement(
+        0, G4ThreeVector(pos.x() + AlBSide/4.0, pos.y() + (AlBSide+AlSlitHeight)/4.0, pos.z() + (AlBThickness-AlSlitDepth)/2.0 ),
+        logicalAlPad, "SourceHolder", motherVolume, false, 0);
+    physicalAlPadLF = new G4PVPlacement(
+        0, G4ThreeVector(pos.x() + AlBSide/4.0, pos.y() - (AlBSide+AlSlitHeight)/4.0, pos.z() + (AlBThickness-AlSlitDepth)/2.0 ),
+        logicalAlPad, "SourceHolder", motherVolume, false, 0);
+    physicalAlPadUB = new G4PVPlacement(
+        0, G4ThreeVector(pos.x() + AlBSide/4.0, pos.y() + (AlBSide+AlSlitHeight)/4.0, pos.z() - (AlBThickness-AlSlitDepth)/2.0 ),
+        logicalAlPad, "SourceHolder", motherVolume, false, 0);
+    physicalAlPadLB = new G4PVPlacement(
+        0, G4ThreeVector(pos.x() + AlBSide/4.0, pos.y() - (AlBSide+AlSlitHeight)/4.0, pos.z() - (AlBThickness-AlSlitDepth)/2.0 ),
+        logicalAlPad, "SourceHolder", motherVolume, false, 0);
+
+
+    //Al Block of the Source holder
+    AlTopLayer = new G4Box("SourceHolder", AlBSide/4.0, AlBSide/2.0, AlSlitDepth/2.0);
+    //Circular cut
+    DiskSlit = new G4Tubs("SourceHolder",0.0, AlSlitHeight/ 2., AlSlitDepth / 2. + 1.0*mm, 0., 360. * deg);
+    // Left Al Box
+    AlSlit = new G4SubtractionSolid("SourceHolder", AlTopLayer, DiskSlit, 0, G4ThreeVector( AlBSide/4.0, 0.0 , 0.0 ));
+    logicalAlSlit = new G4LogicalVolume(AlSlit, aluminiumMaterial, "SourceHolder");
+    physicalAlSlitF = new G4PVPlacement(
+        0, G4ThreeVector(pos.x() - AlBSide/4.0, pos.y(), pos.z() + (AlBThickness-AlSlitDepth)/2.0 ),
+        logicalAlSlit, "SourceHolder", motherVolume, false, 0);
+
+    physicalAlSlitB = new G4PVPlacement(
+        0, G4ThreeVector(pos.x() - AlBSide/4.0, pos.y(), pos.z() - (AlBThickness-AlSlitDepth)/2.0 ),
+        logicalAlSlit, "SourceHolder", motherVolume, false, 0);
+
+    //Al Block of the Source holder
+    AlEarBox = new G4Box("SourceHolder", AlBSide/4.0, AlBSide/4.0, AlSlitHeight/2.0);
+    //Circular cut
+    DiskCut = new G4Tubs("SourceHolder",0.0, AlSourceOD/ 2., AlSlitHeight / 2. + 1.0*mm, 0., 360. * deg);
+    AlEar = new G4SubtractionSolid("SourceHolder", AlEarBox, DiskCut, 0, G4ThreeVector( -1.0/4.0*AlBSide, -1.0/4.0*AlBSide , 0.0 ));
+    logicalAlEar = new G4LogicalVolume(AlEar, aluminiumMaterial, "SourceHolder");
+    physicalAlEarF1 = new G4PVPlacement(
+        0, G4ThreeVector(pos.x() + AlBSide/4.0, pos.y() + AlBSide/4.0, pos.z() + ((AlBThickness+AlSlitHeight)/2.0 ) ),
+        logicalAlEar, "SourceHolder", motherVolume, false, 0);
+    physicalAlEarF2 = new G4PVPlacement(
+        zRot90, G4ThreeVector(pos.x() + AlBSide/4.0, pos.y() - AlBSide/4.0, pos.z() + ((AlBThickness+AlSlitHeight)/2.0 ) ),
+        logicalAlEar, "SourceHolder", motherVolume, false, 0);
+    physicalAlEarF3 = new G4PVPlacement(
+        zRot180, G4ThreeVector(pos.x() - AlBSide/4.0, pos.y() - AlBSide/4.0, pos.z() + ((AlBThickness+AlSlitHeight)/2.0 ) ),
+        logicalAlEar, "SourceHolder", motherVolume, false, 0);
+    physicalAlEarF4 = new G4PVPlacement(
+        zRot270, G4ThreeVector(pos.x() - AlBSide/4.0, pos.y() + AlBSide/4.0, pos.z() + ((AlBThickness+AlSlitHeight)/2.0 ) ),
+        logicalAlEar, "SourceHolder", motherVolume, false, 0);
+    physicalAlEarB1 = new G4PVPlacement(
+        0, G4ThreeVector(pos.x() + AlBSide/4.0, pos.y() + AlBSide/4.0, pos.z() - ((AlBThickness+AlSlitHeight)/2.0 ) ),
+        logicalAlEar, "SourceHolder", motherVolume, false, 0);
+    physicalAlEarB2 = new G4PVPlacement(
+        zRot90, G4ThreeVector(pos.x() + AlBSide/4.0, pos.y() - AlBSide/4.0, pos.z() - ((AlBThickness+AlSlitHeight)/2.0 ) ),
+        logicalAlEar, "SourceHolder", motherVolume, false, 0);
+    physicalAlEarB3 = new G4PVPlacement(
+        zRot180, G4ThreeVector(pos.x() - AlBSide/4.0, pos.y() - AlBSide/4.0, pos.z() - ((AlBThickness+AlSlitHeight)/2.0 ) ),
+        logicalAlEar, "SourceHolder", motherVolume, false, 0);
+    physicalAlEarB4 = new G4PVPlacement(
+        zRot270, G4ThreeVector(pos.x() - AlBSide/4.0, pos.y() + AlBSide/4.0, pos.z() - ((AlBThickness+AlSlitHeight)/2.0 ) ),
+        logicalAlEar, "SourceHolder", motherVolume, false, 0);
   }
   else if (id == 7) {
     // 241Am source tests at LANL 2019
@@ -569,6 +655,20 @@ void NDDDetectorConstruction::BuildVisualisation() {
       new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));
   simpleBoxVisAttRed->SetVisibility(true);
   simpleBoxVisAttRed->SetForceSolid(false);
+
+  logicalCarrier->SetVisAttributes(simpleBoxVisAttRed);
+  logicalSourceHolder->SetVisAttributes(simpleBoxVisAttRed);
+
+  G4VisAttributes* simpleBoxVisAttYellow =
+      new G4VisAttributes(G4Colour(0.988, 0.812, 0.01));
+  simpleBoxVisAttYellow->SetVisibility(true);
+  simpleBoxVisAttYellow->SetForceSolid(false);
+
+  logicalbArmor->SetVisAttributes(simpleBoxVisAttYellow);
+  logicalCM1->SetVisAttributes(simpleBoxVisAttYellow);
+  logicalCM2->SetVisAttributes(simpleBoxVisAttYellow);
+  logicalCArmor->SetVisAttributes(simpleBoxVisAttYellow);
+
 }
 
 void NDDDetectorConstruction::ConstructSDandField() {}
