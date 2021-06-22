@@ -3,8 +3,9 @@ using RadiationDetectorSignals
 function CalculateRiseTime(t, v::Array, low::Real, high::Real)
     tLow = 0
     tHigh = 0
-
-    vMax = v[end]
+    
+    v = abs.(v)
+    vMax = findmax(v)[1]
     for i in 1:length(v)
         if v[i] >= low * vMax
             tLow = t[i]
@@ -40,10 +41,12 @@ function CollectRiseTimesFiltered(events, low = 0.1, high = 0.9; dt = 1e-9, cont
     return riseTimes
 end
 
-function CollectRiseTimesNoisyFiltered(events, noises, low = 0.1, high = 0.9; dt = 1e-9, contact = 1)
+function CollectRiseTimesNoisyFiltered(events, noises, low = 0.1, high = 0.9; dt = 1e-9, contact = 1, pixel=64)
     riseTimes = Vector{Unitful.Time}()
     for i in 1:length(events)
-        push!(riseTimes, CalculateRiseTime(events[i].waveforms[contact].time, CustomNoisyFilter(events[i].waveforms[contact].value, noises[contact,1] ,noises[contact,2] , dt), low, high))
+    #for i in 1:10
+    	 @info i 
+        push!(riseTimes, CalculateRiseTime(events[i].waveforms[contact].time, CustomNoisyFilter(events[i].waveforms[contact].value, noises[pixel,1] ,noises[pixel,2] , dt), low, high))
     end
     return riseTimes
 end

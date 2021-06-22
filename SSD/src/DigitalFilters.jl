@@ -26,16 +26,17 @@ function HighPassFilter(x::AbstractArray, RC::Real, dt::Real)::AbstractArray
     return y
 end
 
-function SampleNoise(x::AbstractArray, Freq::AbstractArray, Amp::AbstractArray)::AbstractArray
-    delt::Float64
+function SampleNoise(x::AbstractArray, Freq::AbstractArray, Amp::AbstractArray; dt=1e-9)::AbstractArray
+    Random.seed!()
     for i = 1:length(Freq)
         rphase = rand()*2.0*pi
+	@info rphase
         for j = 1:length(x)
             delt = j
-            y[j] += Amp[i]*cos(2.0*pi*Freq[i]*(delt-rphase))
+            x[j] += Amp[i]*cos((2.0*pi*Freq[i]*delt*dt)-rphase)
         end
     end
-    return y
+    return x
 end
 
 function CustomFilter(x::AbstractArray, dt::Real)::AbstractArray
@@ -52,7 +53,7 @@ function CustomNoisyFilter(x::AbstractArray, Freq::AbstractArray, Amp::AbstractA
     y1 = HighPassFilter(x, 5e-6, dt)
     y2 = LowPassFilter(y1, 7e-9, dt)
     y3 = LowPassFilter(y2, 7e-9, dt)
-    y4 = LowPassFilter(y3, Freq, Amp)
+    y4 = SampleNoise(y3, Freq, Amp)
 
     return y4
 end
