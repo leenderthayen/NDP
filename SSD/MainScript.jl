@@ -34,11 +34,7 @@ end
 SetChargeDriftModel!(sim, chargeDriftConfigFile)
 
 @info "Loading Geant Data"
-<<<<<<< HEAD
 geantFilename = "../data/e_500keV.root"
-=======
-geantFilename = "../data/proton_30keV_0inc.root"
->>>>>>> 23483d3e26b57f63eeeffe4cf8a2c95022ba7d3c
 gdf = GetHitInformation(geantFilename)
 
 @info "Applying Noise"
