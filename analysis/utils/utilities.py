@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.signal
 
 m_e = 510.998910
 alpha =  7.2973525698e-3
@@ -86,3 +87,34 @@ def weightedAverage(x, sigma, axis=None):
 def ComptonEdge(E):
     # E is gamma energy in keV
     return E*(1-1/(1+2*E/m_e))
+
+def plot_peaks(x, indexes, algorithm=None, mph=None, mpd=None):
+    """Plot results of the peak dectection."""
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError as e:
+        print('matplotlib is not available.', e)
+        return
+    _, ax = plt.subplots(1, 1, figsize=(8, 4))
+    ax.plot(x, 'b', lw=1)
+    if indexes.size:
+        label = 'peak'
+        label = label + 's' if indexes.size > 1 else label
+        ax.plot(indexes, x[indexes], '+', mfc=None, mec='r', mew=2, ms=8,
+                label='%d %s' % (indexes.size, label))
+        ax.legend(loc='best', framealpha=.5, numpoints=1)
+    ax.set_xlim(-.02*x.size, x.size*1.02-1)
+    ymin, ymax = x[np.isfinite(x)].min(), x[np.isfinite(x)].max()
+    yrange = ymax - ymin if ymax > ymin else 1
+    ax.set_ylim(ymin - 0.1*yrange, ymax + 0.1*yrange)
+    ax.set_xlabel('Data #', fontsize=14)
+    ax.set_ylabel('Amplitude', fontsize=14)
+    ax.set_title('%s (mph=%s, mpd=%s)' % (algorithm, mph, mpd))
+    plt.show()
+
+def findPeaks(histData, **kwargs):
+	indices, props = scipy.signal.find_peaks(histData, **kwargs)
+
+	plot_peaks(histData, indices)
+
+	return indices

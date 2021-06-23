@@ -1,9 +1,13 @@
 build*
 *.hdf5
 Figures/*
+*pycache*
 *.DS_Store*
 *.root
 *save*
 *notes*
 *plots*
 *env*
+*.pyc
+*.png
+*.zip

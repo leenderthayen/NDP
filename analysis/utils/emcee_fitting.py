@@ -97,7 +97,6 @@ def fitToData(model, x, y, yerr, doSampling=True, plotResults=True, **kwargs):
         mini.minimize(**kwargs)
         result = model.fit(y, params, x=x, weights=1./yerr)
 
-    lmfit.report_errors(params)
     print(result.fit_report())
 
     figs = []
