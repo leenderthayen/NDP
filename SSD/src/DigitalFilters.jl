@@ -4,6 +4,11 @@ function ExtendWaveform(x::AbstractArray, dt::Real, endTime::Real)::AbstractArra
     return vcat(x, [x[end] for i in 1:(endTime/dt-length(x))])
 end
 
+function PadWaveform(x::AbstractArray, dt::Real, startTime::Real, endTime::Real)::AbstractArray
+	 y = vcat([x[1] for i in 1:(startTime/dt)],x)
+	 return ExtendWaveform(y, dt, endTime)
+end
+
 function LowPassFilter(x::AbstractArray, RC::Real, dt::Real)::AbstractArray
     alpha = RC/(RC+dt)
 
@@ -53,7 +58,7 @@ function CustomNoisyFilter(x::AbstractArray, Freq::AbstractArray, Amp::AbstractA
     y1 = HighPassFilter(x, 5e-6, dt)
     y2 = LowPassFilter(y1, 7e-9, dt)
     y3 = LowPassFilter(y2, 7e-9, dt)
-    y4 = SampleNoise(y3, Freq, Amp)
+    y4 = SampleNoise(y3, Freq, Amp, dt=dt)
 
     return y4
 end
