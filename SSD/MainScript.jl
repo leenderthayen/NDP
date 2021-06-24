@@ -34,11 +34,7 @@ end
 SetChargeDriftModel!(sim, chargeDriftConfigFile)
 
 @info "Loading Geant Data"
-<<<<<<< HEAD
 geantFilename = "../data/e_500keV.root"
-=======
-geantFilename = "../data/proton_30keV_0inc.root"
->>>>>>> 23483d3e26b57f63eeeffe4cf8a2c95022ba7d3c
 gdf = GetHitInformation(geantFilename)
 
 @info "Applying Noise"
@@ -48,8 +44,8 @@ elecNoise = GetNoiseROOT(noiseFilename,1.5e3)
 #
 offset0 = CartesianPoint{T}(0, 0, 0)
 events0 = DriftGeant4Events(gdf, sim, offset0,time_step=1u"ns", stepLimiter=100000)
-riseTimes0 = CollectRiseTimes(events0, contact=2)
-riseTimesNoisy = CollectRiseTimesNoisyFiltered(events0,elecNoise, contact=2, pixel=64)
+riseTimes0 = CollectRiseTimesFiltered(events0, dt=1e-9, contact=2)
+riseTimesNoisy = CollectRiseTimesNoisyFiltered(events0,elecNoise, dt=1e-9, contact=2, pixel=64)
 
 
 #
