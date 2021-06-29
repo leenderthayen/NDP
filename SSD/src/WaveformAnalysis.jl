@@ -50,3 +50,45 @@ function CollectRiseTimesNoisyFiltered(events, noises, low = 0.1, high = 0.9; dt
     end
     return riseTimes
 end
+
+
+function CollectRiseTimesOnDetector(events, detector, low = 0.1, high = 0.9;contact = 2)
+    riseTimes = Vector{Unitful.Time}()
+    for i in 1:length(events)
+    	if in(events[i].locations[1], detector.contacts[1].geometry)
+           push!(riseTimes, CalculateRiseTime(events[i].waveforms[contact], low, high))
+        end
+    end
+    return riseTimes
+end
+
+function CollectRiseTimesFilteredOnDetector(events,detector, low = 0.1, high = 0.9; dt = 1e-9, contact = 2)
+    riseTimes = Vector{Unitful.Time}()
+    for i in 1:length(events)
+    	if in(events[i].locations[1], detector.contacts[1].geometry)
+           push!(riseTimes, CalculateRiseTime(events[i].waveforms[contact].time, CustomFilter(events[i].waveforms[contact].value, dt), low, high))
+    	end
+    end
+    return riseTimes
+end
+
+function CollectRiseTimesNoisyFilteredOnDetector(events, noises, detector, low = 0.1, high = 0.9; dt = 1e-9, contact = 1, pixel=64)
+    riseTimes = Vector{Unitful.Time}()
+    for i in 1:length(events)
+    	if in(events[i].locations[1], detector.contacts[1].geometry)
+           push!(riseTimes, CalculateRiseTime(events[i].waveforms[contact].time, CustomNoisyFilter(events[i].waveforms[contact].value, noises[pixel,1] ,noises[pixel,2] , dt), low, high))
+    	end
+    end
+    return riseTimes
+end
+
+function CollectEnergiesFilteredOnDetector(events,detector; dt = 1e-9, contact = 2)
+    energies = Vector()
+    for i in 1:length(events)
+    	if in(events[i].locations[1], detector.contacts[1].geometry)
+           push!(energies, findmax(abs.(CustomFilter(events[i].waveforms[contact].value,dt)))[1])
+    	end
+    end
+    return energies
+end
+

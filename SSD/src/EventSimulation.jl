@@ -53,3 +53,12 @@ end
 function SimulateWaveform(event::Event, simulation::Simulation, time_step = 0.1u"ns")
     simulate!(event, simulation, Δt = time_step)
 end
+
+struct Frederick
+       drift_paths::Vector{SolidStateDetectors.EHDriftPath}
+       waveforms::Vector{<:Any}
+end
+
+function Frederick(event::SolidStateDetectors.Event)::Frederick
+	 return Frederick(event.drift_paths, event.waveforms)
+end
