@@ -13,6 +13,8 @@ from utils.introspection import *
 from utils.utilities import *
 import utils.analysis as anal
 
+from scipy.odr import *
+
 logging.basicConfig(level=logging.INFO)
 
 def analyseWFFiles(filenames, cuts):
@@ -24,13 +26,21 @@ def analyseWFFiles(filenames, cuts):
 
 	print(waveformFile.bcs)
 
-	totalTime = (waveformFile.head(-1)['timestamp']-waveformFile.head(0)['timestamp'])*4e-9
+	#totalTime = (waveformFile.head(-1)['timestamp']-waveformFile.head(0)['timestamp'])*4e-9
+	heads = waveformFile.headers()
+	totalTime = (heads.iloc[-1]['timestamp']-heads.iloc[0]['timestamp'])*4e-9
 
 	results = waveformFile.determineEnergyTiming(method='trap', params=[1250, 40, 1250], batchsize=20000)
 
 	logging.info("Energy timing done")
 
 	return waveformFile, totalTime, results
+
+def calculateCountrate(result, interval):
+    result.defineCut('timestamp', 'sort')
+    ts = result.data()['timestamp']*4e-9
+    t = np.linspace(0, ts.iloc[-1], int(ts.iloc[-1]/interval))
+    return np.diff(np.interp(t, ts, np.arange(len(ts))))
 
 def loadTemperatureData(filename):
 	names = ["Detector", "FET S", "FET N", "Ring", "Preamp", "Abs time", "Time stamp 12h", "Date"]
@@ -86,6 +96,18 @@ def fitPeaks(results, bc, bins):
 			plt.show(block=True)
 
 	return resultColl, figColl
+
+def performODRCalibration(channels, channelErrs, energies, energyErrs):
+	def linear(p, x):
+		a, b = p
+		return a*x+b
+	model = Model(linear)
+	data = RealData(energies, channels, sx=energyErrs, sy=channelErrs)
+
+	odr = ODR(data, model, beta0=[1.6, 1])
+	out = odr.run()
+
+	return out
 
 if __name__ == "__main__":
 	logging.info("STARTING")

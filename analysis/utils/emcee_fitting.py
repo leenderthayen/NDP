@@ -187,7 +187,7 @@ def interpretSamplingResults(x, y, yerr, sampler, ndim, params, model):
 
 def plotFitResults(model, params, result, x, y):
 
-    fig, axes = plt.subplots(2, 1, sharex=True, figsize=(16,9))
+    fig, axes = plt.subplots(2, 1, sharex=True)
     axes[0].plot(x, y)
     axes[0].plot(x, result.best_fit, linewidth=2)
     axes[1].plot(x, result.residual)
@@ -225,7 +225,7 @@ def plotSamplingResults(sampler, ndim, params, truths=None):
         axes[i%int((ndim+1.0)/2.0)][int(i/(ndim+1.0)*2.0)].set_ylabel(labels[i])
     fig.tight_layout()'''
 
-    fig, axes = plt.subplots(ndim, 1, sharex=True, figsize=(8, 9))
+    fig, axes = plt.subplots(ndim, 1, sharex=True)
     for i in range(ndim):
         axes[i].plot(sampler.chain[:, :, i].T, color='k', alpha=0.4)
         axes[i].yaxis.set_major_locator(MaxNLocator(5))

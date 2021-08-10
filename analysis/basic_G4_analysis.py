@@ -32,6 +32,8 @@ def convolveHist(hist, bins, sigma, plot=True):
         plt.bar(bins[:-1]+dx/2, hist, width=dx)
         plt.yscale("log")
 
+    return res
+
 def plotPrimaries(tree):
     radAll = tree.arrays(["energy"], "process == \"RadioactiveDecayBase\"")["energy"]
     rade = tree.arrays(["energy"], "((process == \"RadioactiveDecayBase\") & (name == \"e-\"))")["energy"]
@@ -87,7 +89,7 @@ def buildPixelSpectrum(hitsTree, pixel, cce = lambda z: 1, bins=100, plot=True):
 if __name__ == "__main__":
     print("Starting")
 
-    fileName = "../data/G4/109Cd_front_UoM_0.5+1.67.root"
+    fileName = "../data/G4/109Cd_front_UoM_1+4.0_new.root"
 
     file = uproot.open(fileName)
 
@@ -96,14 +98,33 @@ if __name__ == "__main__":
     dl = 1e-4 # 100 nm, in mm
 
     cce = lambda z: np.where(z < dl, 0, 1)
+    cce2 = lambda z: 1-np.exp(-z/dl/1.15)
 
-    bins = np.arange(0, 150, 0.1)
+    binWidth = 0.1
+
+    bins = np.arange(0, 100, binWidth)
 
     hist, _ = buildPixelSpectrum(file["ntuple/hits"], 64, cce=cce, bins=bins)
 
-    convolveHist(hist, bins, 3)
+    # hist2, _ = buildPixelSpectrum(file["ntuple/hits"], 64, cce=cce2, bins=bins)
 
-    anal.fitFunction(bins[:-1], hist, 'Longoria', (55, 67))
+    # fig, ax = plt.subplots(1, 2)
+    # ax[0].bar(bins[:-1]+binWidth/2, hist, width=binWidth, label="Hard DL", alpha=0.7)
+    # ax[0].bar(bins[:-1]+binWidth/2, hist2, width=binWidth, label="Soft DL", alpha=0.7)
+    # ax[0].set_yscale("log")
+    # ax[0].set_xlabel("Detected proton energy [keV]")
+    # ax[0].set_ylabel("Counts [a.u.]")
+    # fig.suptitle("Charge collection efficiency & proton peak shape")
+    # ax[0].legend(loc=0)
+    # z = np.linspace(0, 4*dl, 200)
+    # ax[1].plot(z*1e6, cce(z))
+    # ax[1].plot(z*1e6, cce2(z))
+    # ax[1].set_xlabel("Distance into crystal [nm]")
+    # ax[1].set_ylabel("Charge collection efficiency")
+
+    convolveHist(hist[1:], bins[1:], 2.5)
+
+    #anal.fitFunction(bins[:-1], hist, 'Longoria', (55, 67))
 
     plt.show(block=True)
 
