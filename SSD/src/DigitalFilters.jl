@@ -31,6 +31,40 @@ function HighPassFilter(x::AbstractArray, RC::Real, dt::Real)::AbstractArray
     return y
 end
 
+#Convolution of the filter over the waveform, so the filter looks flipped
+function PrepTrapFilter(Rise::Real, FTop::Real, Tau::Real)::AbstractArray
+    y = zeros(2*Rise+FTop)
+
+    for i = 1:Rise
+        y[i] = i - Tau
+        y[i + Rise + FTop] = Tau + Rise - i
+    end
+    for i = 1:FTop
+        y[i+Rise] = Rise
+    end
+    return y
+end
+
+function TrapezoidalFilter(x::AbstractArray, t::AbstractArray, scale::Real)::AbstractArray
+    y = zeros(length(x) - length(t))
+
+    for i = 1:(length(x) - length(t))
+        dummy = 0.0;
+        for j = 1:length(t)
+            dummy += x[i+j] * t[j]
+        end
+        y[i] = dummy/scale
+    end
+    return y
+end
+
+function RunTrapFilter(x::AbstractArray, Rise::Real, FTop::Real, Tau::Real)::AbstractArray
+    y = PrepTrapFilter(Rise, FTop, Tau)
+    y1 = TrapezoidalFilter(x,y,(Rise*Tau))
+
+    return y1
+end
+
 function SampleNoise(x::AbstractArray, Freq::AbstractArray, Amp::AbstractArray; dt=1e-9)::AbstractArray
     Random.seed!()
     y = copy(x)
