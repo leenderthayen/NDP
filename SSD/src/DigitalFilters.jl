@@ -59,7 +59,7 @@ function TrapezoidalFilter(x::AbstractArray, t::AbstractArray, scale::Real)::Abs
 end
 
 function RunTrapFilter(x::AbstractArray, Rise::Real, FTop::Real, Tau::Real)::AbstractArray
-    y = PrepTrapFilter(Rise, FTop, Tau)
+    y = PrepTrapFilter(Rise, FTop, Tau) #Nominal values: Rise = 800.0, FTop = 400.0, Tau = 5000.0, assuming 1 ns resolution
     y1 = TrapezoidalFilter(x,y,(Rise*Tau))
 
     return y1
