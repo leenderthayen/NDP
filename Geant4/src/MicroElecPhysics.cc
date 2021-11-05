@@ -50,7 +50,7 @@
 
 #include "G4MicroElecElastic_new.hh"
 #include "G4MicroElecElasticModel_new.hh"
-#include "G4MicroElecInelastic_new.hh"
+#include "G4MicroElecInelastic.hh"
 #include "G4MicroElecInelasticModel_new.hh"
 //
 
@@ -185,7 +185,7 @@ void MicroElecPhysics::ConstructProcess()
 	ph->RegisterProcess(theMicroElecElasticProcess, particle);
 
 	// MicroElec ionisation is not active in the world
-	G4MicroElecInelastic_new* microelecioni = new G4MicroElecInelastic_new("e-_G4MicroElecInelastic");
+	G4MicroElecInelastic* microelecioni = new G4MicroElecInelastic("e-_G4MicroElecInelastic");
 	microelecioni->SetEmModel(new G4DummyModel(),1);
 	ph->RegisterProcess(microelecioni, particle);
 

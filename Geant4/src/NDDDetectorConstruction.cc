@@ -7,6 +7,7 @@
 #include "G4MaterialTable.hh"
 #include "G4Element.hh"
 #include "G4ElementTable.hh"
+#include "G4NistManager.hh"
 
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
@@ -54,6 +55,19 @@ G4VPhysicalVolume* NDDDetectorConstruction::Construct() {
 }
 
 void NDDDetectorConstruction::BuildMaterials() {
+  G4NistManager* manager = G4NistManager::Instance();
+  airMaterial = manager->FindOrBuildMaterial("G4_AIR");
+  siliconMaterial = manager->FindOrBuildMaterial("G4_Si");
+  copperMaterial = manager->FindOrBuildMaterial("G4_Cu");
+  aluminiumMaterial = manager->FindOrBuildMaterial("G4_Al");
+  tinMaterial = manager->FindOrBuildMaterial("G4_Sn");
+  bariumMaterial = manager->FindOrBuildMaterial("G4_Ba");
+  bismuthMaterial = manager->FindOrBuildMaterial("G4_Bi");
+  cadmiumMaterial = manager->FindOrBuildMaterial("G4_Cd");
+  berylliumMaterial = manager->FindOrBuildMaterial("G4_Be");
+  germaniumMaterial = manager->FindOrBuildMaterial("G4_Ge");
+  waterMaterial = manager->FindOrBuildMaterial("G4_WATER");
+
   // Material definitions
   G4double a, z;
   G4double density, pressure;
@@ -63,11 +77,10 @@ void NDDDetectorConstruction::BuildMaterials() {
   density = 1.293 * mg / cm3;
   G4Element* N = new G4Element("Nitrogen", "N", z = 7., a = 14.01 * g / mole);
   G4Element* O = new G4Element("Oxygen", "O", z = 8., a = 16.00 * g / mole);
-  airMaterial = new G4Material("Air", density, nel = 2);
-  airMaterial->AddElement(N, 70 * perCent);
-  airMaterial->AddElement(O, 30 * perCent);
+
 
   // "Vacuum": 1e-8 Torr (low density air taken proportional to pressure)
+
   G4double densityAirSTP = density;
   pressure = 1e-8;  // Torr
   density = (pressure / 760.) * densityAirSTP;
@@ -76,13 +89,15 @@ void NDDDetectorConstruction::BuildMaterials() {
   vacuumMaterial->AddElement(O, 30 * perCent);
 
   // Silicon: properties from wikipedia
-  siliconMaterial = new G4Material("Silicon", z = 14., a = 28.086 * g / mole,
-                                   density = 2.329 * g / cm3);
+
+  // siliconMaterial = new G4Material("Si", z = 14., a = 28.086 * g / mole,
+  //                                  density = 2.329 * g / cm3);
 
   // copperMaterial: properties from wikipedia
-  copperMaterial =
-      new G4Material("copperMaterial", z = 29., a = 63.546 * g / mole,
-                     density = 8.94 * g / cm3);
+  // copperMaterial =
+  //     new G4Material("Cu", z = 29., a = 63.546 * g / mole,
+  //                    density = 8.94 * g / cm3);
+
 
   // Stainless steel: model from
   // http://hypernews.slac.stanford.edu/HyperNews/geant4/get/geometry/915/1.html
@@ -106,20 +121,22 @@ void NDDDetectorConstruction::BuildMaterials() {
   stainlessSteelMaterial->AddElement(Fe, fractionmass = 0.712);
   stainlessSteelMaterial->AddElement(Ni, fractionmass = 0.09);
 
-  aluminiumMaterial = new G4Material("Aluminum", z = 13, a = 26.9815 * g / mole,
-                                     density = 2.70 * g / cm3);
 
-  tinMaterial = new G4Material("Tin", z = 50, a = 118.710 * g / mole,
-                               density = 7.365 * g / cm3);
 
-  bariumMaterial = new G4Material("Barium", z = 56, a = 137.327 * g / mole,
-                                  density = 3510 * kg / m3);
-
-  bismuthMaterial = new G4Material("Bismuth", z = 83, a = 208.980 * g / mole,
-                                   density = 9.78 * g / cm3);
-
-  cadmiumMaterial = new G4Material("Cadmium", z = 48, a = 112.414 * g / mole,
-                                  density = 8.65 * g / cm3);
+  // aluminiumMaterial = new G4Material("Al", z = 13, a = 26.9815 * g / mole,
+  //                                    density = 2.70 * g / cm3);
+  //
+  // tinMaterial = new G4Material("Sn", z = 50, a = 118.710 * g / mole,
+  //                              density = 7.365 * g / cm3);
+  //
+  // bariumMaterial = new G4Material("Ba", z = 56, a = 137.327 * g / mole,
+  //                                 density = 3510 * kg / m3);
+  //
+  // bismuthMaterial = new G4Material("Bi", z = 83, a = 208.980 * g / mole,
+  //                                  density = 9.78 * g / cm3);
+  //
+  // cadmiumMaterial = new G4Material("Cd", z = 48, a = 112.414 * g / mole,
+  //                                 density = 8.65 * g / cm3);
 
   G4Element* H = new G4Element("Hydrogen", "H", z = 1., a = 1.0008 * g / mole);
   mylarMaterial = new G4Material("Mylar", 1.370 * g / cm3, 3);
@@ -164,16 +181,17 @@ void NDDDetectorConstruction::BuildMaterials() {
   alumCeramicMaterial->AddElement(O, fractionmass = 0.463);
   alumCeramicMaterial->AddElement(Ca, fractionmass = 0.029);
 
-  berylliumMaterial = new G4Material("Beryllium", z = 4, a = 9.0121 * g / mole,
-                                     density = 1.85 * g / cm3);
-
-  germaniumMaterial = new G4Material(
-      "Germanium", z = 32., a = 72.630 * g / mole, density = 5.323 * g / cm3);
-
-  waterMaterial = new G4Material("Water", 1.000 * g / cm3, 2);
-  waterMaterial->AddElement(H, natoms = 2);
-  waterMaterial->AddElement(O, natoms = 1);
+  // berylliumMaterial = new G4Material("Be", z = 4, a = 9.0121 * g / mole,
+  //                                    density = 1.85 * g / cm3);
+  //
+  // germaniumMaterial = new G4Material(
+  //     "Germanium", z = 32., a = 72.630 * g / mole, density = 5.323 * g / cm3);
+  //
+  // waterMaterial = new G4Material("Water", 1.000 * g / cm3, 2);
+  // waterMaterial->AddElement(H, natoms = 2);
+  // waterMaterial->AddElement(O, natoms = 1);
   // Print all the material definitions
+
   G4cout << G4endl << "Material Definitions : " << G4endl << G4endl;
   G4cout << *(G4Material::GetMaterialTable()) << G4endl;
 }
@@ -254,65 +272,65 @@ void NDDDetectorConstruction::BuildSiDetector() {
 
   if(backingConfig>0) {
     // Alumina backing (?)
-    solidBacking = new G4Polyhedra("Backing", 0, 360. * deg, 16, 2, czPlanes, crInner, crOuter);
+    solidBacking = new G4Polyhedra("solidBacking", 0, 360. * deg, 16, 2, czPlanes, crInner, crOuter);
     logicalBacking =
-        new G4LogicalVolume(solidBacking, alumCeramicMaterial, "Backing");
+        new G4LogicalVolume(solidBacking, alumCeramicMaterial, "logicalBacking");
     physicalBacking = new G4PVPlacement(
         0, G4ThreeVector(xSilicon, ySilicon, zBack),
-        logicalBacking, "Backing", logicalWorld, false, 0);
+        logicalBacking, "physicalBacking", logicalWorld, false, 0);
 
 
     // Bottom of the Armor and copper board
-    solidbArmor = new G4Tubs("Backing", 0., bArmorDiameter/2.0,
+    solidbArmor = new G4Tubs("solidArmor", 0., bArmorDiameter/2.0,
                               bArmorThickness / 2., 0., 360. * deg);
     logicalbArmor =
-        new G4LogicalVolume(solidbArmor, copperMaterial, "Backing");
+        new G4LogicalVolume(solidbArmor, copperMaterial, "logicalArmor");
     physicalbArmor = new G4PVPlacement(
         0, G4ThreeVector(xSilicon, ySilicon, zbArmor),
-        logicalbArmor, "Backing", logicalWorld, false, 0);
+        logicalbArmor, "physicalArmor", logicalWorld, false, 0);
 
 
     // Rogers Material Transition board
-    solidRoger = new G4Tubs("Backing", 0., RO4350Diameter/2.0,
+    solidRoger = new G4Tubs("solidRoger", 0., RO4350Diameter/2.0,
                               RO4350Thickness / 2., 0., 360. * deg);
     logicalRoger =
-        new G4LogicalVolume(solidRoger, alumCeramicMaterial, "Backing");
+        new G4LogicalVolume(solidRoger, alumCeramicMaterial, "logicalRoger");
     physicalRoger = new G4PVPlacement(
         0, G4ThreeVector(xSilicon, ySilicon, zRoger),
-        logicalRoger, "Backing", logicalWorld, false, 0);
+        logicalRoger, "physicalRoger", logicalWorld, false, 0);
 
 
     // First Copper Mount
-    solidCM1 = new G4Tubs("Backing", 0., CuMount1Dia/2.0,
+    solidCM1 = new G4Tubs("solidCM1", 0., CuMount1Dia/2.0,
                               CuMount1Thick / 2., 0., 360. * deg);
     logicalCM1 =
-        new G4LogicalVolume(solidCM1, copperMaterial, "Backing");
+        new G4LogicalVolume(solidCM1, copperMaterial, "logicalCM1");
     physicalCM1 = new G4PVPlacement(
         0, G4ThreeVector(xSilicon, ySilicon, zCuMount1),
-        logicalCM1, "Backing", logicalWorld, false, 0);
+        logicalCM1, "physicalCM1", logicalWorld, false, 0);
 
 
     // Second Copper Mount
-    solidCM2 = new G4Tubs("Backing", CuMount2InnerDia/2.0, CuMount2Dia/2.0,
+    solidCM2 = new G4Tubs("solidCM2", CuMount2InnerDia/2.0, CuMount2Dia/2.0,
                               CuMount2Thick / 2., 0., 360. * deg);
     logicalCM2 =
-        new G4LogicalVolume(solidCM2, copperMaterial, "Backing");
+        new G4LogicalVolume(solidCM2, copperMaterial, "logicalCM2");
     physicalCM2 = new G4PVPlacement(
         0, G4ThreeVector(xSilicon, ySilicon, zCuMount2),
-        logicalCM2, "Backing", logicalWorld, false, 0);
+        logicalCM2, "physicalCM2", logicalWorld, false, 0);
 
     // Detector Armor
-    ArmorTube = new G4Tubs("Backing", 0., ArmorRad,
+    ArmorTube = new G4Tubs("solidArmorTube", 0., ArmorRad,
                                   ArmorThickness / 2., 0., 360. * deg);
 
     // Void inside of the Armor
-    ArmorInVoid = new G4Polyhedra("Backing", 0, 360. * deg, 16, 2, azPlanes, arInner, arOuter);
-    CopperArmor = new G4SubtractionSolid("Backing", ArmorTube, ArmorInVoid, 0, G4ThreeVector());
+    ArmorInVoid = new G4Polyhedra("solidArmorVoid", 0, 360. * deg, 16, 2, azPlanes, arInner, arOuter);
+    CopperArmor = new G4SubtractionSolid("solidCopperArmor", ArmorTube, ArmorInVoid, 0, G4ThreeVector());
     logicalCArmor =
-        new G4LogicalVolume(CopperArmor, copperMaterial, "Backing");
+        new G4LogicalVolume(CopperArmor, copperMaterial, "logicalCopperArmor");
     physicalCArmor = new G4PVPlacement(
         0, G4ThreeVector(xSilicon, ySilicon, zCuArmor),
-        logicalCArmor, "Backing", logicalWorld, false, 0);
+        logicalCArmor, "physicalCopperArmor", logicalWorld, false, 0);
   }
 
 }
@@ -533,7 +551,7 @@ void NDDDetectorConstruction::BuildSource(G4int id, G4ThreeVector pos) {
 void NDDDetectorConstruction::BuildVisualisation() {
   // Visualization attributes
 
-  logicalWorld->SetVisAttributes(G4VisAttributes::Invisible);
+  //logicalWorld->SetVisAttributes(G4VisAttributes::Invisible);
 
   G4VisAttributes* simpleBoxVisAttGreen =
       new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
