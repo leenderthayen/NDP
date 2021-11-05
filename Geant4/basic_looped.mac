@@ -6,10 +6,10 @@
 ####################################################
 #                   VERBOSITY                      #
 ####################################################
-/control/verbose 0
+/control/verbose 2
 /tracking/verbose 0
 /event/verbose 0
-/run/verbose 0
+/run/verbose 2
 
 ####################################################
 #                    GEOMETRY                      #
@@ -22,19 +22,23 @@
 # 2 : 133Ba quasi-sealed
 # 3 : 207Bi 5 um mylar
 # 4 : 113Sn, 139Ce 5 um mylar
-# Load lock
+# 5 : 109Cd
+# 6 : UoM source holder (Al block)
+
 #/NDD/geometry/addSourceID 4
-#/NDD/geometry/addSourcePosition 0 0 0 mm
-# 45Ca source
-#/NDD/geometry/addSourceID 0
-#/NDD/geometry/addSourcePosition 0 0 -710 mm
-# Electrode hole
-#/NDD/geometry/addSourceID 1
-#/NDD/geometry/addSourcePosition 0 0 2127 mm
-# Electrode cap
-#/NDD/geometry/addSourceID 3
-#/NDD/geometry/addSourcePosition 0 -80 2160 mm
-/NDD/geometry/pixelRings 6
+#/NDD/geometry/addSourcePosition 0. 0. -4.0 cm
+#/NDD/geometry/addSourceID 5
+#/NDD/geometry/addSourcePosition 0. 0. -5.5808 cm
+#/NDD/geometry/addSourceID 6
+#/NDD/geometry/addSourcePosition 0. 0. -4.7904 cm
+#/NDD/geometry/buildBacking 1
+
+####################################################
+#                     READOUT                      #
+####################################################
+
+/NDD/readout/pixelRings 6
+/NDD/readout/pixelSize 10.3 mm
 
 ####################################################
 #                     PHYSICS                      #
@@ -43,7 +47,7 @@
 #/NDD/phys/setGCut 100 nm
 #/NDD/phys/setECut 100 nm
 #/NDD/phys/setPCut 100 um
-#/NDD/phys/addPhysics standardSS
+/NDD/phys/addPhysics empenelope
 
 
 /run/initialize
@@ -69,8 +73,8 @@
 #/gps/ang/type iso
 #/gps/pos/type Volume
 #/gps/pos/shape Cylinder
-#/gps/pos/centre 0 0 0 mm
-#/gps/pos/radius 1 mm
+#/gps/pos/centre 0 0 -4.0 cm
+#/gps/pos/radius 1.5 mm
 #/gps/pos/halfz 30 nm
 
 # Mono energetic
@@ -101,13 +105,29 @@
 
 #/gps/source/clear
 #/gps/source/add 1.0
+#/gps/particle proton
+#/gps/energy 30 keV
+#/gps/direction 0 0 1
+#/gps/ang/type iso
+#/gps/energy 0 keV
+#/gps/ang/type iso
+#/gps/position 0 0 0 cm
+
+# Delete unwanted sources
+#/gps/source/delete 0
+
+/gps/source/list
+
+####################################################
+#                       RUN                        #
+####################################################
 #Stop
-/gps/particle e-
-/gps/energy 1000 keV
-/gps/direction 0 -0.34202 0.939693
-/gps/position 0 0.34202 0.0603074 cm
+/gps/particle proton
+/gps/energy 30 keV
+/gps/direction 0 -0.996195 0.0871557
+/gps/position 0 0.996195 0.912844 cm
 /gps/source/list
 /run/particle/dumpCutValues
-/analysis/setFileName e-_1000keV_20inc.root
-/run/printProgress 100
-/run/beamOn 2500
+/analysis/setFileName proton_30keV_85inc_50k.root
+/run/printProgress 1000
+/run/beamOn 50000

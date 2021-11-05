@@ -210,6 +210,10 @@ void NDDDetectorConstruction::BuildSiDetector() {
       0,
       G4ThreeVector(xSilicon, ySilicon, zSilicon),
       logicalSilicon, "physicalSilicon", logicalWorld, false, 0);
+    
+  G4double maxStepDLs = 5. * nm;
+  stepLimitCar = new G4UserLimits(maxStepDLs);
+  logicalSilicon->SetUserLimits(stepLimitCar);
 
   //Varaibles for the Backing ------------------------------------------------
   //Ceramic Dimensions

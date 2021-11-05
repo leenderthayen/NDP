@@ -45,6 +45,7 @@ int main(int argc,char** argv)
   runManager->SetUserInitialization(detector);
   // Physics list
   G4VModularPhysicsList* physicsList = new NDDPhysicsList;
+  physicsList->RegisterPhysics(new G4StepLimiterPhysics());
   physicsList->RegisterPhysics(new G4ParallelWorldPhysics(parallelWorldName));
   runManager->SetUserInitialization(physicsList);
   // User action initialization
