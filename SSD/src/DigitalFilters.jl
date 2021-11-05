@@ -3,7 +3,8 @@ function ExtendWaveform(x::AbstractArray, dt::Real, endTime::Real)::AbstractArra
 end
 
 function LowPassFilter(x::AbstractArray, RC::Real, dt::Real)::AbstractArray
-    alpha = RC/(RC+dt)
+    #alpha = RC/(RC+dt) This might be wrong
+    alpha = dt/(RC+dt)
 
     y = zeros(length(x))
     y[1] = alpha*x[1]
