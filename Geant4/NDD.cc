@@ -6,6 +6,9 @@
 #include "G4ParallelWorldPhysics.hh"
 #include "G4StepLimiterPhysics.hh"
 
+#include "G4MPImanager.hh"
+#include "G4MPIsession.hh"
+
 #ifdef G4MULTITHREADED
 #include "G4MTRunManager.hh"
 #else
@@ -35,6 +38,9 @@ int main(int argc,char** argv)
 #else
   G4RunManager * runManager = new G4RunManager;
 #endif
+  
+  G4MPImanager * g4MPI = new G4MPImanager(argc, argv);
+  G4MPIsession * session = g4MPI->GetMPIsession();
 
   // Set mandatory initialization classes
   //
@@ -80,7 +86,7 @@ int main(int argc,char** argv)
   // Free the store: user actions, physics_list and detector_description are
   //                 owned and deleted by the run manager, so they should not
   //                 be deleted in the main() program !
-
+  delete g4MPI;
   delete visManager;
   delete runManager;
 

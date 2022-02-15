@@ -26,12 +26,21 @@ if(NOT ROOT_FOUND)
   return()
 endif()
 
+
+find_package(G4mpi REQUIRED)
+if(G4mpi_FOUND)
+  message(STATUS "G4mpi found")
+  message(STATUS "G4mpi inc: ${G4mpi_INCLUDE_DIRS}") 
+else()
+  message(STATUS "g4mpi not found")
+endif()
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
 #
 include_directories(${PROJECT_SOURCE_DIR}/include
 	${Geant4_INCLUDE_DIRS}
-	${ROOT_INCLUDE_DIRS})
+	${ROOT_INCLUDE_DIRS}
+	${G4mpi_INCLUDE_DIRS})
 
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 
@@ -39,7 +48,7 @@ file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(NDD NDD.cc ${sources})
-target_link_libraries(NDD ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
+target_link_libraries(NDD ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${G4mpi_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
