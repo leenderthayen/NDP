@@ -1,13 +1,10 @@
 build*
-<<<<<<< HEAD
 *.png
 .ipynb_checkpoints
 *figures*
-=======
 *data*
 *figures*
 *.ipynb_checkpoints*
->>>>>>> develop
 *.hdf5
 Figures/*
 *pycache*
@@ -17,11 +14,8 @@ Figures/*
 *notes*
 *plots*
 *env*
-<<<<<<< HEAD
 *data*
 *__pycache__*
-=======
 *.pyc
 *.png
 *.zip
->>>>>>> develop
