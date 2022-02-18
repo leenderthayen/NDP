@@ -102,7 +102,7 @@ If you find any bugs or have any suggestions for improvements to makeCCD.py or m
 
 ### Reading root files with ReadGeant4Hits.jl
 
-Older Geant4 root files have a different branch structure than the current version of ReadGeant4Hits.jl expects. If you encounter this error it can be fixed my replacing line 39
+Older Geant4 root files have a different branch structure than the current version of ReadGeant4Hits.jl expects. If you encounter this error it can be fixed by replacing line 39
 ```
 df = DataFrame(eID = t.eventID, tID = t.trackID, X = t.x, Y = t.y, Z = t.z, E = t.eDep, p = t.particle)
 ```
