@@ -1,4 +1,7 @@
 build*
+*.png
+.ipynb_checkpoints
+*figures*
 *.hdf5
 Figures/*
 *.DS_Store*
@@ -7,3 +10,5 @@ Figures/*
 *notes*
 *plots*
 *env*
+*data*
+*__pycache__*
