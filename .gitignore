@@ -1,4 +1,7 @@
 build*
+*data*
+*figures*
+*.ipynb_checkpoints*
 *.hdf5
 Figures/*
 *pycache*
