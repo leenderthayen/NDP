@@ -1,62 +1,9 @@
-"""
-.. module:: loglikelihood
-    :platform: Linux
-    :synopsis: Implementation of calculation of the
-     loglikelihood for common distributions
-
-.. moduleauthor:: Leendert Hayen <leendert.hayen@fys.kuleuven.be>
-"""
-
 import numpy as np
+import scipy.signal
 
 m_e = 510.998910
 alpha =  7.2973525698e-3
 
-def gauss(x, a, x0, sigma):
-    tt = (x-x0)/sigma
-    return a*np.exp(-0.5*(tt**2.0))
-    
-def fierz(E, ampl, fierz, Z=20.0):
-    """Returns the function for a Fierz term present in the nuclear beta decay
-    rate
-
-    Parameters
-    ----------
-    E : array_like
-        Input data for the experimental energy of the beta particle
-    ampl : float
-           Rescaling factor
-    fierz : float
-            Value for Fierz parameter
-    Z : float
-        Proton number of the decay
-
-    Returns
-    -------
-    float
-        loglikelihood for the data."""
-    return ampl*(1+fierz*np.sqrt(1.0-(alpha*Z)**2.0)*m_e/(m_e+E))
-    
-def linearBG(x, slope, offset):
-    return x*slope+offset
-    
-def stepFunc(x, x0, sigma, stepSize):
-    tt = (x-x0)/sigma
-    return stepSize/(1.0+np.exp(tt))**2.0
-
-def lowerExponential(x, x0, sigma, lowexp1, lowexp2):
-    tt = (x-x0)/sigma
-    return lowexp1*np.exp(lowexp2*tt)/(1+np.exp(tt))**4.0
-    
-def higherExponential(x, x0, sigma, highexp1, highexp2):
-    tt = (x-x0)/sigma
-    return highexp1*np.exp(highexp2*tt)/(1+np.exp(-tt))**4.0
-def fullFunction(theta, x):
-    a, sigma, x0, le1, le2, he1, he2, step, offset = theta
-    return gauss(x, a, x0, sigma) + lowerExponential(x, x0, sigma, le1, le2) \
-    + higherExponential(x, x0, sigma, he1, he2) + stepFunc(x, x0, sigma, step)\
-    + linearBG(x, 0.0, offset)
-    
 def round2SignifFigs(vals, n):
     """
     Code copied from
@@ -136,3 +83,38 @@ def weightedAverage(x, sigma, axis=None):
     Xscatt = (((x - Xm) / sigma)**2).sum(axis=axis) / ((len(x) - 1) * Xstat)
     Xstat = 1 / Xstat
     return Xm, np.maximum.reduce([Xstat, Xscatt], axis=axis) ** 0.5
+
+def ComptonEdge(E):
+    # E is gamma energy in keV
+    return E*(1-1/(1+2*E/m_e))
+
+def plot_peaks(x, indexes, algorithm=None, mph=None, mpd=None):
+    """Plot results of the peak dectection."""
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError as e:
+        print('matplotlib is not available.', e)
+        return
+    _, ax = plt.subplots(1, 1, figsize=(8, 4))
+    ax.plot(x, 'b', lw=1)
+    if indexes.size:
+        label = 'peak'
+        label = label + 's' if indexes.size > 1 else label
+        ax.plot(indexes, x[indexes], '+', mfc=None, mec='r', mew=2, ms=8,
+                label='%d %s' % (indexes.size, label))
+        ax.legend(loc='best', framealpha=.5, numpoints=1)
+    ax.set_xlim(-.02*x.size, x.size*1.02-1)
+    ymin, ymax = x[np.isfinite(x)].min(), x[np.isfinite(x)].max()
+    yrange = ymax - ymin if ymax > ymin else 1
+    ax.set_ylim(ymin - 0.1*yrange, ymax + 0.1*yrange)
+    ax.set_xlabel('Data #', fontsize=14)
+    ax.set_ylabel('Amplitude', fontsize=14)
+    ax.set_title('%s (mph=%s, mpd=%s)' % (algorithm, mph, mpd))
+    plt.show()
+
+def findPeaks(histData, **kwargs):
+	indices, props = scipy.signal.find_peaks(histData, **kwargs)
+
+	plot_peaks(histData, indices)
+
+	return indices

@@ -27,7 +27,7 @@ function GetHDF5HitInformation(filename::String)::GroupedDataFrame
 
     df = DataFrame(eID = eventID, tID = trackID, X = x, Y = y, Z = z, E = eDep, p = particle)
 
-    return groupby(df, :ID)
+    return groupby(df, :eID)
 end
 
 function GetROOTHitInformation(filename::String)::GroupedDataFrame
@@ -38,5 +38,5 @@ function GetROOTHitInformation(filename::String)::GroupedDataFrame
 
     df = DataFrame(eID = t.eventID, tID = t.trackID, X = t.x, Y = t.y, Z = t.z, E = t.eDep, p = t.particle)
 
-    return groupby(df, :ID)
+    return groupby(df, :eID)
 end
