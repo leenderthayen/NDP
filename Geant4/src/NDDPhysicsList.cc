@@ -2,9 +2,9 @@
 #include "NDDPhysicsListMessenger.hh"
 
 #include "PhysListEmStandard.hh"
-#include "PhysListEmStandardSS.hh"   //single scattering model
-#include "PhysListEmStandardGS.hh"   //Goudsmit-Saunderson
-#include "PhysListEmStandardWVI.hh"  //Wentzel-VI MSC model
+#include "G4EmStandardPhysicsSS.hh"   //single scattering model
+#include "G4EmStandardPhysicsGS.hh"   //Goudsmit-Saunderson
+#include "G4EmStandardPhysicsWVI.hh"  //Wentzel-VI MSC model
 
 #include "G4EmStandardPhysics.hh"
 #include "G4EmStandardPhysics_option1.hh"
@@ -136,7 +136,7 @@ void NDDPhysicsList::ReplaceEMPhysicsList(const G4String& name) {
   }
 
   if (name == "local") {
-    ReplacePhysics(new PhysListEmStandard(name));
+    ReplacePhysics(new G4EmStandardPhysics());
   } else if (name == "emstandard_opt0") {
     ReplacePhysics(new G4EmStandardPhysics(1));
   } else if (name == "emstandard_opt1") {
@@ -146,11 +146,11 @@ void NDDPhysicsList::ReplaceEMPhysicsList(const G4String& name) {
   } else if (name == "emstandard_opt3") {
     ReplacePhysics(new G4EmStandardPhysics_option3());
   } else if (name == "standardSS") {
-    ReplacePhysics(new PhysListEmStandardSS(name));
+    ReplacePhysics(new G4EmStandardPhysicsSS());
   } else if (name == "standardWVI") {
-    ReplacePhysics(new PhysListEmStandardWVI(name));
+    ReplacePhysics(new G4EmStandardPhysicsWVI());
   } else if (name == "standardGS") {
-    ReplacePhysics(new PhysListEmStandardGS(name));
+    ReplacePhysics(new G4EmStandardPhysicsGS());
   } else if (name == "emlivermore") {
     ReplacePhysics(new G4EmLivermorePhysics());
   } else if (name == "empenelope") {
