@@ -1,4 +1,4 @@
-#using HDF5
+using HDF5
 #using LegendHDF5IO: readdata, writedata
 using JLD2
 using SolidStateDetectors
@@ -114,6 +114,68 @@ function SetChargeDriftModel!(simulation::Simulation{T}, driftConfigFile::Union{
     charge_drift_model = ADLChargeDriftModel(driftConfigFile, T=T)
     set_charge_drift_model!(simulation, charge_drift_model)
     calculate_drift_fields!(simulation)
+end
+
+function ExportFields(sim::Simulation{T}, filename::String)
+    ef = sim.electric_field
+    wp = sim.weighting_potentials[2]
+
+    data_wp, grid_wp = wp.data, wp.grid
+    
+    data, grid_ef = convert(Array{Array},ef.data), ef.grid
+    n,m,p = size(data)
+    Ex = [data[i,j,k][1] for i=1:n,j=1:m,k=1:p]
+    Ey = [data[i,j,k][2] for i=1:n,j=1:m,k=1:p]
+    Ez = [data[i,j,k][3] for i=1:n,j=1:m,k=1:p]
+    
+    h5open(string("NessieEF", filename, ".hf"),"w") do f
+		f["Ex"]=Ex
+    	f["Ey"]=Ey
+    	f["Ez"]=Ez
+    	f["gridx"]=collect(grid_ef[1])
+    	f["gridy"]=collect(grid_ef[2])
+    	f["gridz"]=collect(grid_ef[3])
+     end
+
+     h5open(string("NessieWP", filename, ".hf"),"w") do f
+		f["wp"]=data_wp
+    	f["gridx"]=collect(grid_wp[1])
+    	f["gridy"]=collect(grid_wp[2])
+    	f["gridz"]=collect(grid_wp[3])
+     end
+end
+
+function ExportWeightingPotential(sim::Simulation{T}, filename::String,dir="")
+    wp = sim.weighting_potentials[2]
+
+    data_wp, grid_wp = wp.data, wp.grid
+
+     h5open(string(dir,"NessieWP", filename, ".hf"),"w") do f
+		f["wp"]=data_wp
+    	f["gridx"]=collect(grid_wp[1])
+    	f["gridy"]=collect(grid_wp[2])
+    	f["gridz"]=collect(grid_wp[3])
+     end
+end
+
+function ExportElectricField(sim::Simulation{T}, filename::String,dir="")
+    ef = sim.electric_field
+    
+    data, grid_ef = convert(Array{Array},ef.data), ef.grid
+    n,m,p = size(data)
+    Ex = [data[i,j,k][1] for i=1:n,j=1:m,k=1:p]
+    Ey = [data[i,j,k][2] for i=1:n,j=1:m,k=1:p]
+    Ez = [data[i,j,k][3] for i=1:n,j=1:m,k=1:p]   
+
+    h5open(string(dir,"NessieEF", filename, ".hf"),"w") do f
+		f["Ex"]=Ex
+    	f["Ey"]=Ey
+    	f["Ez"]=Ez
+    	f["gridx"]=collect(grid_ef[1])
+    	f["gridy"]=collect(grid_ef[2])
+    	f["gridz"]=collect(grid_ef[3])
+     end
+
 end
 
 #-------------------------------------------------------------------------------
